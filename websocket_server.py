@@ -11,7 +11,7 @@ class HalEcho(WebSocket):
         state = 'Direction: {0}, State {1}'.format(direction, state)
         print state
         if "up" in direction:
-            Pymove().run_up_start() if state else Pymove().run_up_stop()
+            Pymove().run_up_start()
             state = 'Move UP state: {0}'.format(state)        
         if 'down' in direction:
             Pymove().run_down_start() if state else Pymove().run_down_stop()
@@ -20,7 +20,7 @@ class HalEcho(WebSocket):
             Pymove().run_left_start() if state else Pymove().run_left_stop()
             state = 'Move LEFT state: {0}'.format(state)        
         if 'right' in direction:
-            Pymove().run_right_start() if state else Pymove().run_right_stop()
+            Pymove().run_right_start() if state else move.run_right_stop()
             state = 'Move RIGHT state: {0}'.format(state)
         return state
 

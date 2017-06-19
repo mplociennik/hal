@@ -2,7 +2,7 @@
 import sys
 import json
 from SimpleWebSocketServer import SimpleWebSocketServer, WebSocket
-from PyMove import PyMove
+from pymove import PyMove
 
 class HalEcho(WebSocket):
 

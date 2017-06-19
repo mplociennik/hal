@@ -9,7 +9,8 @@ class HalEcho(WebSocket):
 
     def move(self, direction, state):
         state = 'Direction: {0}, State {1}'.format(direction, state)
-        if 'up' in direction:
+        print state
+        if "up" in direction:
             move = Pymove()
             move.run_up_start() if state else move.run_up_stop()
             state = 'Move UP state: {0}'.format(state)        

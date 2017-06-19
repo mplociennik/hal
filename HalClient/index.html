@@ -1,0 +1,51 @@
+<html>
+<head>
+
+<script src="jquery-3.2.1.min.js"></script>
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+<!-- Optional theme -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+</head>
+<body>
+<script type="text/javascript">
+var ws = new WebSocket('ws://192.168.1.151:8083');
+
+ws.onopen = () => {
+  dataJson = JSON.stringify({event: 'connect', data:{}, datetime: null});
+  // ws.send(dataJson);
+};
+
+ws.onmessage = (e) => {
+  console.log('received data:',e.data);
+  $('.socket-response').html(e.data);
+}
+
+ws.onerror = (e) => {
+  console.log(e.message);
+};
+
+ws.onclose = (e) => {
+  console.log('Socket connection closed.');
+  console.log(e.code, e.reason);
+};
+
+var move = function(direction, state){
+    console.log('move: ', direction, state);
+    dataJson = JSON.stringify({event: 'move', data:{direction: direction, state:state}, datetime: null});
+    ws.send(dataJson);
+};
+
+</script>
+<button class="btn btn-primary" onmousedown="move('up', true)" onmouseup="move('up', false)">Up</button>
+<button class="btn btn-primary" onmousedown="move('down', true)" onmouseup="move('down', false)">Down</button>
+<button class="btn btn-primary" onmousedown="move('left', true)" onmouseup="move('left', false)">Left</button>
+<button class="btn btn-primary" onmousedown="move('right', true)" onmouseup="move('right', false)">Right</button>
+
+<div>Socket Response: <span class="socket-response"></span></div>
+</body>
+</html>

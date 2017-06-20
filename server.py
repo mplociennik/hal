@@ -19,7 +19,6 @@ class HalEcho(WebSocket):
             if state:
                 PyMove().run_up_start()
             else:
-                print('sthaaap')
                 PyMove().run_up_stop()
             response = 'Move UP state: {0}'.format(state)     
         if 'down' in direction:

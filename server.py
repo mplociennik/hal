@@ -4,6 +4,7 @@ import json
 import platform
 from SimpleWebSocketServer import SimpleWebSocketServer, WebSocket
 
+print platform.system()
 if platform.system() == 'Linux':
     from pymove import PyMove
 

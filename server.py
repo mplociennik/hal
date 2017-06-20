@@ -23,14 +23,23 @@ class HalEcho(WebSocket):
                 PyMove().run_up_stop()
             response = 'Move UP state: {0}'.format(state)     
         if 'down' in direction:
-            PyMove().run_down_start() if state else PyMove().run_down_stop()
+            if state:
+                PyMove().run_down_start()  
+            else:
+                PyMove().run_down_stop()
             response = 'Move DOWN state: {0}'.format(state)
         if 'left' in direction:
-            PyMove().run_left_start() if state else PyMove().run_left_stop()
-            state = 'Move LEFT state: {0}'.format(state)        
+            if state:
+                PyMove().run_left_start()
+            else:
+                PyMove().run_left_stop()
+            response = 'Move LEFT state: {0}'.format(state)        
         if 'right' in direction:
-            PyMove().run_right_start() if state else move.run_right_stop()
-            state = 'Move RIGHT state: {0}'.format(state)
+            if state:
+                PyMove().run_right_start() 
+            else:
+                PyMove().run_right_stop()
+            response = 'Move RIGHT state: {0}'.format(state)
         return state
 
     def protect_home(self):

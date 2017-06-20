@@ -11,13 +11,13 @@ class HalEcho(WebSocket):
 
 
     def move(self, direction, state):
-        print('state type: {0}'.format(type(state)))
         response = 'Direction: {0}, State {1}'.format(direction, state)
         print response
         if platform.system() == 'Windows':
             return response
         if "up" in direction:
             if state:
+                print('state true go up')
                 PyMove().run_up_start()
             else:
                 PyMove().run_up_stop()

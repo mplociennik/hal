@@ -17,7 +17,10 @@ class HalEcho(WebSocket):
         if platform.system() == 'Windows':
             return response
         if "up" in direction:
-            PyMove().run_up_start() if state else PyMove().run_up_stop()
+            if state:
+                PyMove().run_up_start()
+            else:
+                PyMove().run_up_stop()
             response = 'Move UP state: {0}'.format(state)     
         if 'down' in direction:
             PyMove().run_down_start() if state else PyMove().run_down_stop()

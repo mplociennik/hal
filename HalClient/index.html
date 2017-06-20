@@ -34,7 +34,7 @@
 </head>
 <body>
   <script type="text/javascript">
-  var ws = new WebSocket('ws://192.168.1.151:8083');
+  var ws = new WebSocket('ws://192.168.1.135:8083');
 
   ws.onopen = () => {
     dataJson = JSON.stringify({event: 'connect', data:{}, datetime: null});

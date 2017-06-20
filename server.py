@@ -11,7 +11,7 @@ class HalEcho(WebSocket):
 
 
     def move(self, direction, state):
-        print 'state: {0}'.format(state)
+        print('state type: {0}'.format(type(state)))
         response = 'Direction: {0}, State {1}'.format(direction, state)
         print response
         if platform.system() == 'Windows':
@@ -47,4 +47,6 @@ class HalEcho(WebSocket):
         print(self.address, 'closed')
 
 server = SimpleWebSocketServer('', 8083, HalEcho)
+
+print('Server listening...')
 server.serveforever()

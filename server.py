@@ -4,7 +4,6 @@ import json
 import platform
 from SimpleWebSocketServer import SimpleWebSocketServer, WebSocket
 
-print platform.system()
 if platform.system() == 'Linux':
     from pymove import PyMove
 
@@ -12,11 +11,12 @@ class HalEcho(WebSocket):
 
 
     def move(self, direction, state):
-        response = 'Direction: {0}, State {1}'.format(direction, state)
+        response = 'Direction: {0}, State: {1}'.format(direction, state)
         print response
         if platform.system() == 'Windows':
             return response
         if "up" in direction:
+            print('dupa')
             if state:
                 print('state true go up')
                 PyMove().run_up_start()

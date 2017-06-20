@@ -1,22 +1,43 @@
 <html>
 <head>
 
-<script src="jquery-3.2.1.min.js"></script>
-<!-- Latest compiled and minified CSS -->
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <script src="jquery-3.2.1.min.js"></script>
+  <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 
-<!-- Optional theme -->
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+  <!-- Optional theme -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
 
-<!-- Latest compiled and minified JavaScript -->
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+  <!-- Latest compiled and minified JavaScript -->
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+  <style>
+  .control-arrows{
+    margin:1%;
+    padding:1%;
+  }
+  .control-arrow {
+    margin: 1%;
+  }
+  .arrow-up{
+    margin-left: 2.5%;
+  } 
+  .arrow-down{
+    margin-left: 2.5%;
+  } 
+  .arrow-left{
+    margin-right: 1%;
+  } 
+  .arrow-right{
+    margin-left: 1%;
+  } 
+  </style>
 </head>
 <body>
-<script type="text/javascript">
-var ws = new WebSocket('ws://192.168.1.135:8083');
+  <script type="text/javascript">
+  var ws = new WebSocket('ws://127.0.0.1:8083');
 
-ws.onopen = () => {
-  dataJson = JSON.stringify({event: 'connect', data:{}, datetime: null});
+  ws.onopen = () => {
+    dataJson = JSON.stringify({event: 'connect', data:{}, datetime: null});
   // ws.send(dataJson);
 };
 
@@ -35,17 +56,32 @@ ws.onclose = (e) => {
 };
 
 var move = function(direction, state){
-    console.log('move: ', direction, state);
-    dataJson = JSON.stringify({event: 'move', data:{direction: direction, state:state}, datetime: null});
-    ws.send(dataJson);
+  console.log('move: ', direction, state);
+  dataJson = JSON.stringify({event: 'move', data:{direction: direction, state:state}, datetime: null});
+  ws.send(dataJson);
 };
 
 </script>
-<button class="btn btn-primary" onmousedown="move('up', true)" onmouseup="move('up', false)">Up</button>
-<button class="btn btn-primary" onmousedown="move('down', true)" onmouseup="move('down', false)">Down</button>
-<button class="btn btn-primary" onmousedown="move('left', true)" onmouseup="move('left', false)">Left</button>
-<button class="btn btn-primary" onmousedown="move('right', true)" onmouseup="move('right', false)">Right</button>
-
-<div>Socket Response: <span class="socket-response"></span></div>
+<div class="container-fluid">
+  <div class="row control-arrows">
+    <div class="col-md-12">
+      <div class="row">
+        <button class="btn btn-primary control-arrow arrow-up" onmousedown="move('up', true)" onmouseup="move('up', false)"><span class="glyphicon glyphicon-arrow-up"></span></button>
+      </div>
+      <div class="row">
+        <button class="btn btn-primary control-arrow arrow-left" onmousedown="move('left', true)" onmouseup="move('left', false)"><span class="glyphicon glyphicon-arrow-left"></span></button>
+        <button class="btn btn-primary control-arrow arrow-right" onmousedown="move('right', true)" onmouseup="move('right', false)"><span class="glyphicon glyphicon-arrow-right"></span></button>
+      </div>
+      <div class="row">
+        <button class="btn btn-primary control-arrow arrow-down" onmousedown="move('down', true)" onmouseup="move('down', false)"><span class="glyphicon glyphicon-arrow-down"></span></button>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      Socket Response: <span class="socket-response"></span>
+    </div>
+  </div>
+</div>
 </body>
 </html>

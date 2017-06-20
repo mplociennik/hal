@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
 import sys
 import json
+import platform
 from SimpleWebSocketServer import SimpleWebSocketServer, WebSocket
-from pymove import PyMove
+
+if platform.system() == 'Linux':
+    from pymove import PyMove
 
 class HalEcho(WebSocket):
 
@@ -10,6 +13,8 @@ class HalEcho(WebSocket):
     def move(self, direction, state):
         state = 'Direction: {0}, State {1}'.format(direction, state)
         print state
+        if platform.system() == 'Windows':
+            return state
         if "up" in direction:
             try:
                 PyMove().run_up_start() if state else PyMove().run_up_stop()
@@ -28,6 +33,9 @@ class HalEcho(WebSocket):
             PyMove().run_right_start() if state else move.run_right_stop()
             state = 'Move RIGHT state: {0}'.format(state)
         return state
+
+    def protect_home(self):
+        pass
 
     def handleMessage(self):
         response = 'Bad command!'

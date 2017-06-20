@@ -11,21 +11,17 @@ class HalEcho(WebSocket):
 
 
     def move(self, direction, state):
-        state = 'Direction: {0}, State {1}'.format(direction, state)
-        print state
+        print 'state: {0}'.format(state)
+        response = 'Direction: {0}, State {1}'.format(direction, state)
+        print response
         if platform.system() == 'Windows':
-            return state
+            return response
         if "up" in direction:
-            try:
-                PyMove().run_up_start() if state else PyMove().run_up_stop()
-                state = 'Move UP state: {0}'.format(state)     
-            except:
-                print "Unexpected error:", sys.exc_info()[0]
-                raise
-
+            PyMove().run_up_start() if state else PyMove().run_up_stop()
+            response = 'Move UP state: {0}'.format(state)     
         if 'down' in direction:
             PyMove().run_down_start() if state else PyMove().run_down_stop()
-            state = 'Move DOWN state: {0}'.format(state)
+            response = 'Move DOWN state: {0}'.format(state)
         if 'left' in direction:
             PyMove().run_left_start() if state else PyMove().run_left_stop()
             state = 'Move LEFT state: {0}'.format(state)        

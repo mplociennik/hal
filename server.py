@@ -40,7 +40,7 @@ class HalEcho(WebSocket):
             else:
                 PyMove().run_right_stop()
             response = 'Move RIGHT state: {0}'.format(state)
-        return state
+        return response
 
     def protect_home(self):
         pass

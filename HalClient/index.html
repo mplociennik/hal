@@ -34,10 +34,12 @@
 </head>
 <body>
   <script type="text/javascript">
-  var ws = new WebSocket('ws://127.0.0.1:8083');
+  var ws = new WebSocket('ws://192.168.1.135:8083');
 
   ws.onopen = () => {
     dataJson = JSON.stringify({event: 'connect', data:{}, datetime: null});
+    $('.socket-response').html('Socket connected! :)');
+    
   // ws.send(dataJson);
 };
 
@@ -48,19 +50,59 @@ ws.onmessage = (e) => {
 
 ws.onerror = (e) => {
   console.log(e.message);
+  $('.socket-response').html(e.message);
 };
 
 ws.onclose = (e) => {
   console.log('Socket connection closed.');
   console.log(e.code, e.reason);
+  $('.socket-response').html('Socket connection closed.');
 };
 
+var lastMove = null;
 var move = function(direction, state){
-  console.log('move: ', direction, state);
-  dataJson = JSON.stringify({event: 'move', data:{direction: direction, state:state}, datetime: null});
-  ws.send(dataJson);
+    thisMove = direction + '-' + state;
+    if(lastMove !== thisMove){
+        console.log('move: ', direction, state);
+        dataJson = JSON.stringify({event: 'move', data:{direction: direction, state:state}, datetime: null});
+        ws.send(dataJson);
+        lastMove = thisMove;
+    }
+};
+var lastMove = null;
+document.onkeydown = function(e) {
+    switch (e.keyCode) {
+        case 37:
+            move('left', true);
+            break;
+        case 38:
+            move('up', true);
+            break;
+        case 39:
+            move('right', true);
+            break;
+        case 40:
+            move('down', true);
+            break;
+    }
 };
 
+document.onkeyup = function(e) {
+    switch (e.keyCode) {
+        case 37:
+            move('left', false);
+            break;
+        case 38:
+            move('up', false);
+            break;
+        case 39:
+            move('right', false);
+            break;
+        case 40:
+            move('down', false);
+            break;
+    }
+};
 </script>
 <div class="container-fluid">
   <div class="row control-arrows">

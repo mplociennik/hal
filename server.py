@@ -41,14 +41,20 @@ class HalEcho(WebSocket):
             response = 'Move RIGHT state: {0}'.format(state)
         return response
 
-    def protect_home(self):
-        pass
+    def protect_home(self, state):
+        if state:
+            response = 'Runing home protection.'
+        else:
+            response = 'Stoping home protection.'
+        return response
 
     def handleMessage(self):
         response = 'Bad command!'
         dataObj = json.loads(self.data)
         if dataObj['event'] == 'move':
             response = self.move(dataObj['data']['direction'], dataObj['data']['state'])
+        if dataObj['event'] == 'protectHome':
+            response = self.protect_home(dataObj['data']['state'])
         self.sendMessage(response.decode("utf-8"))
 
     def handleConnected(self):

@@ -1,0 +1,3 @@
+rootProject.name = 'HalClient'
+
+include ':app'

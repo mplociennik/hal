@@ -24,7 +24,7 @@ export default class HalClient extends Component {
   _connectSocket(){
     console.log('Starting connection...');
     var self = this;
-    this.socketStream = new WebSocket("ws://192.168.1.151:8083");
+    this.socketStream = new WebSocket("ws://192.168.1.135:8083");
     console.log(this.socketStream);
 
     this.socketStream.onmessage = (request)=>{
@@ -61,7 +61,7 @@ export default class HalClient extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <View style={{flex: .05, backgroundColor: '#4f4f4f', paddingTop: Constants.statusBarHeight,}}>
+        <View style={{flex: .05, backgroundColor: '#4f4f4f', paddingTop: 10,}}>
           <Text style={{color: '#fff', marginTop:10, marginLeft:5}}>Hal Client</Text>
         </View>
         <View style={{flex: .25}}>
@@ -129,7 +129,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingTop: Constants.statusBarHeight,
+    paddingTop: 10,
     backgroundColor: '#ecf0f1',
   },
   paragraph: {

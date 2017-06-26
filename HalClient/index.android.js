@@ -61,73 +61,110 @@ export default class HalClient extends Component {
   render() {
     return (
       <View style={styles.container}>
-      <Text style={styles.socketInfo}>
-      SocketResponse: { this.state.socketResponse }
-      </Text>
-      <Text>
-      Direction: {this.state.moveDirection}
-      State: {this.state.moveState}
-      </Text>
-      <Switch onValueChange={(value)=>{this._protectHome(value)}} value = {this.state.protectHomeState}/>
-      <Button onPress={()=>this._connectSocket()} title="Connect socket"/>
-      <TouchableWithoutFeedback 
-        onPressIn={()=>this._move('up', true)} onPressOut={()=>this._move('up', false)}>
-      <View style={styles.button}>
-        <Text>
-        UP
-        </Text>
+        <View style={{flex: .05, backgroundColor: '#4f4f4f', paddingTop: Constants.statusBarHeight,}}>
+          <Text style={{color: '#fff', marginTop:10, marginLeft:5}}>Hal Client</Text>
+        </View>
+        <View style={{flex: .25}}>
+          <View style={{flexDirection:'row'}}>
+            <View>
+              <Text>Home Protection: </Text>
+            </View>
+            <View>
+              <Switch onValueChange={(value)=>{this._protectHome(value);}} value = {this.state.protectHomeState}/>
+            </View>
+          </View>
+          <Text>
+            SocketResponse: { this.state.socketResponse }
+          </Text>
+          <Text>Move direction: {this.state.moveDirection}, Move state: {String(this.state.moveState)}</Text>
+          <Button onPress={()=>this._connectSocket()} title="Connect socket"/>
+        </View>
+        <View style={{flex:.5,flexDirection:'column', justifyContent: 'center', alignItems: 'center',}}>
+          <View style={{flexDirection:'row'}}>
+            <TouchableWithoutFeedback 
+              onPressIn={()=>this._move('up', true)} onPressOut={()=>this._move('up', false)}>
+              <View style={styles.button}>
+              <Text>
+              UP
+              </Text>
+            </View>
+            </TouchableWithoutFeedback>
+          </View>
+          <View style={{flexDirection:'row'}}>
+            <TouchableWithoutFeedback 
+            onPressIn={()=>this._move('left', true)} onPressOut={()=>this._move('left', false)}>
+              <View style={styles.buttonLeft}>
+              <Text>
+                LEFT
+              </Text>
+              </View>
+            </TouchableWithoutFeedback>      
+            <TouchableWithoutFeedback 
+              onPressIn={()=>this._move('right', true)} onPressOut={()=>this._move('right', false)}>
+            <View style={styles.buttonRight}>
+              <Text>
+                RIGHT
+              </Text>
+            </View>
+            </TouchableWithoutFeedback>
+          </View>
+          <View style={{flexDirection:'row'}}>
+            <TouchableWithoutFeedback 
+              onPressIn={()=>this._move('down', true)} onPressOut={()=>this._move('down', false)}>
+            <View style={styles.button}>
+              <Text>
+                DOWN
+              </Text>
+            </View>
+            </TouchableWithoutFeedback>  
+          </View>
+        </View>
       </View>
-      </TouchableWithoutFeedback>      
-      <TouchableWithoutFeedback 
-        onPressIn={()=>this._move('down', true)} onPressOut={()=>this._move('down', false)}>
-      <View style={styles.button}>
-        <Text>
-          DOWN
-        </Text>
-      </View>
-      </TouchableWithoutFeedback>      
-      <TouchableWithoutFeedback 
-        onPressIn={()=>this._move('left', true)} onPressOut={()=>this._move('left', false)}>
-      <View style={styles.button}>
-      <Text>
-        LEFT
-      </Text>
-      </View>
-      </TouchableWithoutFeedback>      
-      <TouchableWithoutFeedback 
-        onPressIn={()=>this._move('right', true)} onPressOut={()=>this._move('right', false)}>
-      <View style={styles.button}>
-        <Text>
-          RIGHT
-        </Text>
-      </View>
-      </TouchableWithoutFeedback>
-      </View>
-      );
+    );
   }
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    alignItems: 'center',
     justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
+    paddingTop: Constants.statusBarHeight,
+    backgroundColor: '#ecf0f1',
   },
-  socketInfo: {
-    fontSize: 20,
-    alignItems: 'center',
-    margin: 10,
+  paragraph: {
+    margin: 24,
+    fontSize: 18,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    color: '#34495e',
   },
-  button: {
+  button:{
     alignItems: 'center',
-    marginBottom: 7,
+    marginBottom: 10,
     borderWidth: 1,
     borderRadius: 5,
     borderColor: '#000',
-    padding: 10
+    padding: 20
   },
-
+  buttonLeft:{
+    alignItems: 'center',
+    marginBottom: 10,
+    marginRight: 10,
+    borderWidth: 1,
+    borderRadius: 5,
+    borderColor: '#000',
+    padding: 20
+  },
+    buttonRight:{
+    alignItems: 'center',
+    marginBottom: 10,
+    marginLeft: 10,
+    borderWidth: 1,
+    borderRadius: 5,
+    borderColor: '#000',
+    padding: 20
+  },
 });
 
 AppRegistry.registerComponent('HalClient', () => HalClient);

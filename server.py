@@ -7,8 +7,11 @@ from SimpleWebSocketServer import SimpleWebSocketServer, WebSocket
 if platform.system() == 'Linux':
     from pymove import PyMove
 
+
 class HalEcho(WebSocket):
 
+    def __init__(self):
+        self.home_protect_process = HomeProtectProcess()
 
     def move(self, direction, state):
         response = 'Direction: {0}, State: {1}'.format(direction, state)
@@ -44,8 +47,10 @@ class HalEcho(WebSocket):
     def protect_home(self, state):
         if state:
             response = 'Runing home protection.'
+            self.home_protect_process.start()
         else:
             response = 'Stoping home protection.'
+            self.home_protect_process.terminate()
         return response
 
     def handleMessage(self):

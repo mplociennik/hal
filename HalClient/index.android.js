@@ -6,7 +6,9 @@ import {
   View,
   TouchableWithoutFeedback,
   Button,
-  Switch
+  Switch,
+  Vibration,
+  Alert
 } from 'react-native';
 
 export default class HalClient extends Component {
@@ -29,14 +31,21 @@ export default class HalClient extends Component {
 
     this.socketStream.onmessage = (request)=>{
       console.log(request.data);
-      self.setState({socketResponse: request.data});
+      switch(request.data.event){
+        case 'message':
+        self.setState({socketResponse: request.data});
+        break;
+        case 'protectHomeAlarm':
+        this._protectHomeAlarm();
+        break;
+      }
     };    
 
     this.socketStream.onclose = (e)=>{
       console.log('Socket connection closed.');
       console.log(e.code, e.reason);
       self.setState({socketResponse: 'Socket connection closed.'});
-    
+
     };
   }
 
@@ -58,70 +67,83 @@ export default class HalClient extends Component {
     this.setState({protectHomeState: state});
   }
 
+  _protectHomeAlarm(){
+    console.log('Alarm alarm alarm!');
+    Vibration.vibrate([0, 500, 200, 500], true);
+    Alert.alert(
+      'Protect Home Alert!',
+      'Door is opened!',
+      [
+      {text: 'OK', onPress: () => Vibration.cancel()},
+      ],
+      { cancelable: false }
+      )
+  }
+
   render() {
     return (
       <View style={styles.container}>
-        <View style={{flex: .05, backgroundColor: '#4f4f4f', paddingTop: 10,}}>
-          <Text style={{color: '#fff', marginTop:10, marginLeft:5}}>Hal Client</Text>
-        </View>
-        <View style={{flex: .25}}>
-          <View style={{flexDirection:'row'}}>
-            <View>
-              <Text>Home Protection: </Text>
-            </View>
-            <View>
-              <Switch onValueChange={(value)=>{this._protectHome(value);}} value = {this.state.protectHomeState}/>
-            </View>
-          </View>
-          <Text>
-            SocketResponse: { this.state.socketResponse }
-          </Text>
-          <Text>Move direction: {this.state.moveDirection}, Move state: {String(this.state.moveState)}</Text>
-          <Button onPress={()=>this._connectSocket()} title="Connect socket"/>
-        </View>
-        <View style={{flex:.5,flexDirection:'column', justifyContent: 'center', alignItems: 'center',}}>
-          <View style={{flexDirection:'row'}}>
-            <TouchableWithoutFeedback 
-              onPressIn={()=>this._move('up', true)} onPressOut={()=>this._move('up', false)}>
-              <View style={styles.button}>
-              <Text>
-              UP
-              </Text>
-            </View>
-            </TouchableWithoutFeedback>
-          </View>
-          <View style={{flexDirection:'row'}}>
-            <TouchableWithoutFeedback 
-            onPressIn={()=>this._move('left', true)} onPressOut={()=>this._move('left', false)}>
-              <View style={styles.buttonLeft}>
-              <Text>
-                LEFT
-              </Text>
-              </View>
-            </TouchableWithoutFeedback>      
-            <TouchableWithoutFeedback 
-              onPressIn={()=>this._move('right', true)} onPressOut={()=>this._move('right', false)}>
-            <View style={styles.buttonRight}>
-              <Text>
-                RIGHT
-              </Text>
-            </View>
-            </TouchableWithoutFeedback>
-          </View>
-          <View style={{flexDirection:'row'}}>
-            <TouchableWithoutFeedback 
-              onPressIn={()=>this._move('down', true)} onPressOut={()=>this._move('down', false)}>
-            <View style={styles.button}>
-              <Text>
-                DOWN
-              </Text>
-            </View>
-            </TouchableWithoutFeedback>  
-          </View>
-        </View>
+      <View style={{flex: .05, backgroundColor: '#4f4f4f', paddingTop: 10,}}>
+      <Text style={{color: '#fff', marginTop:10, marginLeft:5}}>Hal Client</Text>
       </View>
-    );
-  }
+      <View style={{flex: .25}}>
+      <View style={{flexDirection:'row'}}>
+      <View>
+      <Text>Home Protection: </Text>
+      </View>
+      <View>
+      <Switch onValueChange={(value)=>{this._protectHome(value);}} value = {this.state.protectHomeState}/>
+      </View>
+      </View>
+      <Text>
+      SocketResponse: { this.state.socketResponse }
+      </Text>
+      <Text>Move direction: {this.state.moveDirection}, Move state: {String(this.state.moveState)}</Text>
+      <Button onPress={()=>this._connectSocket()} title="Connect socket"/>
+      </View>
+      <View style={{flex:.5,flexDirection:'column', justifyContent: 'center', alignItems: 'center',}}>
+      <View style={{flexDirection:'row'}}>
+      <TouchableWithoutFeedback 
+      onPressIn={()=>this._move('up', true)} onPressOut={()=>this._move('up', false)}>
+      <View style={styles.button}>
+      <Text>
+      UP
+      </Text>
+      </View>
+      </TouchableWithoutFeedback>
+      </View>
+      <View style={{flexDirection:'row'}}>
+      <TouchableWithoutFeedback 
+      onPressIn={()=>this._move('left', true)} onPressOut={()=>this._move('left', false)}>
+      <View style={styles.buttonLeft}>
+      <Text>
+      LEFT
+      </Text>
+      </View>
+      </TouchableWithoutFeedback>      
+      <TouchableWithoutFeedback 
+      onPressIn={()=>this._move('right', true)} onPressOut={()=>this._move('right', false)}>
+      <View style={styles.buttonRight}>
+      <Text>
+      RIGHT
+      </Text>
+      </View>
+      </TouchableWithoutFeedback>
+      </View>
+      <View style={{flexDirection:'row'}}>
+      <TouchableWithoutFeedback 
+      onPressIn={()=>this._move('down', true)} onPressOut={()=>this._move('down', false)}>
+      <View style={styles.button}>
+      <Text>
+      DOWN
+      </Text>
+      </View>
+      </TouchableWithoutFeedback>  
+      </View>
+      </View>
+      </View>
+      );
+}
 }
 
 const styles = StyleSheet.create({
@@ -156,7 +178,7 @@ const styles = StyleSheet.create({
     borderColor: '#000',
     padding: 20
   },
-    buttonRight:{
+  buttonRight:{
     alignItems: 'center',
     marginBottom: 10,
     marginLeft: 10,

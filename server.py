@@ -55,6 +55,7 @@ class HalEcho(WebSocket):
         return response
 
     def handleMessage(self):
+        print ('debug')
         response = 'Bad command!'
         dataObj = json.loads(self.data)
         if dataObj['event'] == 'move':

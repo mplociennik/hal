@@ -31,17 +31,19 @@ export default class HalClient extends Component {
 
     this.socketStream.onmessage = (request)=>{
       console.log(request.data);
-      switch(request.data.event){
+      var requestData = JSON.parse(request.data);
+      switch(requestData.event){
         case 'message':
-          self.setState({socketResponse: request.data});
+          self.setState({socketResponse: requestData.data.message});
           break;        
         case 'move':
-          self.setState({socketResponse: request.data});
+          self.setState({socketResponse: requestData.data.message});
           break;
         case 'protectHome':
-          if (request.dat.data.state) {
-            this._protectHomeAlarm();
-          }
+          self.setState({socketResponse: requestData.data.message});
+          break;        
+        case 'protectHomeAlarm':
+          this._protectHomeAlarm();
           break;
       }
     };    

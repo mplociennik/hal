@@ -6,6 +6,7 @@ from SimpleWebSocketServer import SimpleWebSocketServer, WebSocket
 
 if platform.system() == 'Linux':
     from pymove import PyMove
+    from home_protect import HomeProtectProcess
 
 
 class HalEcho(WebSocket):

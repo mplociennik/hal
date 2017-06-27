@@ -14,7 +14,7 @@ class HalEcho(WebSocket):
         self.home_protect_process = HomeProtectProcess()
 
     def move(self, direction, state):
-        response = 'Direction: {0}, State: {1}'.format(direction, state)
+        response = json.dumps({'event': 'message','data': {'message': 'Direction: {0}, State: {1}'.format(direction, state)}})
         print response
         if platform.system() == 'Windows':
             return response
@@ -23,33 +23,33 @@ class HalEcho(WebSocket):
                 PyMove().run_up_start()
             else:
                 PyMove().run_up_stop()
-            response = 'Move UP state: {0}'.format(state)     
+            response = json.dumps({'event': 'move' ,'data': {'message': 'Move UP state: {0}'.format(state)}})     
         if 'down' in direction:
             if state:
                 PyMove().run_down_start()  
             else:
                 PyMove().run_down_stop()
-            response = 'Move DOWN state: {0}'.format(state)
+            response = json.dumps({'event': 'move' ,'data': {'message': 'Move DOWN state: {0}'.format(state)}})
         if 'left' in direction:
             if state:
                 PyMove().run_left_start()
             else:
                 PyMove().run_left_stop()
-            response = 'Move LEFT state: {0}'.format(state)        
+            response = json.dumps({'event': 'move' ,'data': {'message': 'Move LEFT state: {0}'.format(state)}})        
         if 'right' in direction:
             if state:
                 PyMove().run_right_start() 
             else:
                 PyMove().run_right_stop()
-            response = 'Move RIGHT state: {0}'.format(state)
+            response = json.dumps({'event': 'move' ,'data': {'message': 'Move RIGHT state: {0}'.format(state)}})
         return response
 
     def protect_home(self, state):
         if state:
-            response = 'Runing home protection.'
+            response = json.dumps({'event': 'protectionHome' ,'data': {'message': 'Runing home protection.'}})
             self.home_protect_process.start()
         else:
-            response = 'Stoping home protection.'
+            response = json.dumps({'event': 'protectionHome' ,'data': {'message': 'Stoping home protection.'}})
             self.home_protect_process.terminate()
         return response
 

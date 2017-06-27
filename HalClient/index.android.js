@@ -26,7 +26,7 @@ export default class HalClient extends Component {
   _connectSocket(){
     console.log('Starting connection...');
     var self = this;
-    this.socketStream = new WebSocket("ws://192.168.1.135:8083");
+    this.socketStream = new WebSocket("ws://192.168.1.151:8083");
     console.log(this.socketStream);
 
     this.socketStream.onmessage = (request)=>{
@@ -36,13 +36,13 @@ export default class HalClient extends Component {
         self.setState({socketResponse: request.data});
         break;
         case 'protectHomeAlarm':
-        this._protectHomeAlarm();
-        break;
+          this._protectHomeAlarm();
+          break;
       }
     };    
 
     this.socketStream.onclose = (e)=>{
-      console.log('Socket connection closed.');
+      console.log('Socket connection closed.', e);
       console.log(e.code, e.reason);
       self.setState({socketResponse: 'Socket connection closed.'});
 

@@ -55,17 +55,22 @@ class HalEcho(WebSocket):
         return response
 
     def handleMessage(self):
-        print ('debug')
-        response = 'Bad command!'
-        dataObj = json.loads(self.data)
-        if dataObj['event'] == 'move':
-            response = self.move(dataObj['data']['direction'], dataObj['data']['state'])
-        if dataObj['event'] == 'protectHome':
-            response = self.protect_home(dataObj['data']['state'])
-        self.sendMessage(response.decode("utf-8"))
+        try:
+            response = 'Bad command!'
+            dataObj = json.loads(self.data)
+            if dataObj['event'] == 'move':
+                response = self.move(dataObj['data']['direction'], dataObj['data']['state'])
+            if dataObj['event'] == 'protectHome':
+                response = self.protect_home(dataObj['data']['state'])
+            self.sendMessage(response.decode("utf-8"))
+        except:
+            print('Cannot handle message: {0}'.format(response))
 
     def handleConnected(self):
-        print(self.address, 'connected')
+        try:
+            print(self.address, 'connected')
+        except:
+            print('COnnection error...')
 
     def handleClose(self):
         print(self.address, 'closed')
@@ -74,3 +79,4 @@ server = SimpleWebSocketServer('', 8083, HalEcho)
 
 print('Server listening...')
 server.serveforever()
+print 'Server closed...'

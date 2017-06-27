@@ -33,10 +33,15 @@ export default class HalClient extends Component {
       console.log(request.data);
       switch(request.data.event){
         case 'message':
-        self.setState({socketResponse: request.data});
-        break;
-        case 'protectHomeAlarm':
-          this._protectHomeAlarm();
+          self.setState({socketResponse: request.data});
+          break;        
+        case 'move':
+          self.setState({socketResponse: request.data});
+          break;
+        case 'protectHome':
+          if (request.dat.data.state) {
+            this._protectHomeAlarm();
+          }
           break;
       }
     };    

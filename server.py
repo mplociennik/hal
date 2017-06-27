@@ -6,13 +6,9 @@ from SimpleWebSocketServer import SimpleWebSocketServer, WebSocket
 
 if platform.system() == 'Linux':
     from pymove import PyMove
-    from home_protect import HomeProtectProcess
 
 
 class HalEcho(WebSocket):
-
-    def __init__(self):
-        self.home_protect_process = HomeProtectProcess()
 
     def move(self, direction, state):
         response = json.dumps({'event': 'message','data': {'message': 'Direction: {0}, State: {1}'.format(direction, state)}})
@@ -24,7 +20,7 @@ class HalEcho(WebSocket):
                 PyMove().run_up_start()
             else:
                 PyMove().run_up_stop()
-            response = json.dumps({'event': 'move' ,'data': {'message': 'Move UP state: {0}'.format(state)}})     
+            response = json.dumps({'event': 'move' ,'data': {'message': 'Move UP state: {0}'.format(state)}})             
         if 'down' in direction:
             if state:
                 PyMove().run_down_start()  
@@ -36,22 +32,20 @@ class HalEcho(WebSocket):
                 PyMove().run_left_start()
             else:
                 PyMove().run_left_stop()
-            response = json.dumps({'event': 'move' ,'data': {'message': 'Move LEFT state: {0}'.format(state)}})        
+            response = json.dumps({'event': 'move' ,'data': {'message': 'Move LEFT state: {0}'.format(state)}})   
         if 'right' in direction:
             if state:
                 PyMove().run_right_start() 
             else:
                 PyMove().run_right_stop()
-            response = json.dumps({'event': 'move' ,'data': {'message': 'Move RIGHT state: {0}'.format(state)}})
+            response = json.dumps({'event': 'move' ,'data': {'message': 'Move RIGHT state: {0}'.format(state)}})            
         return response
 
     def protect_home(self, state):
         if state:
-            response = json.dumps({'event': 'protectionHome' ,'data': {'message': 'Runing home protection.'}})
-            self.home_protect_process.start()
+            response = json.dumps({'event': 'protectHome' ,'data': {'state': True, 'message': 'Home protection enabled!'}})   
         else:
-            response = json.dumps({'event': 'protectionHome' ,'data': {'message': 'Stoping home protection.'}})
-            self.home_protect_process.terminate()
+            response = json.dumps({'event': 'protectHome' ,'data': {'state': False, 'message': 'Home protection disabled!'}})   
         return response
 
     def handleMessage(self):
@@ -70,13 +64,12 @@ class HalEcho(WebSocket):
         try:
             print(self.address, 'connected')
         except:
-            print('COnnection error...')
+            print('Connection error...')
 
     def handleClose(self):
         print(self.address, 'closed')
 
 server = SimpleWebSocketServer('', 8083, HalEcho)
-
 print('Server listening...')
 server.serveforever()
 print 'Server closed...'

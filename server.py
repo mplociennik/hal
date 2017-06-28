@@ -48,11 +48,11 @@ class HalEcho(WebSocket):
         if state:
             response = json.dumps({'event': 'protectHome' ,'data': {'state': True, 'message': 'Home protection enabled!'}})  
             if platform.system() == 'Linux':
-                homeProtectProcess.start(self)      
+                self.home_protect_process.start(self)      
         else:
             response = json.dumps({'event': 'protectHome' ,'data': {'state': False, 'message': 'Home protection disabled!'}})   
             if platform.system() == 'Linux':
-                homeProtectProcess.terminate()
+                self.home_protect_process.terminate()
         return response
 
     def handleMessage(self):

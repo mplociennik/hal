@@ -78,5 +78,7 @@ class HalEcho(WebSocket):
 
 server = SimpleWebSocketServer('', 8083, HalEcho)
 print('Server listening...')
-server.serveforever()
-print 'Server closed...'
+try:
+    server.serveforever()
+except:
+    print 'Server closed...'

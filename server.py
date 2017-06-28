@@ -6,7 +6,10 @@ from SimpleWebSocketServer import SimpleWebSocketServer, WebSocket
 
 if platform.system() == 'Linux':
     from pymove import PyMove
-    from home_protect import HomeProtectProcess
+    try:
+        from home_protect import HomeProtectProcess
+    except:
+        print('kurwa nie dziala')
 
 
 class HalEcho(WebSocket):

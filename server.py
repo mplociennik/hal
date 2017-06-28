@@ -6,10 +6,13 @@ from SimpleWebSocketServer import SimpleWebSocketServer, WebSocket
 
 if platform.system() == 'Linux':
     from pymove import PyMove
+    from home_protect import HomeProtectProcess
 
 
 class HalEcho(WebSocket):
-
+    def __init__(self):
+        if platform.system() == 'Linux':
+            self.home_protect_process = HomeProtectProcess
     def move(self, direction, state):
         response = json.dumps({'event': 'message','data': {'message': 'Direction: {0}, State: {1}'.format(direction, state)}})
         print response
@@ -43,9 +46,13 @@ class HalEcho(WebSocket):
 
     def protect_home(self, state):
         if state:
-            response = json.dumps({'event': 'protectHome' ,'data': {'state': True, 'message': 'Home protection enabled!'}})   
+            response = json.dumps({'event': 'protectHome' ,'data': {'state': True, 'message': 'Home protection enabled!'}})  
+            if platform.system() == 'Linux':
+                homeProtectProcess.start(self)      
         else:
             response = json.dumps({'event': 'protectHome' ,'data': {'state': False, 'message': 'Home protection disabled!'}})   
+            if platform.system() == 'Linux':
+                homeProtectProcess.terminate()
         return response
 
     def handleMessage(self):

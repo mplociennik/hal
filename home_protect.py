@@ -14,7 +14,8 @@ class HomeProtectProcess(multiprocessing.Process):
         self.exit = multiprocessing.Event()
         self.INITIAL_DISTANCE = int(Distance().detect())
             
-    def start(self):
+    def start(self, socket):
+        self.socket = socket
         while not self.exit.is_set():
             self.watch()
         print "Protection stoped!"

@@ -83,7 +83,7 @@ class HalEcho(WebSocket):
         print(self.address, 'closed')
 
     def serveHalClient(self, dataObj):
-        print(dataObj['event'])
+        print('dataobj event: '.format(dataObj['event']))
         if dataObj['event'] == 'init':
             self.client_type = dataObj['client']
             print dataObj

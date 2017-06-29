@@ -59,6 +59,7 @@ class HalEcho(WebSocket):
         try:
             response = 'Bad command!'
             dataObj = json.loads(self.data)
+            print('dataobj: {0}'.format(dataObj))
             if dataObj['client'] == 'halClient':
                 response = this.serveHalClient(dataObj)
             if dataObj['client'] == 'protectHome':

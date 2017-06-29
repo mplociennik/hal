@@ -6,12 +6,10 @@ import hashlib
 from SimpleWebSocketServer import SimpleWebSocketServer, WebSocket
 if platform.system() == 'Linux':
     from pymove import PyMove
-    # try:
-    #     from home_protect import HomeProtectProcess
-    # except:
-    #     print('kurwa nie dziala')
+    from home_protect import HomeProtectProcess
 
 clients = [];
+home_protect_process = HomeProtectProcess()
 
 class HalEcho(WebSocket):
     ''' do not create init function here'''
@@ -49,15 +47,16 @@ class HalEcho(WebSocket):
     def protect_home(self, state):
         if state:
             response = json.dumps({'event': 'protectHome' ,'data': {'state': True, 'message': 'Home protection enabled!'}})  
-            # if platform.system() == 'Linux':
-            #     self.home_protect_process.start(self)      
+            if platform.system() == 'Linux':
+                home_protect_process.start()      
         else:
             response = json.dumps({'event': 'protectHome' ,'data': {'state': False, 'message': 'Home protection disabled!'}})   
-            # if platform.system() == 'Linux':
-            #     self.home_protect_process.terminate()
+            if platform.system() == 'Linux':
+                home_protect_process.terminate()
         return response
 
     def handleMessage(self):
+        print self.data
         try:
             response = 'Bad command!'
             dataObj = json.loads(self.data)

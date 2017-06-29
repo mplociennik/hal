@@ -54,6 +54,12 @@ export default class HalClient extends Component {
       self.setState({socketResponse: 'Socket connection closed.'});
 
     };
+
+    this.socketStream.onopen = (evt)=>{ 
+      self.setState({socketResponse: 'Socket connection opened.'});
+      const requestData = {client: 'halClient', event: 'init', date: Date.now(), data:{}};
+      self.socketStream.send(JSON.stringify(requestData))
+    };
   }
 
   _disconnectSocket(){
@@ -61,7 +67,7 @@ export default class HalClient extends Component {
   }
 
   _move(direction, state){
-    const requestData = {event: 'move', date: Date.now(), data:{direction:direction, state: state}};
+    const requestData = {client: 'halClient', event: 'move', date: Date.now(), data:{direction:direction, state: state}};
     console.log('Move: ',requestData);
     this.socketStream.send(JSON.stringify(requestData));
     this.setState({moveDirection: direction, moveState: state});
@@ -69,7 +75,7 @@ export default class HalClient extends Component {
 
   _protectHome(state){
     console.log('ProtectHome state: ', state);
-    const requestData = {event: 'protectHome', date: Date.now(), data:{state: state}};
+    const requestData = {client: 'halClient', event: 'protectHome', date: Date.now(), data:{state: state}};
     this.socketStream.send(JSON.stringify(requestData));
     this.setState({protectHomeState: state});
   }

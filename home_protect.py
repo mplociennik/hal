@@ -2,9 +2,15 @@
 # -*- coding: utf-8 -*-
 import multiprocessing
 import time
-from speech import Speech
-from distance import Distance
+from websocket import create_connection
+import platform
+import json
 
+if platform.system() == 'Linux':
+    from speech import Speech
+    from distance import Distance
+
+WEBSOCKET_HOST = 'ws://10.150.128.92:8083/'
 
 class HomeProtectProcess(multiprocessing.Process):
 
@@ -12,10 +18,25 @@ class HomeProtectProcess(multiprocessing.Process):
     def __init__(self, ):
         multiprocessing.Process.__init__(self)
         self.exit = multiprocessing.Event()
-        self.INITIAL_DISTANCE = int(Distance().detect())
+        if platform.system() =='Linux':
+            self.INITIAL_DISTANCE = int(Distance().detect())
+
+    def ws_on_message(self, ws, message):
+        print(message)
+        message = json.loads(message)
+        print("Received Message: {0}".format(message))
+
+    def ws_on_error(self, ws, error):
+        print(error)
+
+    def ws_on_close(self, ws):
+        print("### closed ###")
+
+    def ws_on_open(self, ws):
+        message = json.dumps({"client": "protectHome","event": "message", "data": {"message": "I'm ready to listening!"}})
+        self.ws.send(message)
             
-    def start(self, socket):
-        self.socket = socket
+    def start(self):
         while not self.exit.is_set():
             self.watch()
         print "Protection stoped!"
@@ -29,14 +50,29 @@ class HomeProtectProcess(multiprocessing.Process):
         return sub <= self.DIST_TOLERANCE
 
     def watch(self):
-        distance = Distance()
-        cm = distance.detect()
-        print int(cm)
-        if self.detect_opened_door(int(cm)):
+        if platform.system() == 'Linux':
+            distance = Distance()
+            cm = distance.detect()
+            print int(cm)
+            if self.detect_opened_door(int(cm)):
+                self.alarm()
+        else:
+            time.sleep(2)
             self.alarm()
 
     def alarm(self):
-        print 'Exterminate! Exterminate! Exterminate!'
+        print('Sending initial request to HalServer')
+        ws = create_connection(WEBSOCKET_HOST)
+        initMessage = json.dumps({"client": "protectHome","event": "init"})
+        ws.send(initMessage)
+        result =  ws.recv()
+        print("Received init response: {0}".format(result))
+        time.sleep(1)
+        print('Sending alarm message to Hal Server.')
+        message = json.dumps({"client": "protectHome","event": "alarm", "data": {"message": "Exterminate, Exterminate, Exterminate!"}})
+        ws.send(message)
+        ws.close()
+        self.terminate()
 
 if __name__ == "__main__":
     process = HomeProtectProcess()

@@ -2,8 +2,8 @@
 import sys
 import json
 import platform
+import hashlib
 from SimpleWebSocketServer import SimpleWebSocketServer, WebSocket
-
 if platform.system() == 'Linux':
     from pymove import PyMove
     # try:
@@ -11,12 +11,10 @@ if platform.system() == 'Linux':
     # except:
     #     print('kurwa nie dziala')
 
+clients = [];
 
 class HalEcho(WebSocket):
-    def __init__(self):
-        if platform.system() == 'Linux':
-            # self.home_protect_process = HomeProtectProcess
-            pass
+    ''' do not create init function here'''
     def move(self, direction, state):
         response = json.dumps({'event': 'message','data': {'message': 'Direction: {0}, State: {1}'.format(direction, state)}})
         print response
@@ -63,22 +61,57 @@ class HalEcho(WebSocket):
         try:
             response = 'Bad command!'
             dataObj = json.loads(self.data)
-            if dataObj['event'] == 'move':
-                response = self.move(dataObj['data']['direction'], dataObj['data']['state'])
-            if dataObj['event'] == 'protectHome':
-                response = self.protect_home(dataObj['data']['state'])
+            if dataObj['client'] == 'halClient':
+                response = this.serveHalClient(dataObj)
+            if dataObj['client'] == 'protectHome':
+                response = self.serveProtectHome(dataObj)
             self.sendMessage(response.decode("utf-8"))
         except:
             print('Cannot handle message: {0}'.format(response))
 
     def handleConnected(self):
         try:
+            # uid = hashlib.sha512()
+            # uid.update(self.address)
+            # self.uid = uid.hexdigest()
             print(self.address, 'connected')
+            clients.append(self)
         except:
             print('Connection error...')
 
     def handleClose(self):
+        clients.remove(self)
         print(self.address, 'closed')
+
+    def serveHalClient(self, dataObj):
+        if dataObj['event'] == 'init':
+            self.client_type = dataObj['client']
+            print dataObj
+            response = json.dumps({'event': 'message' , 'message': 'Init ready!'})           
+        if dataObj['event'] == 'message':
+            print dataObj
+            response = json.dumps({'event': 'message' , 'message': 'Hal Server received message.'})   
+        if dataObj['event'] == 'move':
+            response = self.move(dataObj['data']['direction'], dataObj['data']['state'])
+        return response
+
+    def serveProtectHome(self, dataObj):
+        if dataObj['event'] == 'init':
+            self.client_type = dataObj['client']
+            print('ProtectHomeClient initialized: {}'.format(self.client_type))
+            response = json.dumps({'event': 'message' , 'message': 'Init ready!'})     
+        if dataObj['event'] == 'protectHome':
+                response = self.protect_home(dataObj['data']['state'])
+        if dataObj['event'] == 'message':
+            response = 'Hal server received Your message.'
+        if dataObj['event'] == 'alarm':
+            response = 'Hal server received Your message.'
+        return response
+
+    def broadcastByClientType(self, client_type, data):
+        for client in clients:
+            if client.client_type == client_type:
+                client.sendMessage(data)
 
 server = SimpleWebSocketServer('', 8083, HalEcho)
 print('Server listening...')

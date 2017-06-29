@@ -56,7 +56,6 @@ class HalEcho(WebSocket):
         return response
 
     def handleMessage(self):
-        print self.data
         try:
             response = 'Bad command!'
             dataObj = json.loads(self.data)
@@ -83,6 +82,7 @@ class HalEcho(WebSocket):
         print(self.address, 'closed')
 
     def serveHalClient(self, dataObj):
+        print(dataObj['event'])
         if dataObj['event'] == 'init':
             self.client_type = dataObj['client']
             print dataObj

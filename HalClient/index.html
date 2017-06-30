@@ -37,93 +37,103 @@
   var ws = new WebSocket('ws://127.0.0.1:8083');
 
   ws.onopen = () => {
-    dataJson = JSON.stringify({event: 'connect', data:{}, datetime: null});
+    dataJson = JSON.stringify({client: 'halClient', event: 'init', data:{}, date: new Date()});
+    ws.send(dataJson);
     $('.socket-response').html('Socket connected! :)');
     
-  // ws.send(dataJson);
-};
+  };
 
-ws.onmessage = (e) => {
-  console.log('received data:',e.data);
-  $('.socket-response').html(e.data);
-}
+  ws.onmessage = (e) => {
+    console.log('received data:',e.data);
+    $('.socket-response').html(e.data);
+  }
 
-ws.onerror = (e) => {
-  console.log(e.message);
-  $('.socket-response').html(e.message);
-};
+  ws.onerror = (e) => {
+    console.log(e.message);
+    $('.socket-response').html(e.message);
+  };
 
-ws.onclose = (e) => {
-  console.log('Socket connection closed.');
-  console.log(e.code, e.reason);
-  $('.socket-response').html('Socket connection closed.');
-};
+  ws.onclose = (e) => {
+    console.log('Socket connection closed.');
+    console.log(e.code, e.reason);
+    $('.socket-response').html('Socket connection closed.');
+  };
 
-var lastMove = null;
-var move = function(direction, state){
+  var lastMove = null;
+  var move = function(direction, state){
     thisMove = direction + '-' + state;
     if(lastMove !== thisMove){
-        console.log('move: ', direction, state);
-        dataJson = JSON.stringify({event: 'move', data:{direction: direction, state:state}, datetime: null});
-        ws.send(dataJson);
-        lastMove = thisMove;
+      console.log('move: ', direction, state);
+      dataJson = JSON.stringify({client: 'halClient', event: 'move', data:{direction: direction, state:state}, date: new Date()});
+      ws.send(dataJson);
+      lastMove = thisMove;
     }
-};
-var lastMove = null;
-document.onkeydown = function(e) {
-    switch (e.keyCode) {
-        case 37:
-            move('left', true);
-            break;
-        case 38:
-            move('up', true);
-            break;
-        case 39:
-            move('right', true);
-            break;
-        case 40:
-            move('down', true);
-            break;
-    }
-};
+  };
 
-document.onkeyup = function(e) {
+  var protectHome = function(state){
+    console.log('ProtectHome state: ', state);
+    var requestData = {client: 'halClient', event: 'protectHome', date: Date.now(), data:{state: state}};
+    ws.send(JSON.stringify(requestData));
+  };
+
+  var lastMove = null;
+  document.onkeydown = function(e) {
     switch (e.keyCode) {
-        case 37:
-            move('left', false);
-            break;
-        case 38:
-            move('up', false);
-            break;
-        case 39:
-            move('right', false);
-            break;
-        case 40:
-            move('down', false);
-            break;
+      case 37:
+      move('left', true);
+      break;
+      case 38:
+      move('up', true);
+      break;
+      case 39:
+      move('right', true);
+      break;
+      case 40:
+      move('down', true);
+      break;
     }
-};
-</script>
-<div class="container-fluid">
-  <div class="row control-arrows">
-    <div class="col-md-12">
-      <div class="row">
-        <button class="btn btn-primary control-arrow arrow-up" onmousedown="move('up', true)" onmouseup="move('up', false)"><span class="glyphicon glyphicon-arrow-up"></span></button>
+  };
+
+  document.onkeyup = function(e) {
+    switch (e.keyCode) {
+      case 37:
+      move('left', false);
+      break;
+      case 38:
+      move('up', false);
+      break;
+      case 39:
+      move('right', false);
+      break;
+      case 40:
+      move('down', false);
+      break;
+    }
+  };
+  </script>
+  <div class="container-fluid">
+    <div class="row control-arrows">
+      <div class="col-md-12">
+        <div class="row">
+          <button class="btn btn-primary control-arrow arrow-up" onmousedown="move('up', true)" onmouseup="move('up', false)"><span class="glyphicon glyphicon-arrow-up"></span></button>
+        </div>
+        <div class="row">
+          <button class="btn btn-primary control-arrow arrow-left" onmousedown="move('left', true)" onmouseup="move('left', false)"><span class="glyphicon glyphicon-arrow-left"></span></button>
+          <button class="btn btn-primary control-arrow arrow-right" onmousedown="move('right', true)" onmouseup="move('right', false)"><span class="glyphicon glyphicon-arrow-right"></span></button>
+        </div>
+        <div class="row">
+          <button class="btn btn-primary control-arrow arrow-down" onmousedown="move('down', true)" onmouseup="move('down', false)"><span class="glyphicon glyphicon-arrow-down"></span></button>
+        </div>
+        <div class="row">
+          <button class="btn btn-primary control-arrow arrow-up" onmousedown="protectHome(true)" onmouseup="protectHome(false)">protect home</button>
+        </div>
       </div>
-      <div class="row">
-        <button class="btn btn-primary control-arrow arrow-left" onmousedown="move('left', true)" onmouseup="move('left', false)"><span class="glyphicon glyphicon-arrow-left"></span></button>
-        <button class="btn btn-primary control-arrow arrow-right" onmousedown="move('right', true)" onmouseup="move('right', false)"><span class="glyphicon glyphicon-arrow-right"></span></button>
-      </div>
-      <div class="row">
-        <button class="btn btn-primary control-arrow arrow-down" onmousedown="move('down', true)" onmouseup="move('down', false)"><span class="glyphicon glyphicon-arrow-down"></span></button>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        Socket Response: <span class="socket-response"></span>
       </div>
     </div>
   </div>
-  <div class="row">
-    <div class="col-md-12">
-      Socket Response: <span class="socket-response"></span>
-    </div>
-  </div>
-</div>
 </body>
 </html>

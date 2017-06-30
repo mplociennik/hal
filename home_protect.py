@@ -10,7 +10,7 @@ if platform.system() == 'Linux':
     from speech import Speech
     from distance import Distance
 
-WEBSOCKET_HOST = 'ws://10.150.128.92:8083/'
+WEBSOCKET_HOST = 'ws://127.0.0.1:8083/'
 
 class HomeProtectProcess(multiprocessing.Process):
 
@@ -57,7 +57,6 @@ class HomeProtectProcess(multiprocessing.Process):
             if self.detect_opened_door(int(cm)):
                 self.alarm()
         else:
-            time.sleep(2)
             self.alarm()
 
     def alarm(self):
@@ -65,12 +64,15 @@ class HomeProtectProcess(multiprocessing.Process):
         ws = create_connection(WEBSOCKET_HOST)
         initMessage = json.dumps({"client": "protectHome","event": "init"})
         ws.send(initMessage)
+        time.sleep(1)
         result =  ws.recv()
         print("Received init response: {0}".format(result))
-        time.sleep(1)
         print('Sending alarm message to Hal Server.')
-        message = json.dumps({"client": "protectHome","event": "alarm", "data": {"message": "Exterminate, Exterminate, Exterminate!"}})
-        ws.send(message)
+        alarm_message = json.dumps({"client": "protectHome","event": "alarm", "data": {"message": "Exterminate, Exterminate, Exterminate!"}})
+        ws.send(alarm_message)
+        time.sleep(1)
+        result_alarm =  ws.recv()
+        print("Received alarm response: {0}".format(result_alarm))
         ws.close()
         self.terminate()
 
@@ -78,7 +80,7 @@ if __name__ == "__main__":
     process = HomeProtectProcess()
     process.start()
     print "Waiting for a while"
-    time.sleep(3)
+    time.sleep(10)
     process.terminate()
     time.sleep(3)
     print "Child process state: %d" % process.is_alive()

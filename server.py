@@ -4,12 +4,10 @@ import json
 import platform
 import hashlib
 from SimpleWebSocketServer import SimpleWebSocketServer, WebSocket
-from home_protect import HomeProtectProcess
 if platform.system() == 'Linux':
     from pymove import PyMove
 
 clients = [];
-home_protect_process = HomeProtectProcess()
 
 
 class HalEcho(WebSocket):
@@ -45,18 +43,18 @@ class HalEcho(WebSocket):
             response = json.dumps({'event': 'move' ,'data': {'message': 'Move RIGHT state: {0}'.format(state)}})            
         return response
 
-    def protect_home(self, state):
-        if state:
-            response = json.dumps({'event': 'message' ,'data': {'message': 'Home protection enabled!'}})  
-            home_protect_process.start()      
-            if platform.system() == 'Linux':
-                home_protect_process.start()      
-        else:
-            response = json.dumps({'event': 'message' ,'data': {'message': 'Home protection disabled!'}})   
-            home_protect_process.terminate()
-            if platform.system() == 'Linux':
-                home_protect_process.terminate()
-        return response
+    # def protect_home(self, state):
+    #     if state:
+    #         response = json.dumps({'event': 'message' ,'data': {'message': 'Home protection enabled!'}})  
+    #         home_protect_process.start()      
+    #         if platform.system() == 'Linux':
+    #             home_protect_process.start()      
+    #     else:
+    #         response = json.dumps({'event': 'message' ,'data': {'message': 'Home protection disabled!'}})   
+    #         home_protect_process.terminate()
+    #         if platform.system() == 'Linux':
+    #             home_protect_process.terminate()
+    #     return response
 
     def serveHalClient(self, dataObj):
         if dataObj['event'] == 'init':
@@ -75,11 +73,11 @@ class HalEcho(WebSocket):
             self.client_type = dataObj['client']
             print('ProtectHomeClient initialized: {}'.format(self.client_type))
             response = json.dumps({'event': 'message' , 'data': {'message': 'Init ready!'}})     
-        if dataObj['event'] == 'protectHome':
-                response = self.protect_home(dataObj['data']['state'])
         if dataObj['event'] == 'message':
+            print("Message from homeProtect: {}".format(datObj['data']['message']))
             response = 'Hal server received Your message.'
         if dataObj['event'] == 'alarm':
+            print('Alarm alarm alarm!')
             response = 'Hal server received Your alarm message.'
         return response
 

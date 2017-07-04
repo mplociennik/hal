@@ -20,24 +20,9 @@ class HomeProtectProcess(multiprocessing.Process):
         self.exit = multiprocessing.Event()
         if platform.system() =='Linux':
             self.INITIAL_DISTANCE = int(Distance().detect())
-
-    def ws_on_message(self, ws, message):
-        print(message)
-        message = json.loads(message)
-        print("Received Message: {0}".format(message))
-
-    def ws_on_error(self, ws, error):
-        print(error)
-
-    def ws_on_close(self, ws):
-        print("### closed ###")
-
-    def ws_on_open(self, ws):
-        message = json.dumps({"client": "protectHome","event": "message", "data": {"message": "I'm ready to listening!"}})
-        self.ws.send(message)
             
     def start(self):
-        self.socket_connect()
+        # self.socket_connect()
         while not self.exit.is_set():
             self.watch()
         print "Protection stoped!"
@@ -63,13 +48,13 @@ class HomeProtectProcess(multiprocessing.Process):
     def alarm(self):
         print('Sending alarm message to Hal Server.')
         alarm_message = json.dumps({"client": "protectHome","event": "alarm", "data": {"message": "Exterminate, Exterminate, Exterminate!"}})
-        print(self.ws.sock != None)
+        print("".format(self.ws.sock != None))
         self.ws.send(alarm_message)
         time.sleep(1)
 
-    def socket_connect(self):
-        websocket.enableTrace(True)
+        websocket.enableTrace(False)
         def on_message(ws, message):
+            print('dupa')
             print("Received server response: {0}".format(message))
 
         def on_error(ws, error):

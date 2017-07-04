@@ -20,7 +20,7 @@ class HomeProtectProcess(multiprocessing.Process):
         self.exit = multiprocessing.Event()
         if platform.system() =='Linux':
             self.INITIAL_DISTANCE = int(Distance().detect())
-            print('initial distance is: {}'.format(self.INITIAL_DISTANCE))
+            print('initial distance is: {0} cm'.format(self.INITIAL_DISTANCE))
             
     def start(self):
         self.socket_connect()
@@ -40,16 +40,17 @@ class HomeProtectProcess(multiprocessing.Process):
         if platform.system() == 'Linux':
             distance = Distance()
             cm = distance.detect()
-            print('Distance: {0}'.format(int(cm)))
+            print('Distance: {0} cm'.format(int(cm)))
             if self.detect_opened_door(int(cm)):
                 self.alarm()
         else:
+            print('dupa dupa')
             self.alarm()
 
     def alarm(self):
         print('Sending alarm message to Hal Server.')
         alarm_message = json.dumps({"client": "protectHome","event": "alarm", "data": {"message": "Exterminate, Exterminate, Exterminate!"}})
-        print("".format(self.ws.sock != None))
+        print("socket is {0}".format(self.ws.sock != None))
         self.ws.send(alarm_message)
         time.sleep(1)
 

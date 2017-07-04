@@ -43,19 +43,6 @@ class HalEcho(WebSocket):
             response = json.dumps({'event': 'move' ,'data': {'message': 'Move RIGHT state: {0}'.format(state)}})            
         return response
 
-    # def protect_home(self, state):
-    #     if state:
-    #         response = json.dumps({'event': 'message' ,'data': {'message': 'Home protection enabled!'}})  
-    #         home_protect_process.start()      
-    #         if platform.system() == 'Linux':
-    #             home_protect_process.start()      
-    #     else:
-    #         response = json.dumps({'event': 'message' ,'data': {'message': 'Home protection disabled!'}})   
-    #         home_protect_process.terminate()
-    #         if platform.system() == 'Linux':
-    #             home_protect_process.terminate()
-    #     return response
-
     def serveHalClient(self, dataObj):
         if dataObj['event'] == 'init':
             self.client_type = dataObj['client']
@@ -70,8 +57,8 @@ class HalEcho(WebSocket):
 
     def serveProtectHome(self, dataObj):
         if dataObj['event'] == 'init':
+            print('ProtectHomeClient initialized: {0}'.format(self.client_type))
             self.client_type = dataObj['client']
-            print('ProtectHomeClient initialized: {}'.format(self.client_type))
             response = json.dumps({'event': 'message' , 'data': {'message': 'Init ready!'}})     
         if dataObj['event'] == 'message':
             print("Message from homeProtect: {}".format(datObj['data']['message']))

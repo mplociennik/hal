@@ -37,6 +37,7 @@ class HomeProtectProcess(multiprocessing.Process):
         self.ws.send(message)
             
     def start(self):
+        self.socket_connect()
         while not self.exit.is_set():
             self.watch()
         print "Protection stoped!"
@@ -60,27 +61,39 @@ class HomeProtectProcess(multiprocessing.Process):
             self.alarm()
 
     def alarm(self):
-        print('Sending initial request to HalServer')
-        ws = create_connection(WEBSOCKET_HOST)
-        initMessage = json.dumps({"client": "protectHome","event": "init"})
-        ws.send(initMessage)
-        time.sleep(1)
-        result =  ws.recv()
-        print("Received init response: {0}".format(result))
         print('Sending alarm message to Hal Server.')
         alarm_message = json.dumps({"client": "protectHome","event": "alarm", "data": {"message": "Exterminate, Exterminate, Exterminate!"}})
-        ws.send(alarm_message)
+        self.ws.send(alarm_message)
         time.sleep(1)
-        result_alarm =  ws.recv()
-        print("Received alarm response: {0}".format(result_alarm))
-        ws.close()
-        self.terminate()
+
+    def socket_connect(self):
+        websocket.enableTrace(True)
+        def on_message(ws, message):
+            print("Received server response: {0}".format(message))
+
+        def on_error(ws, error):
+            print(error)
+
+        def on_close(ws):
+            print("### connection closed ###")
+
+        def on_open(ws):
+            print('Sending initial request to HalServer')
+            initMessage = json.dumps({"client": "protectHome","event": "init"})
+            ws.send(initMessage)
+
+        self.ws = websocket.WebSocketApp("ws://192.168.1.135:8083",
+                              on_message = on_message,
+                              on_error = on_error,
+                              on_close = on_close)
+        self.ws.on_open = on_open
+        self.ws.run_forever()
 
 if __name__ == "__main__":
     process = HomeProtectProcess()
     process.start()
-    print "Waiting for a while"
-    time.sleep(10)
-    process.terminate()
-    time.sleep(3)
-    print "Child process state: %d" % process.is_alive()
+    # print "Waiting for a while"
+    # time.sleep(10)
+    # process.terminate()
+    # time.sleep(3)
+    # print "Child process state: %d" % process.is_alive()

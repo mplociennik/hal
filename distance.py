@@ -19,7 +19,6 @@ class Distance:
         GPIO.cleanup()
         
     def detect(self):
-        print "start"
         time.sleep(1)
         GPIO.output(TRIG,1)
         time.sleep(0.000001)

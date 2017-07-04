@@ -63,6 +63,7 @@ class HomeProtectProcess(multiprocessing.Process):
     def alarm(self):
         print('Sending alarm message to Hal Server.')
         alarm_message = json.dumps({"client": "protectHome","event": "alarm", "data": {"message": "Exterminate, Exterminate, Exterminate!"}})
+        print(self.ws.sock != None)
         self.ws.send(alarm_message)
         time.sleep(1)
 

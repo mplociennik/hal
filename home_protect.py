@@ -52,9 +52,10 @@ class HomeProtectProcess(multiprocessing.Process):
         self.ws.send(alarm_message)
         time.sleep(1)
 
-        websocket.enableTrace(False)
+    def socket_connect(self):
+        websocket.enableTrace(True)
         def on_message(ws, message):
-            print('dupa')
+            print('duupa')
             print("Received server response: {0}".format(message))
 
         def on_error(ws, error):

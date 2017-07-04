@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 import multiprocessing
 import time
-from websocket import create_connection
+import websocket
 import platform
 import json
 

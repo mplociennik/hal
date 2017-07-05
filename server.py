@@ -45,8 +45,10 @@ class HalEcho(WebSocket):
 
     def protect_home(self, state):
         print("protect_home state: {0}".format(state))
-        dataObj = {'event':'protectHome', 'data': {'state': True}}
-        self.broadcastByClientType('protectHome', json.dumps(data))
+        print("dupa0")
+        dataObj = json.dumps({'event':'protectHome', 'data': {'state': True}})
+        print('dupa1')
+        self.broadcastByClientType('protectHome', dataObj)
 
     def serveHalClient(self, dataObj):
         if dataObj['event'] == 'init':
@@ -74,6 +76,7 @@ class HalEcho(WebSocket):
         return response
 
     def broadcastByClientType(self, client_type, data):
+        print('dupa')
         print("clients: {0}".format(clients))
         for client in clients:
             print("client in clients: {0}".client.address[0])

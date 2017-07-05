@@ -23,7 +23,8 @@ class HomeProtectProcess(multiprocessing.Process):
             self.INITIAL_DISTANCE = int(Distance().detect())
             print('initial distance is: {0} cm'.format(self.INITIAL_DISTANCE))
             
-    def start(self):
+    def start(self, ws):
+        self.ws = ws
         time.sleep(2)
         while not self.exit.is_set():
             self.watch()
@@ -58,20 +59,31 @@ class HomeProtectProcess(multiprocessing.Process):
         time.sleep(1)
 
 class HomeProtect():
-        
-    def on_message(self, ws, message):
-        print("Received server response: {0}".format(message))
+    
+    def __init__(self):
+        self.home_protect_process = HomeProtectProcess()
+    def toggle_protect_home(self, state)
+        if state:
+            self.home_protect_process.start(self.ws)
+        else:
+            self.home_protect_process.terminate()
 
-    def on_error(self, ws, error):
+    def on_message(self, message):
+        dataObj = json.loads(message)
+        print("Received server response: {0}".format(message))
+        if dataObj['event'] == 'protectHome':
+            self.toggle_protect_home(dataObj['data']['state'])
+
+    def on_error(self, error):
         print(error)
 
-    def on_close(self, ws):
+    def on_close(self):
         print("### connection closed ###")
 
-    def on_open(self, ws):
+    def on_open(self):
         print('Sending initial request to HalServer')
         initMessage = json.dumps({"client": "protectHome","event": "init", "data": {'mesage': 'hello server!'}})
-        ws.send(initMessage)
+        self.ws.send(initMessage)
 
     def start(self):
         websocket.enableTrace(True)

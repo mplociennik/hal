@@ -75,6 +75,7 @@ class HalEcho(WebSocket):
 
     def broadcastByClientType(self, client_type, data):
         for client in clients:
+            print("client in clients: {0}".client.address[0])
             if client.client_type == client_type:
                 client.sendMessage(data)
 

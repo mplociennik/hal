@@ -73,7 +73,7 @@ class HomeProtect():
         initMessage = json.dumps({"client": "protectHome","event": "init", "data": {'mesage': 'hello server!'}})
         ws.send(initMessage)
 
-    def start():
+    def start(self):
         websocket.enableTrace(True)
         self.ws = websocket.WebSocketApp("ws://192.168.1.135:8083",
                           on_message = on_message,

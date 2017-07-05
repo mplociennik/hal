@@ -57,33 +57,38 @@ class HomeProtectProcess(multiprocessing.Process):
         self.ws.send(alarm_message)
         time.sleep(1)
 
-    def socket_connect(self):
+class HomeProtect():
+        
+    def on_message(self, ws, message):
+        print("Received server response: {0}".format(message))
+
+    def on_error(self, ws, error):
+        print(error)
+
+    def on_close(self, ws):
+        print("### connection closed ###")
+
+    def on_open(self, ws):
+        print('Sending initial request to HalServer')
+        initMessage = json.dumps({"client": "protectHome","event": "init", "data": {'mesage': 'hello server!'}})
+        ws.send(initMessage)
+
+    def start():
         websocket.enableTrace(True)
-        def on_message(ws, message):
-            print("Received server response: {0}".format(message))
-
-        def on_error(ws, error):
-            print(error)
-
-        def on_close(ws):
-            print("### connection closed ###")
-
-        def on_open(ws):
-            print('Sending initial request to HalServer')
-            initMessage = json.dumps({"client": "protectHome","event": "init", "data": {'mesage': 'hello server!'}})
-            ws.send(initMessage)
-
         self.ws = websocket.WebSocketApp("ws://192.168.1.135:8083",
-                              on_message = on_message,
-                              on_error = on_error,
-                              on_close = on_close)
+                          on_message = on_message,
+                          on_error = on_error,
+                          on_close = on_close)
         self.ws.on_open = on_open
         self.ws.run_forever()
 
+
 if __name__ == "__main__":
-    process = HomeProtectProcess()
-    process.start()
-    process.socket_connect()
+    home_protect = HomeProtect()
+    home_protect.start()
+    # process = HomeProtectProcess()
+    # process.start()
+    # process.socket_connect()
     # print "Waiting for a while"
     # time.sleep(10)
     # process.terminate()

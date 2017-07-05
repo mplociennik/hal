@@ -24,6 +24,7 @@ class HomeProtectProcess(multiprocessing.Process):
             print('initial distance is: {0} cm'.format(self.INITIAL_DISTANCE))
             
     def start(self):
+        time.sleep(2)
         while not self.exit.is_set():
             self.watch()
         print "Protection stoped!"
@@ -34,6 +35,7 @@ class HomeProtectProcess(multiprocessing.Process):
 
     def detect_opened_door(self, distance):
         sub = distance - self.INITIAL_DISTANCE
+        print("sub: {0}".format(sub))
         return sub <= self.DIST_TOLERANCE
 
     def watch(self):
@@ -44,7 +46,6 @@ class HomeProtectProcess(multiprocessing.Process):
             if self.detect_opened_door(int(cm)):
                 self.alarm()
         else:
-            print('dupa dupa')
             self.alarm()
 
     def alarm(self):
@@ -77,6 +78,8 @@ class HomeProtectProcess(multiprocessing.Process):
                               on_close = on_close)
         self.ws.on_open = on_open
         self.ws.run_forever()
+
+class HomeProtectWebsocketClient():
 
 if __name__ == "__main__":
     process = HomeProtectProcess()

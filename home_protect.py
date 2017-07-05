@@ -68,7 +68,7 @@ class HomeProtectProcess(multiprocessing.Process):
 
         def on_open(ws):
             print('Sending initial request to HalServer')
-            initMessage = json.dumps({"client": "protectHome","event": "init"})
+            initMessage = json.dumps({"client": "protectHome","event": "init", data: {'mesage': 'hello server!'}})
             ws.send(initMessage)
 
         self.ws = websocket.WebSocketApp("ws://192.168.1.135:8083",

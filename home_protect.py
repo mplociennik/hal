@@ -23,7 +23,6 @@ class HomeProtectProcess(multiprocessing.Process):
             print('initial distance is: {0} cm'.format(self.INITIAL_DISTANCE))
             
     def start(self):
-        self.socket_connect()
         while not self.exit.is_set():
             self.watch()
         print "Protection stoped!"
@@ -80,6 +79,7 @@ class HomeProtectProcess(multiprocessing.Process):
 if __name__ == "__main__":
     process = HomeProtectProcess()
     process.start()
+    process.socket_connect()
     # print "Waiting for a while"
     # time.sleep(10)
     # process.terminate()

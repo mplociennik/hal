@@ -36,7 +36,7 @@ class HomeProtectProcess(multiprocessing.Process):
     def detect_opened_door(self, distance):
         sub = distance - self.INITIAL_DISTANCE
         print("sub: {0}".format(sub))
-        return sub <= self.DIST_TOLERANCE
+        return sub >= self.DIST_TOLERANCE
 
     def watch(self):
         if platform.system() == 'Linux':

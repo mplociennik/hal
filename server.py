@@ -44,6 +44,7 @@ class HalEcho(WebSocket):
         return response
 
     def protect_home(self, state):
+        print("protect_home state: {0}".format(state))
         dataObj = {'event':'protectHome', 'data': {'state': True}}
         self.broadcastByClientType('protectHome', json.dumps(data))
 

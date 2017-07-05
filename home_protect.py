@@ -57,7 +57,6 @@ class HomeProtectProcess(multiprocessing.Process):
     def socket_connect(self):
         websocket.enableTrace(True)
         def on_message(ws, message):
-            print('duupa')
             print("Received server response: {0}".format(message))
 
         def on_error(ws, error):

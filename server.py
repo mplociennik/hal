@@ -57,9 +57,8 @@ class HalEcho(WebSocket):
 
     def serveProtectHome(self, dataObj):
         if dataObj['event'] == 'init':
-            # self.client_type = dataObj['client']
-            # print('ProtectHomeClient initialized: {0}'.format(self.client_type))
-            print('dupa')
+            self.client_type = dataObj['client']
+            print('ProtectHomeClient initialized: {0}'.format(self.client_type))
             response = json.dumps({'event': 'message' , 'data': {'message': 'Init ready!'}})     
         if dataObj['event'] == 'message':
             print("Message from homeProtect: {}".format(datObj['data']['message']))

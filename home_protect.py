@@ -62,7 +62,8 @@ class HomeProtect():
     
     def __init__(self):
         self.home_protect_process = HomeProtectProcess()
-    def toggle_protect_home(self, state)
+
+    def toggle_protect_home(self, state):
         if state:
             self.home_protect_process.start(self.ws)
         else:

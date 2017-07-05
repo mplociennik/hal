@@ -69,22 +69,22 @@ class HomeProtect():
         else:
             self.home_protect_process.terminate()
 
-    def on_message(self, message):
+    def on_message(self, ws, message):
         dataObj = json.loads(message)
         print("Received server response: {0}".format(message))
         if dataObj['event'] == 'protectHome':
             self.toggle_protect_home(dataObj['data']['state'])
 
-    def on_error(self, error):
+    def on_error(self, ws, error):
         print(error)
 
-    def on_close(self):
+    def on_close(self, ws):
         print("### connection closed ###")
 
-    def on_open(self):
+    def on_open(self, ws):
         print('Sending initial request to HalServer')
         initMessage = json.dumps({"client": "protectHome","event": "init", "data": {'mesage': 'hello server!'}})
-        self.ws.send(initMessage)
+        ws.send(initMessage)
 
     def start(self):
         websocket.enableTrace(True)

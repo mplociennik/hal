@@ -79,8 +79,6 @@ class HomeProtectProcess(multiprocessing.Process):
         self.ws.on_open = on_open
         self.ws.run_forever()
 
-class HomeProtectWebsocketClient():
-
 if __name__ == "__main__":
     process = HomeProtectProcess()
     process.start()

@@ -45,7 +45,7 @@ class HalEcho(WebSocket):
 
     def protect_home(self, state):
         dataObj = {'event':'protectHome', 'data': {'state': True}}
-        self.broadcastByClientType('protectHome', json.dumps(data)):
+        self.broadcastByClientType('protectHome', json.dumps(data))
 
     def serveHalClient(self, dataObj):
         if dataObj['event'] == 'init':

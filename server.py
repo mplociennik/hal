@@ -44,11 +44,13 @@ class HalEcho(WebSocket):
         return response
 
     def protect_home(self, state):
+        response = 
         print("protect_home state: {0}".format(state))
         print("dupa0")
         dataObj = json.dumps({'event':'protectHome', 'data': {'state': True}})
         print('dupa1')
         self.broadcastByClientType('protectHome', dataObj)
+        return json.dumps({'event': 'message' , 'data':{'message': "seting protectHome state: {0}".format(state)}})
 
     def serveHalClient(self, dataObj):
         if dataObj['event'] == 'init':

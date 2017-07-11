@@ -46,14 +46,14 @@ class HomeProtectProcess(multiprocessing.Process):
             cm = distance.detect()
             print('Distance: {0} cm'.format(int(cm)))
             if self.detect_opened_door(int(cm)):
-                self.alarm()
+                self.alarm(int(cm))
         else:
             self.alarm()
 
-    def alarm(self):
+    def alarm(self, distance):
         print("websocket: {0}".format(self.ws))
         print('Sending alarm message to Hal Server.')
-        alarm_message = json.dumps({"client": "protectHome","event": "alarm", "data": {"message": "Dected changed distance: {0}!".format()}})
+        alarm_message = json.dumps({"client": "protectHome","event": "alarm", "data": {"message": "Dected changed distance: {0}!".format(distance)}})
         print("socket is {0}".format(self.ws.sock != None))
         self.ws.send(alarm_message)
         time.sleep(1)

@@ -58,7 +58,7 @@ export default class HalClient extends Component {
 
     this.socketStream.onopen = (evt)=>{ 
       self.setState({socketResponse: 'Socket connection opened.'});
-      const requestData = {client: 'halClient', event: 'init', date: Date.now(), data:{}};
+      const requestData = {client: 'halClient', event: 'init', date: Date.now(), data:{message: 'Hello Server!'}};
       self.socketStream.send(JSON.stringify(requestData))
     };
   }

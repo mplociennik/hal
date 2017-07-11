@@ -30,6 +30,7 @@ export default class HalClient extends Component {
     console.log(this.socketStream);
 
     this.socketStream.onmessage = (request)=>{
+      console.log(request)
       console.log('requestData1: ',request.data);
       var requestData = JSON.parse(request.data);
       console.log('requestData2: ',requestData);

@@ -19,6 +19,7 @@ class HomeProtectProcess(multiprocessing.Process):
         multiprocessing.Process.__init__(self)
         self.ws = None
         self.exit = multiprocessing.Event()
+        self.alarmState = False
         if platform.system() =='Linux':
             self.INITIAL_DISTANCE = int(Distance().detect())
             print('initial distance is: {0} cm'.format(self.INITIAL_DISTANCE))
@@ -51,13 +52,17 @@ class HomeProtectProcess(multiprocessing.Process):
             self.alarm()
 
     def alarm(self, distance):
-        print("websocket: {0}".format(self.ws))
-        print('Sending alarm message to Hal Server.')
-        alarm_message = json.dumps({"client": "protectHome","event": "alarm", "data": {"message": "Dected changed distance: {0}!".format(distance)}})
-        print("Alarm message: {0}".format(alarm_message))
-        print("socket is {0}".format(self.ws.sock != None))
-        self.ws.send(alarm_message)
-        time.sleep(1)
+        if not self.alarmState:
+            self.alarmState = True
+            print("websocket: {0}".format(self.ws))
+            print('Sending alarm message to Hal Server.')
+            alarm_message = json.dumps({"client": "protectHome","event": "alarm", "data": {"message": "Dected changed distance: {0}!".format(distance)}})
+            print("Alarm message: {0}".format(alarm_message))
+            print("socket is {0}".format(self.ws.sock != None))
+            self.ws.send(alarm_message)
+            time.sleep(1)
+        else:
+            print("Alarm state is alreade sended!")
 
 class HomeProtect():
     

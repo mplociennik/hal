@@ -62,7 +62,7 @@ class HalEcho(WebSocket):
         return response
 
     def serveProtectHome(self, dataObj):
-        response = 'Serve protect home error'
+        response = 'Serve protect home error: {0}'.format(dataObj)
         try:
             if dataObj['event'] == 'init':
                 self.client_type = dataObj['client']
@@ -72,12 +72,13 @@ class HalEcho(WebSocket):
                 print("Message from homeProtect: {}".format(datObj['data']['message']))
                 response = 'Hal server received Your message.'
             if dataObj['event'] == 'alarm':
-                print('Alarm alarm alarm! {0}'.format(datObj))
+                print('Alarm alarm alarm!')
                 dataJson = {'event':'protectHomeAlarm', 'data':{'message':dataObj['data']['message']}}
+                print dataJson
                 self.broadcastByClientType('halClient', json.dumps(dataJson))
                 response = 'Hal server received Your alarm message.'
         except:
-            print("ServeProtectHome error...")
+            print(response)
         return response
 
     def broadcastByClientType(self, client_type, data):
@@ -86,7 +87,8 @@ class HalEcho(WebSocket):
                 print("client in clients: {0}".format(client.address[0]))
                 print("client.client_type == client_type: {0}".format(client.client_type == client_type))
                 if client.client_type == client_type:
-                    client.sendMessage(data)
+                    print client.address[0]
+                    client.sendMessage(data.decode("utf-8"))
         except:
             print('broadcastByClientType error!')
 

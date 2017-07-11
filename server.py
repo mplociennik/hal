@@ -75,7 +75,6 @@ class HalEcho(WebSocket):
         return response
 
     def broadcastByClientType(self, client_type, data):
-        print("dupa")
         for client in clients:
             print("client in clients: {0}".format(client.address[0]))
             if client.client_type == client_type:

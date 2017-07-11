@@ -88,7 +88,7 @@ class HomeProtect():
 
     def start(self):
         websocket.enableTrace(True)
-        self.ws = websocket.WebSocketApp("ws://192.168.1.135:8083",
+        self.ws = websocket.WebSocketApp(WEBSOCKET_HOST,
                           on_message = self.on_message,
                           on_error = self.on_error,
                           on_close = self.on_close)

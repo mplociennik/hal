@@ -62,25 +62,33 @@ class HalEcho(WebSocket):
         return response
 
     def serveProtectHome(self, dataObj):
-        if dataObj['event'] == 'init':
-            self.client_type = dataObj['client']
-            print('ProtectHomeClient initialized: {0}'.format(self.client_type))
-            response = json.dumps({'event': 'message' , 'data': {'message': 'Init ready!'}})     
-        if dataObj['event'] == 'message':
-            print("Message from homeProtect: {}".format(datObj['data']['message']))
-            response = 'Hal server received Your message.'
-        if dataObj['event'] == 'alarm':
-            print('Alarm alarm alarm! {0}'.format(datObj))
-            dataJson = {'event':'protectHomeAlarm', 'data':{'message':dataObj['data']['message']}}
-            self.broadcastByClientType('halClient', json.dumps(dataJson))
-            response = 'Hal server received Your alarm message.'
+        response = 'Serve protect home error'
+        try:
+            if dataObj['event'] == 'init':
+                self.client_type = dataObj['client']
+                print('ProtectHomeClient initialized: {0}'.format(self.client_type))
+                response = json.dumps({'event': 'message' , 'data': {'message': 'Init ready!'}})     
+            if dataObj['event'] == 'message':
+                print("Message from homeProtect: {}".format(datObj['data']['message']))
+                response = 'Hal server received Your message.'
+            if dataObj['event'] == 'alarm':
+                print('Alarm alarm alarm! {0}'.format(datObj))
+                dataJson = {'event':'protectHomeAlarm', 'data':{'message':dataObj['data']['message']}}
+                self.broadcastByClientType('halClient', json.dumps(dataJson))
+                response = 'Hal server received Your alarm message.'
+        except:
+            print("ServeProtectHome error...")
         return response
 
     def broadcastByClientType(self, client_type, data):
-        for client in clients:
-            print("client in clients: {0}".format(client.address[0]))
-            if client.client_type == client_type:
-                client.sendMessage(data)
+        try:
+            for client in clients:
+                print("client in clients: {0}".format(client.address[0]))
+                print("client.client_type == client_type: {0}".format(client.client_type == client_type))
+                if client.client_type == client_type:
+                    client.sendMessage(data)
+        except:
+            print('broadcastByClientType error!')
 
     def checkValidMessage(self, message):
         state = True

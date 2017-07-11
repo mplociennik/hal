@@ -54,6 +54,7 @@ class HomeProtectProcess(multiprocessing.Process):
         print("websocket: {0}".format(self.ws))
         print('Sending alarm message to Hal Server.')
         alarm_message = json.dumps({"client": "protectHome","event": "alarm", "data": {"message": "Dected changed distance: {0}!".format(distance)}})
+        print("Alarm message: {0}".format(alarm_message))
         print("socket is {0}".format(self.ws.sock != None))
         self.ws.send(alarm_message)
         time.sleep(1)
@@ -65,8 +66,10 @@ class HomeProtect():
 
     def toggle_protect_home(self, state):
         if state:
+            print("start process")
             self.home_protect_process.start(self.ws)
         else:
+            print("stop process")
             self.home_protect_process.terminate()
 
     def on_message(self, ws, message):

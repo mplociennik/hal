@@ -70,7 +70,9 @@ class HalEcho(WebSocket):
             print("Message from homeProtect: {}".format(datObj['data']['message']))
             response = 'Hal server received Your message.'
         if dataObj['event'] == 'alarm':
-            print('Alarm alarm alarm!')
+            print('Alarm alarm alarm! {0}'.format(datObj))
+            dataJson = {'event':'protectHomeAlarm', 'data':{'message':dataObj['data']['message']}}
+            self.broadcastByClientType('halClient', json.dumps(dataJson))
             response = 'Hal server received Your alarm message.'
         return response
 

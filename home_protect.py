@@ -70,6 +70,7 @@ class HomeProtect():
         self.home_protect_process = HomeProtectProcess()
 
     def toggle_protect_home(self, state):
+        print("toggle protect hom state: {0}".format(state))
         if state:
             print("start process")
             self.home_protect_process.start(self.ws)
@@ -82,6 +83,8 @@ class HomeProtect():
         print("Received server response: {0}".format(message))
         if dataObj['event'] == 'protectHome':
             self.toggle_protect_home(dataObj['data']['state'])
+        if dataObj['event'] == 'message':
+            print(dataObj['data']['message'])
 
     def on_error(self, ws, error):
         print(error)

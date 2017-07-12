@@ -45,7 +45,7 @@ export default class HalClient extends Component {
           self.setState({socketResponse: requestData.data.message});
           break;        
         case 'protectHomeAlarm':
-          this._protectHomeAlarm();
+          this._protectHomeAlarm(requestData.data.message);
           break;
       }
     };    
@@ -82,12 +82,12 @@ export default class HalClient extends Component {
     this.setState({protectHomeState: state});
   }
 
-  _protectHomeAlarm(){
+  _protectHomeAlarm(message){
     console.log('Alarm alarm alarm!');
     Vibration.vibrate([0, 500, 200, 500], true);
     Alert.alert(
       'Protect Home Alert!',
-      'Door is opened!',
+      message,
       [
       {text: 'OK', onPress: () => Vibration.cancel()},
       ],

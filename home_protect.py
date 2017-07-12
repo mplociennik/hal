@@ -14,7 +14,7 @@ WEBSOCKET_HOST = 'ws://192.168.1.151:8083/'
 
 class HomeProtectProcess(multiprocessing.Process):
 
-    DIST_TOLERANCE = 4
+    DIST_TOLERANCE = 10
     def __init__(self, ):
         multiprocessing.Process.__init__(self)
         self.ws = None

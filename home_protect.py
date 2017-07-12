@@ -5,6 +5,7 @@ import time
 import websocket
 import platform
 import json
+import urllib2
 
 if platform.system() == 'Linux':
     from speech import Speech
@@ -64,13 +65,13 @@ class HomeProtectProcess(multiprocessing.Process):
         else:
             print("Alarm state is alreade sended!")
 
-class HomeProtect(multiprocessing.Process):
-    
+class HomeProtect():
+    ''' not working websocket connection after alarm '''
     def __init__(self):
         self.home_protect_process = HomeProtectProcess()
 
     def toggle_protect_home(self, state):
-        print("toggle protect hom state: {0}".format(state))
+        print("toggle protect home state: {0}".format(state))
         if state:
             print("start process")
             self.home_protect_process.start(self.ws)
@@ -97,14 +98,27 @@ class HomeProtect(multiprocessing.Process):
         initMessage = json.dumps({"client": "protectHome","event": "init", "data": {'mesage': 'hello server!'}})
         ws.send(initMessage)
 
+    def check_connection(self):
+        state = False
+        try:
+            urllib2.urlopen('http://cieniu.pl', timeout=1)
+            state = True
+        except urllib2.URLError as err: 
+            state = False
+        return state
     def start(self):
-        websocket.enableTrace(True)
-        self.ws = websocket.WebSocketApp(WEBSOCKET_HOST,
-                          on_message = self.on_message,
-                          on_error = self.on_error,
-                          on_close = self.on_close)
-        self.ws.on_open = self.on_open
-        self.ws.run_forever()
+        if self.check_connection():
+            websocket.enableTrace(True)
+            self.ws = websocket.WebSocketApp(WEBSOCKET_HOST,
+                              on_message = self.on_message,
+                              on_error = self.on_error,
+                              on_close = self.on_close)
+            self.ws.on_open = self.on_open
+            self.ws.run_forever()
+        else:
+            print('No connection reconnectiong for 10 seconds...')
+            time.sleep(10)
+            self.start()
 
 
 if __name__ == "__main__":

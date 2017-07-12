@@ -64,7 +64,7 @@ class HomeProtectProcess(multiprocessing.Process):
         else:
             print("Alarm state is alreade sended!")
 
-class HomeProtect():
+class HomeProtect(multiprocessing.Process):
     
     def __init__(self):
         self.home_protect_process = HomeProtectProcess()
@@ -80,7 +80,7 @@ class HomeProtect():
 
     def on_message(self, ws, message):
         dataObj = json.loads(message)
-        print("Received server response: {0}".format(message))
+        print("Received server response: {0}".format(dataObj))
         if dataObj['event'] == 'protectHome':
             self.toggle_protect_home(dataObj['data']['state'])
         if dataObj['event'] == 'message':

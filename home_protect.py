@@ -108,6 +108,7 @@ class HomeProtect():
         return state
     def start(self):
         if self.check_connection():
+            print('Connection enabled! Starting socket client...')
             websocket.enableTrace(True)
             self.ws = websocket.WebSocketApp(WEBSOCKET_HOST,
                               on_message = self.on_message,

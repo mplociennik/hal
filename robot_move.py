@@ -58,6 +58,8 @@ class RobotMove():
 
     def on_close(self, ws):
         print("### connection closed ###")
+        print("Reconnecting...")
+        self.start()
 
     def on_open(self, ws):
         print('Sending initial request to HalServer')

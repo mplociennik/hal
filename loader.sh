@@ -7,7 +7,7 @@ cd home/pi/hal
 git pull
 
 # robot move
-sudo python robot_move.py &
+sudo python robot_move.py & > robot_move.log
 
 # home protect
-sudo python home_protect.py &
+sudo python home_protect.py & > home_protect.log

@@ -74,12 +74,9 @@ wss.serveProtectHome = function(ws, dataObj){
         console.log('Message from "' + dataObj.client + '": ' + dataObj.data.message);
         break;
       case 'alarm':
-        dataJson = {event:'protectHomeAlarm', data:{message:dataObj.data.message}};
-        wss.br(dataObj.data.direction, dataObj.data.state);
-          break;
-      case 'protectHome':
-          wss.protectHome(dataObj.data.state);
-          break;
+        dataJson = JSON.stringify({event:'protectHomeAlarm', data:{message:dataObj.data.message}});
+        wss.broadcastByClientName('halClient', dataJson);
+        break;
     }    
   }else{
     console.log('Event is undefined: ', dataObj);

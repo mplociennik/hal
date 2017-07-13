@@ -1,3 +1,5 @@
+#!/bin/sh 
+
 # robot move
 python /home/pi/hal/robot_move.py &
 # home protect

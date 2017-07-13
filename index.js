@@ -52,7 +52,8 @@ wss.serveHalClient = function(ws, dataObj){
             wss.move(dataObj.data.direction, dataObj.data.state);
             break;
         case 'protectHome':
-            wss.protectHome(dataObj.data.state)
+            console.log('Protect home request');
+            wss.protectHome(dataObj.data.state);
             break;
       }    
   }else{
@@ -132,7 +133,7 @@ wss.on('connection', function connection(ws) {
   });
 
   ws.on('close', function close() {
-    console.log('Client disconeccted: ', ws.client);
+    console.log('Client disconected: ', ws.client);
   });
 
   const interval = setInterval(function ping() {

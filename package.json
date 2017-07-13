@@ -1,0 +1,27 @@
+{
+  "name": "hal",
+  "version": "1.0.0",
+  "description": "halserver",
+  "main": "index.js",
+  "dependencies": {
+    "socket.io": "^2.0.3",
+    "ws": "^3.0.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mplociennik/hal.git"
+  },
+  "keywords": [
+    "hal"
+  ],
+  "author": "shadow",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mplociennik/hal/issues"
+  },
+  "homepage": "https://github.com/mplociennik/hal#readme"
+}

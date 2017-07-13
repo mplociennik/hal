@@ -34,7 +34,7 @@
 </head>
 <body>
   <script type="text/javascript">
-  var ws = new WebSocket('ws://192.168.1.135:8083');
+  var ws = new WebSocket('ws://192.168.1.151:8080');
 
   ws.onopen = () => {
     dataJson = JSON.stringify({client: 'halClient', event: 'init', data:{}, date: new Date()});

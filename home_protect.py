@@ -106,6 +106,7 @@ class HomeProtect():
         except urllib2.URLError as err: 
             state = False
         return state
+        
     def start(self):
         if self.check_connection():
             print('Connection enabled! Starting socket client...')
@@ -123,6 +124,7 @@ class HomeProtect():
 
 
 if __name__ == "__main__":
+    time.sleep(15)
     home_protect = HomeProtect()
     home_protect.start()
     # process = HomeProtectProcess()

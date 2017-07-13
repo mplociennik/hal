@@ -14,33 +14,9 @@ class HalEcho(WebSocket):
     ''' do not create init function here'''
     def move(self, direction, state):
         response = json.dumps({'event': 'message','data': {'message': 'Direction: {0}, State: {1}'.format(direction, state)}})
-        print response
-        if platform.system() == 'Windows':
-            return response
-        if "up" in direction:
-            if state:
-                PyMove().run_up_start()
-            else:
-                PyMove().run_up_stop()
-            response = json.dumps({'event': 'move' ,'data': {'message': 'Move UP state: {0}'.format(state)}})             
-        if 'down' in direction:
-            if state:
-                PyMove().run_down_start()  
-            else:
-                PyMove().run_down_stop()
-            response = json.dumps({'event': 'move' ,'data': {'message': 'Move DOWN state: {0}'.format(state)}})
-        if 'left' in direction:
-            if state:
-                PyMove().run_left_start()
-            else:
-                PyMove().run_left_stop()
-            response = json.dumps({'event': 'move' ,'data': {'message': 'Move LEFT state: {0}'.format(state)}})   
-        if 'right' in direction:
-            if state:
-                PyMove().run_right_start() 
-            else:
-                PyMove().run_right_stop()
-            response = json.dumps({'event': 'move' ,'data': {'message': 'Move RIGHT state: {0}'.format(state)}})            
+        print("Move response: {0}".format(response))
+        dataJson = json.dumps({'event': 'move', 'data':{'direction': direction, 'state':state}})
+        self.broadcastByClientType('robotMove', dataJson)          
         return response
 
     def protect_home(self, state):

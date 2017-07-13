@@ -1,6 +1,8 @@
 #!/bin/sh 
 
+#update scripts
+git pull
 # robot move
-python /home/pi/hal/robot_move.py &
+python robot_move.py &
 # home protect
-python /home/pi/hal/home_protect.py &
+python home_protect.py &

@@ -124,7 +124,6 @@ class HomeProtect():
 
 
 if __name__ == "__main__":
-    time.sleep(15)
     home_protect = HomeProtect()
     home_protect.start()
     # process = HomeProtectProcess()

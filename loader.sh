@@ -1,4 +1,5 @@
 #!/bin/sh 
+# test
 
 #update scripts
 git pull

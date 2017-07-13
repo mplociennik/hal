@@ -4,6 +4,6 @@
 #update scripts
 git pull
 # robot move
-python robot_move.py &
+sudo python robot_move.py &
 # home protect
-python home_protect.py &
+sudo python home_protect.py &

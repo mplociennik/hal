@@ -40,6 +40,7 @@ class HomeProtectProcess(multiprocessing.Process):
     def terminate(self):
         print "Terminating protection..."
         self.exit.set()
+        self.ws.close()
 
     def detect_opened_door(self, distance):
         sub = distance - self.INITIAL_DISTANCE
@@ -102,6 +103,7 @@ class HomeProtect():
             print("stop process")
             try:
                 self.home_protect_process.terminate()
+                del self.self.home_protect_process
             except NameError:
                 print("terminate() not found!")
     def on_message(self, ws, message):

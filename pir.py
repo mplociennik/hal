@@ -15,5 +15,6 @@ while True:
         current_state = GPIO.input(pir_sensor)
         if current_state == 1:
           print("Move detected!")
+          time.sleep(2)
     except KeyboardInterrupt:
         GPIO.cleanup()

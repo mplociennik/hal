@@ -132,6 +132,8 @@ class HomeProtect():
         return state
         
     def start(self, count=None):
+        if count is None:
+            count = 0
         count = count + 1
         if self.check_connection():
             print('Connection enabled! Starting socket client...')

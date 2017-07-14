@@ -152,6 +152,9 @@ class HomeProtect():
             self.ws.on_open = self.on_open
             self.ws.run_forever()
         else:
+            if self.ws is not None:
+                self.ws.close()
+                self.ws = None
             print('No connection ({0}) reconnectiong for 10 seconds...'.format(count))
             time.sleep(10)
             self.start(count)

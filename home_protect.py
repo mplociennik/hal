@@ -87,6 +87,7 @@ class HomeProtectProcess(multiprocessing.Process):
 class HomeProtect():
     ''' not working websocket connection after alarm '''
     home_protect_process = None
+    ws = None
     def __init__(self):
         pass
 
@@ -103,7 +104,7 @@ class HomeProtect():
             print("stop process")
             try:
                 self.home_protect_process.terminate()
-                del self.self.home_protect_process
+                self.ws.close()
             except NameError:
                 print("terminate() not found!")
     def on_message(self, ws, message):

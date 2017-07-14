@@ -8,9 +8,8 @@ import json
 import urllib2
 import RPi.GPIO as GPIO
 
-GPIO.setmode(GPIO.BCM)
-GPIO.setwarnings(False)
-PIR_SENSOR = 26
+GPIO.setmode(GPIO.BOARD)
+PIR_SENSOR = 37
 GPIO.setup(PIR_SENSOR, GPIO.IN, GPIO.PUD_DOWN)
 
 if platform.system() == 'Linux':

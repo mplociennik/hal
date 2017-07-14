@@ -11,7 +11,7 @@ import RPi.GPIO as GPIO
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
 PIR_SENSOR = 26
-GPIO.setup(pir_sensor, GPIO.IN, GPIO.PUD_DOWN)
+GPIO.setup(PIR_SENSOR, GPIO.IN, GPIO.PUD_DOWN)
 
 if platform.system() == 'Linux':
     from speech import Speech

@@ -114,6 +114,7 @@ class HomeProtect():
             print(dataObj['data']['message'])
 
     def on_error(self, ws, error):
+        print("jakis err")
         print(error)
 
     def on_close(self, ws):
@@ -148,7 +149,7 @@ class HomeProtect():
         count = count + 1
         print("self.check_connection(): {0} ".format(self.check_connection()))
         if self.check_connection():
-            print('Connection enabled! Starting socket client...')
+            print('Internet connection enabled! Starting socket client...')
             websocket.enableTrace(True)
             self.ws = websocket.WebSocketApp(WEBSOCKET_HOST,
                               on_message = self.on_message,

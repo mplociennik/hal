@@ -32,7 +32,6 @@ class HomeProtectProcess(multiprocessing.Process):
             
     def start(self, ws):
         self.ws = ws
-        time.sleep(2)
         while not self.exit.is_set():
             self.watch_pir()
             # self.watch_distance()
@@ -93,7 +92,8 @@ class HomeProtect():
     def toggle_protect_home(self, state):
         if self.home_protect_process:
             print ("self.home_protect_process is defined")
-
+        else:
+            print("kurwa no nie")
         print("toggle protect home state: {0}".format(state))
         if state:
             print("start process")

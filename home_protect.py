@@ -140,6 +140,10 @@ class HomeProtect():
             self.home_protect_process = HomeProtectProcess()
             count = 0
         if count == 1:
+            time.sleep(5)
+            print("*"*80)
+            print("Restarting home_protect")
+            print("*"*80)
             del self.ws
         count = count + 1
         print("self.check_connection(): {0} ".format(self.check_connection()))

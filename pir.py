@@ -15,7 +15,7 @@ print("Ready")
 try:
     GPIO.add_event_detect(PIR_PIN, GPIO.RISING, callback=MOTION)
     while True:
-    time.sleep(100)
+        time.sleep(100)
 except KeyboardInterrupt:
     print("PIR test closed...")
     GPIO.cleanup()

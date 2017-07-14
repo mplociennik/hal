@@ -21,6 +21,7 @@ wss.broadcast = function broadcast(data) {
 // Broadcast by client type.
 wss.broadcastByClientName = function broadcast(clientName, data) {
   wss.clients.forEach(function each(client) {
+    console.log('Client client: ',client.client);
     if (client.client === clientName && client.readyState === WebSocket.OPEN) {
       client.send(data);
     }
@@ -33,6 +34,7 @@ wss.move = function(ws, direction, state){
 }
 
 wss.protectHome = function(ws, state){
+  console.log("Protect home request state: ", state);
   dataJson = JSON.stringify({event:'protectHome', data:{state: state}});
   wss.broadcastByClientName('protectHome', dataJson);
 }
@@ -52,8 +54,7 @@ wss.serveHalClient = function(ws, dataObj){
             wss.move(dataObj.data.direction, dataObj.data.state);
             break;
         case 'protectHome':
-            console.log('Protect home request');
-            wss.protectHome(dataObj.data.state);
+            wss.protectHome(ws, dataObj.data.state);
             break;
       }    
   }else{
@@ -68,7 +69,6 @@ wss.serveProtectHome = function(ws, dataObj){
         ws.client = dataObj.client;
         dataJson = JSON.stringify({event:'message', data:{message: 'Init ready!'}});
         ws.send(dataJson);
-        console.log('Protect home initialized!');
         break;
       case 'message':
         console.log('Message from "' + dataObj.client + '": ' + dataObj.data.message);
@@ -84,7 +84,21 @@ wss.serveProtectHome = function(ws, dataObj){
 };
 
 wss.serveRobotMove = function(ws, dataObj){
-
+  if (typeof dataObj.event !== 'undefined') {
+    switch(dataObj.event){
+      case 'init':
+        ws.client = dataObj.client;
+        dataJson = JSON.stringify({event:'message', data:{message: 'Init ready!'}});
+        ws.send(dataJson);
+        console.log('RobotMove initialized!');
+        break;
+      case 'message':
+        console.log('Message from "' + dataObj.client + '": ' + dataObj.data.message);
+        break;
+    }    
+  }else{
+    console.log('Event is undefined: ', dataObj);
+  } 
 };
 
 wss.on('connection', function connection(ws) {
@@ -97,7 +111,9 @@ wss.on('connection', function connection(ws) {
     console.log('Connected client: ', ws);
     console.log('socket uid: ', ws.uid);
     dataJson = JSON.stringify({event:'message', data: { message: 'You are connected to server!' }});
-    ws.send(dataJson);
+    if (ws.readyState === WebSocket.OPEN) {
+      ws.send(dataJson);
+    }
     return true;
   });
 
@@ -109,7 +125,7 @@ wss.on('connection', function connection(ws) {
         case 'halClient':
           wss.serveHalClient(ws, dataObj);
           break;        
-        case 'homeProtect':
+        case 'protectHome':
           wss.serveProtectHome(ws, dataObj);
           break;        
         case 'robotMove':
@@ -119,17 +135,11 @@ wss.on('connection', function connection(ws) {
     } else {
       console.log('Undefined client!');
     }
-    
-    // Broadcast to everyone else.
-    wss.clients.forEach(function each(client) {
-      if (client !== ws && client.readyState === WebSocket.OPEN) {
-        client.send(data);
-      }
-    });
     return true;
   });
 
-  ws.on('close', function close() {
+  ws.on('close', function close(ws) {
+    console.log('ws: ', ws);
     console.log('Client disconected: ', ws.client);
   });
 

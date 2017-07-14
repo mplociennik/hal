@@ -99,8 +99,10 @@ class HomeProtect():
             self.home_protect_process.start(self.ws)
         else:
             print("stop process")
-            self.home_protect_process.terminate()
-
+            try:
+                self.home_protect_process.terminate()
+            except NameError:
+                print("terminate() not found!")
     def on_message(self, ws, message):
         dataObj = json.loads(message)
         print("Received server response: {0}".format(dataObj))

@@ -138,7 +138,7 @@ class HomeProtect():
         if count is None:
             self.home_protect_process = HomeProtectProcess()
             count = 0
-        else if count == 1:
+        if count == 1:
             del self.ws
         count = count + 1
         if self.check_connection():

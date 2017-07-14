@@ -86,8 +86,9 @@ class HomeProtectProcess(multiprocessing.Process):
 
 class HomeProtect():
     ''' not working websocket connection after alarm '''
+    home_protect_process = None
     def __init__(self):
-        self.home_protect_process = HomeProtectProcess()
+        pass
 
     def toggle_protect_home(self, state):
         if self.home_protect_process:
@@ -135,11 +136,7 @@ class HomeProtect():
         
     def start(self, count=None):
         if count is None:
-            print("none")
-            print("none")
-            print("none")
-            print("none")
-            print("none")
+            self.home_protect_process = HomeProtectProcess()
             count = 0
         count = count + 1
         if self.check_connection():

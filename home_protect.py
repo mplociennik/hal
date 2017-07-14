@@ -137,6 +137,7 @@ class HomeProtect():
         
     def connect(self):
         print("Connectiong to websocket...")
+        websocket.enableTrace(True)
         self.ws = websocket.WebSocketApp(WEBSOCKET_HOST,
                           on_message = self.on_message,
                           on_error = self.on_error,
@@ -152,18 +153,9 @@ class HomeProtect():
         print("self.check_connection(): {0} ".format(self.check_connection()))
         
         print('Internet connection enabled! Starting socket client...')
-            websocket.enableTrace(True)
         self.connect()
         
 
 if __name__ == "__main__":
     home_protect = HomeProtect()
     home_protect.start()
-    # process = HomeProtectProcess()
-    # process.start()
-    # process.socket_connect()
-    # print "Waiting for a while"
-    # time.sleep(10)
-    # process.terminate()
-    # time.sleep(3)
-    # print "Child process state: %d" % process.is_alive()

@@ -76,6 +76,7 @@ class RobotMove():
         
     def connect(self):
         print("Connectiong to websocket...")
+        websocket.enableTrace(True)
         self.ws = websocket.WebSocketApp(WEBSOCKET_HOST,
                           on_message = self.on_message,
                           on_error = self.on_error,
@@ -92,7 +93,6 @@ class RobotMove():
             time.sleep(15)
 
         print('Connection enabled! Starting socket client...')
-        websocket.enableTrace(True)
         self.connect()
 
 if __name__ == "__main__":

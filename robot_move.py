@@ -45,6 +45,7 @@ class RobotMove():
                 PyMove().run_right_stop()
             response = json.dumps({'event': 'move' ,'data': {'message': 'Move RIGHT state: {0}'.format(state)}})            
         return response
+
     def on_message(self, ws, message):
         dataObj = json.loads(message)
         print("Received server response: {0}".format(dataObj))
@@ -58,8 +59,6 @@ class RobotMove():
 
     def on_close(self, ws):
         print("### connection closed ###")
-        print("Reconnecting...")
-        self.start()
 
     def on_open(self, ws):
         print('Sending initial request to HalServer')
@@ -75,7 +74,17 @@ class RobotMove():
             state = False
         return state
         
-    def start(self):
+    def start(self, count=None):
+        if count is None:
+            self.home_protect_process = HomeProtectProcess()
+            count = 0
+        if count == 1:
+            time.sleep(15)
+            print("*"*80)
+            print("Restarting home_protect")
+            print("*"*80)
+            del self.ws
+        count = count +1
         if self.check_connection():
             print('Connection enabled! Starting socket client...')
             websocket.enableTrace(True)
@@ -87,11 +96,9 @@ class RobotMove():
             self.ws.run_forever()
         else:
             print('No connection reconnectiong for 10 seconds...')
-            time.sleep(10)
-            self.start()
+            self.start(count)
 
 
 if __name__ == "__main__":
-    time.sleep(15)
     robot_move = RobotMove()
     robot_move.start()

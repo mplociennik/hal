@@ -142,6 +142,7 @@ class HomeProtect():
         if count == 1:
             del self.ws
         count = count + 1
+        print("self.check_connection(): {0} ".format(self.check_connection()))
         if self.check_connection():
             print('Connection enabled! Starting socket client...')
             websocket.enableTrace(True)

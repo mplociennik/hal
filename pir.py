@@ -1,21 +1,20 @@
 import RPi.GPIO as GPIO
 import time
-
 GPIO.setmode(GPIO.BCM)
-PIR_PIN = 37
-GPIO.setup(PIR_PIN, GPIO.IN)
+GPIO.setwarnings(False)
 
-def MOTION(PIR_PIN):
-    print("Motion Detected!")
+pir_sensor = 26
 
-print("PIR Module Test (CTRL+C to exit)")
-time.sleep(2)
-print("Listening...")
+GPIO.setup(pir_sensor, GPIO.IN, GPIO.PUD_DOWN)
 
-try:
-    GPIO.add_event_detect(PIR_PIN, GPIO.RISING, callback=MOTION)
-    while True:
-        time.sleep(100)
-except KeyboardInterrupt:
-    print("PIR test closed...")
-    GPIO.cleanup()
+current_state = 0
+
+while True:
+    try:
+        time.sleep(0.1)
+        current_state = GPIO.input(pir_sensor)
+        if current_state == 1:
+          print("GPIO pin %s is %s" % (pir_sensor, current_state))
+          time.sleep(4) # wait 4 seconds for PIR to reset. 
+    except KeyboardInterrupt:
+        GPIO.cleanup()

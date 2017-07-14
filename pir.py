@@ -16,5 +16,7 @@ while True:
         if current_state == 1:
           print("GPIO pin %s is %s" % (pir_sensor, current_state))
           time.sleep(1) # wait 4 seconds for PIR to reset. 
+        else:
+            print("Not detected movement.")
     except KeyboardInterrupt:
         GPIO.cleanup()

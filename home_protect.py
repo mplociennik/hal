@@ -7,6 +7,11 @@ import platform
 import json
 import urllib2
 
+GPIO.setmode(GPIO.BCM)
+GPIO.setwarnings(False)
+PIR_SENSOR = 26
+GPIO.setup(pir_sensor, GPIO.IN, GPIO.PUD_DOWN)
+
 if platform.system() == 'Linux':
     from speech import Speech
     from distance import Distance
@@ -42,22 +47,34 @@ class HomeProtectProcess(multiprocessing.Process):
         print("sub abs: {0}".format(abs(sub)))
         return abs(sub) >= self.DIST_TOLERANCE
 
-    def watch(self):
+    def watch_distance(self):
         if platform.system() == 'Linux':
             distance = Distance()
             cm = distance.detect()
             print('Distance: {0} cm'.format(int(cm)))
             if self.detect_opened_door(int(cm)):
-                self.alarm(int(cm))
+                self.alarm("Dected changed distance: {0}!".format(int(cm)))
         else:
-            self.alarm()
+            self.alarm("Alarm debug in windows.")    
 
-    def alarm(self, distance):
+    def watch_pir(self):
+        if platform.system() == 'Linux':
+            while True:
+                time.sleep(0.1)
+                current_state = GPIO.input(PIR_SENSOR)
+                if current_state == 1:
+                  self.alarm()
+                  time.sleep(2)
+        else:
+            alarmMessage = "Movement detected!"
+            self.alarm(alarmMessage)
+
+    def alarm(self, message):
         if not self.alarmState:
             self.alarmState = True
             print("websocket: {0}".format(self.ws))
             print('Sending alarm message to Hal Server.')
-            alarm_message = json.dumps({"client": "protectHome","event": "alarm", "data": {"message": "Dected changed distance: {0}!".format(distance)}})
+            alarm_message = json.dumps({"client": "protectHome","event": "alarm", "data": {"message": message}})
             print("Alarm message: {0}".format(alarm_message))
             print("socket is {0}".format(self.ws.sock != None))
             self.ws.send(alarm_message)

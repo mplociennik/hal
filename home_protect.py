@@ -34,7 +34,8 @@ class HomeProtectProcess(multiprocessing.Process):
         self.ws = ws
         time.sleep(2)
         while not self.exit.is_set():
-            self.watch()
+            self.watch_pir()
+            # self.watch_distance()
         print "Protection stoped!"
 
     def terminate(self):
@@ -63,10 +64,10 @@ class HomeProtectProcess(multiprocessing.Process):
                 time.sleep(0.1)
                 current_state = GPIO.input(PIR_SENSOR)
                 if current_state == 1:
-                  self.alarm()
+                  self.alarm("Movement detected!")
                   time.sleep(2)
         else:
-            alarmMessage = "Movement detected!"
+            alarmMessage = "Movement detected test windows!"
             self.alarm(alarmMessage)
 
     def alarm(self, message):
@@ -81,6 +82,7 @@ class HomeProtectProcess(multiprocessing.Process):
             time.sleep(1)
         else:
             print("Alarm state is alreade sended!")
+        self.terminate()
 
 class HomeProtect():
     ''' not working websocket connection after alarm '''
@@ -88,6 +90,9 @@ class HomeProtect():
         self.home_protect_process = HomeProtectProcess()
 
     def toggle_protect_home(self, state):
+        if self.home_protect_process:
+            print ("self.home_protect_process is defined")
+
         print("toggle protect home state: {0}".format(state))
         if state:
             print("start process")
@@ -126,7 +131,8 @@ class HomeProtect():
             state = False
         return state
         
-    def start(self):
+    def start(self, count=None):
+        count = count + 1
         if self.check_connection():
             print('Connection enabled! Starting socket client...')
             websocket.enableTrace(True)
@@ -137,9 +143,9 @@ class HomeProtect():
             self.ws.on_open = self.on_open
             self.ws.run_forever()
         else:
-            print('No connection reconnectiong for 10 seconds...')
+            print('No connection ({0}) reconnectiong for 10 seconds...'.format(count))
             time.sleep(10)
-            self.start()
+            self.start(count)
 
 
 if __name__ == "__main__":

@@ -118,7 +118,7 @@ class HomeProtect():
     def on_close(self, ws):
         print("### connection closed ###")
         print("Reconnecting...")
-        self.start()
+        self.start(1)
 
     def on_open(self, ws):
         print('Sending initial request to HalServer')
@@ -138,6 +138,8 @@ class HomeProtect():
         if count is None:
             self.home_protect_process = HomeProtectProcess()
             count = 0
+        else if count == 1:
+            del self.ws
         count = count + 1
         if self.check_connection():
             print('Connection enabled! Starting socket client...')

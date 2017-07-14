@@ -2,7 +2,7 @@ import RPi.GPIO as GPIO
 import time
 
 GPIO.setmode(GPIO.BOARD)
-PIR_PIN = 21
+PIR_PIN = 29
 GPIO.setup(PIR_PIN, GPIO.IN)
 
 def MOTION(PIR_PIN):

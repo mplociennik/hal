@@ -21,6 +21,7 @@ WEBSOCKET_HOST = 'ws://192.168.1.151:8083/'
 class HomeProtectProcess(multiprocessing.Process):
 
     DIST_TOLERANCE = 10
+    alarm_state = False
     def __init__(self, ):
         multiprocessing.Process.__init__(self)
         self.ws = None
@@ -67,17 +68,18 @@ class HomeProtectProcess(multiprocessing.Process):
                   self.alarm("Movement detected!")
                   time.sleep(2)
         else:
-            alarmMessage = "Movement detected test windows!"
-            self.alarm(alarmMessage)
+            alarm_message = "Movement detected test windows!"
+            self.alarm(alarm_message)
 
     def alarm(self, message):
-        if not self.alarmState:
-            self.alarmState = True
+        if not self.alarm_state:
+            self.alarm_state = True
             print("websocket: {0}".format(self.ws))
             print('Sending alarm message to Hal Server.')
             alarm_message = json.dumps({"client": "protectHome","event": "alarm", "data": {"message": message}})
             print("Alarm message: {0}".format(alarm_message))
             print("socket is {0}".format(self.ws.sock != None))
+            priny
             self.ws.send(alarm_message)
             time.sleep(1)
         else:
@@ -92,10 +94,6 @@ class HomeProtect():
         pass
 
     def toggle_protect_home(self, state):
-        if self.home_protect_process:
-            print ("self.home_protect_process is defined")
-        else:
-            print("kurwa no nie")
         print("toggle protect home state: {0}".format(state))
         if state:
             print("start process")
@@ -103,8 +101,8 @@ class HomeProtect():
         else:
             print("stop process")
             try:
-                self.home_protect_process.terminate()
                 self.ws.close()
+                self.home_protect_process.terminate()
             except NameError:
                 print("terminate() not found!")
     def on_message(self, ws, message):

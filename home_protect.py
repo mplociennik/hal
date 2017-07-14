@@ -135,6 +135,11 @@ class HomeProtect():
         
     def start(self, count=None):
         if count is None:
+            print("none")
+            print("none")
+            print("none")
+            print("none")
+            print("none")
             count = 0
         count = count + 1
         if self.check_connection():

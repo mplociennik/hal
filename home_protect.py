@@ -135,35 +135,26 @@ class HomeProtect():
             state = False
         return state
         
-    def start(self, count=None):
-        if count is None:
-            self.home_protect_process = HomeProtectProcess()
-            count = 0
-        if count == 1:
-            time.sleep(15)
-            print("*"*80)
-            print("Restarting home_protect")
-            print("*"*80)
-            del self.ws
-        count = count + 1
-        print("self.check_connection(): {0} ".format(self.check_connection()))
-        if self.check_connection():
-            print('Internet connection enabled! Starting socket client...')
-            websocket.enableTrace(True)
-            self.ws = websocket.WebSocketApp(WEBSOCKET_HOST,
-                              on_message = self.on_message,
-                              on_error = self.on_error,
-                              on_close = self.on_close)
-            self.ws.on_open = self.on_open
-            self.ws.run_forever()
-        else:
-            if self.ws is not None:
-                print("cos tu nie chaloo")
-                self.ws.close()
-                self.ws = None
-            print('No connection ({0}) reconnectiong for 10 seconds...'.format(count))
-            self.start(count)
+    def connect(self):
+        print("Connectiong to websocket...")
+        self.ws = websocket.WebSocketApp(WEBSOCKET_HOST,
+                          on_message = self.on_message,
+                          on_error = self.on_error,
+                          on_close = self.on_close)
+        self.ws.on_open = self.on_open
+        self.ws.run_forever()
 
+    def start(self):
+        while self.check_connection() == False:
+            count = count + 1
+            print("Not found connetion network! Reconnecting ({0})in 15 seconds...".format(count))
+            time.sleep(15)
+        print("self.check_connection(): {0} ".format(self.check_connection()))
+        
+        print('Internet connection enabled! Starting socket client...')
+            websocket.enableTrace(True)
+        self.connect()
+        
 
 if __name__ == "__main__":
     home_protect = HomeProtect()

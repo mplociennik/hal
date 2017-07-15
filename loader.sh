@@ -1,4 +1,7 @@
 #!/bin/sh 
+ENABLED = False
+
+if ENABLED then
 cd /
 cd home/pi/hal
 
@@ -10,4 +13,6 @@ python home_protect.py & > home_protect.log
 
 # robot move
 python robot_move.py & > robot_move.log
+
+fi
 

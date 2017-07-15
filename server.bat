@@ -1,4 +1,2 @@
-cd D:\hal
-timeout 3
-python server.py
+node index.js
 pause

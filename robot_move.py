@@ -85,7 +85,6 @@ class RobotMove():
         self.ws.run_forever()
 
     def start(self):
-        self.home_protect_process = HomeProtectProcess()
         count = 0
         while self.check_connection() == False:
             count = count + 1

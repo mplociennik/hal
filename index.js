@@ -55,7 +55,7 @@ wss.serveHalClient = function(ws, dataObj){
             console.log('dataObj: ', dataObj);
             console.log('dataObj.data.direction: ', dataObj.data.direction);
             console.log('dataObj.data.state: ', dataObj.data.state);
-            wss.move(dataObj.data.direction, dataObj.data.state);
+            wss.move(ws, dataObj.data.direction, dataObj.data.state);
             break;
         case 'protectHome':
             wss.protectHome(ws, dataObj.data.state);

@@ -48,7 +48,7 @@ class RobotMove():
 
     def on_message(self, ws, message):
         dataObj = json.loads(message)
-        print("Received server response: {0}".format(dataObj))
+        print("Received message: {0}".format(dataObj))
         if dataObj['event'] == 'move':
             self.move(dataObj['data']['direction'], dataObj['data']['state'])
         if dataObj['event'] == 'message':

@@ -30,6 +30,7 @@ wss.broadcastByClientName = function broadcast(clientName, data) {
 
 wss.move = function(ws, direction, state){
   dataJson = JSON.stringify({event:'move', data:{direction: direction, state: state}});
+  console.log('move dataJson: ', dataJson);
   wss.broadcastByClientName('robotMove', dataJson);
 }
 

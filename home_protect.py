@@ -20,62 +20,6 @@ if platform.system() == 'Linux':
 WEBSOCKET_HOST = 'ws://192.168.1.151:8083/'
 
 
-class HomeProtectProcess(multiprocessing.Process):
-
-    DIST_TOLERANCE = 10
-    alarm_state = False
-    def __init__(self, ):
-        multiprocessing.Process.__init__(self)
-        self.exit = multiprocessing.Event()
-        if platform.system() =='Linux':
-            self.INITIAL_DISTANCE = int(Distance().detect())
-            print('initial distance is: {0} cm'.format(self.INITIAL_DISTANCE))
-            
-    def start(self):
-        print("Starting home protection process...")
-        while not self.exit.is_set():
-            self.watch_pir()
-            # self.watch_distance()
-        print "Protection stoped!"
-
-    def terminate(self):
-        print "Terminating protection..."
-        self.exit.set()
-
-    def detect_opened_door(self, distance):
-        sub = distance - self.INITIAL_DISTANCE
-        print("sub: {0}".format(sub))
-        print("sub abs: {0}".format(abs(sub)))
-        return abs(sub) >= self.DIST_TOLERANCE
-
-    def watch_distance(self):
-        if platform.system() == 'Linux':
-            distance = Distance()
-            cm = distance.detect()
-            print('Distance: {0} cm'.format(int(cm)))
-            if self.detect_opened_door(int(cm)):
-                self.alarm("Dected changed distance: {0}!".format(int(cm)))
-        else:
-            self.alarm("Alarm debug in windows.")    
-
-    def watch_pir(self):
-        if platform.system() == 'Linux':
-            while True:
-                time.sleep(0.1)
-                current_state = GPIO.input(PIR_SENSOR)
-                if current_state == 1:
-                  self.alarm("Movement detected!")
-                  time.sleep(2)
-        else:
-            alarm_message = "Movement detected test windows!"
-            time.sleep(3)
-            self.alarm(alarm_message)
-
-    def alarm(self, message):
-        if not self.alarm_state:
-            self.alarm_state = True
-
-
 class HomeProtect():
     ws = None
     DIST_TOLERANCE = 10
@@ -91,6 +35,7 @@ class HomeProtect():
         print("Alarm message: {0}".format(alarm_message))
         print("socket is {0}".format(self.ws.sock != None))
         self.ws.send(alarm_message)
+        self.alarm_enabled = False
         time.sleep(3)
 
     def detect_opened_door(self, distance):
@@ -114,6 +59,7 @@ class HomeProtect():
     def watch_pir(self):
         if platform.system() == 'Linux':
             while self.protect_state:
+                print("PIR is watching...")
                 time.sleep(0.1)
                 current_state = GPIO.input(PIR_SENSOR)
                 if current_state == 1:

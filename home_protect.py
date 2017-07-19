@@ -17,7 +17,7 @@ if platform.system() == 'Linux':
     from speech import Speech
     from distance import Distance
 
-WEBSOCKET_HOST = 'ws://127.0.0.1:8083/'
+WEBSOCKET_HOST = 'ws://192.168.1.151:8083/'
 
 
 class HomeProtectProcess(multiprocessing.Process):

@@ -1,5 +1,5 @@
 #!/bin/sh 
-ENABLED = true
+ENABLED=true
 
 if ENABLED ; then
 cd /

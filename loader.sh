@@ -1,7 +1,7 @@
 #!/bin/sh 
 ENABLED = true
 
-if [ "ENABLED" = true ] ; then
+if ENABLED ; then
 cd /
 cd home/pi/hal
 

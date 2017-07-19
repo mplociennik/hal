@@ -2,8 +2,10 @@
 # -*- coding: utf-8 -*-
 import multiprocessing
 import time
-from pymove import PyMove
-from distance import Distance
+import platform
+if platform.system() == 'Linux':
+    from pymove import PyMove
+    from distance import Distance
 
 
 class RaspieAutopilotProcess(multiprocessing.Process):
@@ -49,7 +51,11 @@ class RaspieAutopilotProcess(multiprocessing.Process):
             
     def start(self):
         while not self.exit.is_set():
-            self.search_free_road()
+            if platform.system() == 'Linux':
+                self.search_free_road()
+            else:
+                print("autopilot loop")
+                time.sleep(1)
         print "Autopilot stoped!"
 
     def terminate(self):

@@ -52,7 +52,6 @@ wss.serveHalClient = function(ws, dataObj){
           console.log('Message from "' + dataObj.client + '": ' + dataObj.data.message);
           break;
         case 'move':
-            console.log('dataObj: ', dataObj);
             console.log('dataObj.data.direction: ', dataObj.data.direction);
             console.log('dataObj.data.state: ', dataObj.data.state);
             wss.move(ws, dataObj.data.direction, dataObj.data.state);

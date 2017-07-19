@@ -2,21 +2,23 @@
 # -*- coding: utf-8 -*-
 import multiprocessing
 import time
-import websocket
 import platform
 import json
 import urllib2
-import RPi.GPIO as GPIO
+import websocket
+import threading
 
-GPIO.setmode(GPIO.BOARD)
-PIR_SENSOR = 37
-GPIO.setup(PIR_SENSOR, GPIO.IN, GPIO.PUD_DOWN)
 
 if platform.system() == 'Linux':
+    import RPi.GPIO as GPIO
+    GPIO.setmode(GPIO.BOARD)
+    PIR_SENSOR = 37
+    GPIO.setup(PIR_SENSOR, GPIO.IN, GPIO.PUD_DOWN)
     from speech import Speech
     from distance import Distance
 
-WEBSOCKET_HOST = 'ws://192.168.1.151:8083/'
+WEBSOCKET_HOST = 'ws://127.0.0.1:8083/'
+
 
 class HomeProtectProcess(multiprocessing.Process):
 
@@ -24,15 +26,13 @@ class HomeProtectProcess(multiprocessing.Process):
     alarm_state = False
     def __init__(self, ):
         multiprocessing.Process.__init__(self)
-        self.ws = None
         self.exit = multiprocessing.Event()
-        self.alarmState = False
         if platform.system() =='Linux':
             self.INITIAL_DISTANCE = int(Distance().detect())
             print('initial distance is: {0} cm'.format(self.INITIAL_DISTANCE))
             
-    def start(self, ws):
-        self.ws = ws
+    def start(self):
+        print("Starting home protection process...")
         while not self.exit.is_set():
             self.watch_pir()
             # self.watch_distance()
@@ -41,7 +41,6 @@ class HomeProtectProcess(multiprocessing.Process):
     def terminate(self):
         print "Terminating protection..."
         self.exit.set()
-        self.ws.close()
 
     def detect_opened_door(self, distance):
         sub = distance - self.INITIAL_DISTANCE
@@ -69,41 +68,51 @@ class HomeProtectProcess(multiprocessing.Process):
                   time.sleep(2)
         else:
             alarm_message = "Movement detected test windows!"
+            time.sleep(3)
             self.alarm(alarm_message)
 
     def alarm(self, message):
         if not self.alarm_state:
             self.alarm_state = True
-            print("websocket: {0}".format(self.ws))
-            print('Sending alarm message to Hal Server.')
-            alarm_message = json.dumps({"client": "protectHome","event": "alarm", "data": {"message": message}})
-            print("Alarm message: {0}".format(alarm_message))
-            print("socket is {0}".format(self.ws.sock != None))
-            priny
-            self.ws.send(alarm_message)
-            time.sleep(1)
-        else:
-            print("Alarm state is alreade sended!")
-        self.terminate()
+
 
 class HomeProtect():
-    ''' not working websocket connection after alarm '''
-    home_protect_process = None
+    home_protect_process = HomeProtectProcess()
     ws = None
+    watch_alarm_state = False
     def __init__(self):
         pass
 
+    def watch_alarm(self):
+        print("dupakupa")
+        while self.watch_alarm_state:
+            print("alarm state: {0}".format(self.home_protect_process.alarm_state))
+            if self.home_protect_process.alarm_state:
+                print("websocket: {0}".format(self.ws))
+                print('Sending alarm message to Hal Server.')
+                alarm_message = json.dumps({"client": "protectHome","event": "alarm", "data": {"message": message}})
+                print("Alarm message: {0}".format(alarm_message))
+                print("socket is {0}".format(self.ws.sock != None))
+                self.ws.send(alarm_message)
+                time.sleep(3)
+            time.sleep(1)
+        print("Watching stoped!")
+            
     def toggle_protect_home(self, state):
         print("toggle protect home state: {0}".format(state))
         if state:
-            print("start process")
-            self.home_protect_process.start(self.ws)
-        else:
-            print("stop process")
+            self.watch_alarm_state = True
+            print("self.watch_alarm_state: {0}".format(self.watch_alarm_state))
             try:
-                self.home_protect_process.terminate()
-            except NameError:
-                print("terminate() not found!")
+                t = threading.Thread(target=self.watch_alarm)
+                t.setDaemon(True)
+                t.start()
+            except :
+                print("huj dupa i kamieni kupa")
+                raise
+        else:
+            self.watch_alarm_state = False
+            self.home_protect_process.terminate()
                 
     def on_message(self, ws, message):
         dataObj = json.loads(message)
@@ -133,6 +142,7 @@ class HomeProtect():
             state = True
         except urllib2.URLError as err: 
             state = False
+        print("self.check_connection() state: {0} ".format(state))
         return state
         
     def connect(self):
@@ -146,11 +156,11 @@ class HomeProtect():
         self.ws.run_forever()
 
     def start(self):
+        count = 0
         while self.check_connection() == False:
             count = count + 1
             print("Not found connetion network! Reconnecting ({0})in 15 seconds...".format(count))
             time.sleep(15)
-        print("self.check_connection(): {0} ".format(self.check_connection()))
         
         print('Internet connection enabled! Starting socket client...')
         self.connect()
@@ -158,4 +168,5 @@ class HomeProtect():
 
 if __name__ == "__main__":
     home_protect = HomeProtect()
+    # home_protect = HomeProtectProcess()
     home_protect.start()

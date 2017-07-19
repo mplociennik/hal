@@ -1,14 +1,16 @@
 #!/usr/bin/env python2
 #encoding: utf-8
-import RPi.GPIO as GPIO
+import platform
 import time
 
-GPIO.setmode(GPIO.BOARD)
-TRIG = 7 
-ECHO = 11
-GPIO.setup(TRIG,GPIO.OUT)
-GPIO.setup(ECHO, GPIO.IN)
-GPIO.output(TRIG, False)
+if platform.system() == 'Linux':
+    import RPi.GPIO as GPIO
+    GPIO.setmode(GPIO.BOARD)
+    TRIG = 7 
+    ECHO = 11
+    GPIO.setup(TRIG,GPIO.OUT)
+    GPIO.setup(ECHO, GPIO.IN)
+    GPIO.output(TRIG, False)
 
 class Distance:
     """
@@ -19,18 +21,21 @@ class Distance:
         GPIO.cleanup()
         
     def detect(self):
-        time.sleep(1)
-        GPIO.output(TRIG,1)
-        time.sleep(0.000001)
-        GPIO.output(TRIG,0)
-        time.sleep(0.000001)
-        while GPIO.input(ECHO) == 0:
-            pulse_start = time.time()
-        while GPIO.input(ECHO) == 1:
-            pulse_stop = time.time()               
-        distance = (pulse_stop - pulse_start) * 17150
-        distance = round(distance, 2)
-        return distance
+        if platform.system() == 'Linux':
+            time.sleep(1)
+            GPIO.output(TRIG,1)
+            time.sleep(0.000001)
+            GPIO.output(TRIG,0)
+            time.sleep(0.000001)
+            while GPIO.input(ECHO) == 0:
+                pulse_start = time.time()
+            while GPIO.input(ECHO) == 1:
+                pulse_stop = time.time()               
+            distance = (pulse_stop - pulse_start) * 17150
+            distance = round(distance, 2)
+            return distance
+        else:
+            return 666
 
 
 if __name__ == "__main__":
@@ -40,6 +45,7 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
             print "interrupt"
     finally:
-        GPIO.cleanup()
+        if platform.system() == 'Linux':
+            GPIO.cleanup()
 
 

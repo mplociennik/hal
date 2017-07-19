@@ -77,42 +77,66 @@ class HomeProtectProcess(multiprocessing.Process):
 
 
 class HomeProtect():
-    home_protect_process = HomeProtectProcess()
     ws = None
-    watch_alarm_state = False
+    DIST_TOLERANCE = 10
+    alarm_state = False
     def __init__(self):
-        pass
+        if platform.system() =='Linux':
+            self.INITIAL_DISTANCE = int(Distance().detect())
+            print('initial distance is: {0} cm'.format(self.INITIAL_DISTANCE))
 
-    def watch_alarm(self):
-        print("dupakupa")
-        while self.watch_alarm_state:
-            print("alarm state: {0}".format(self.home_protect_process.alarm_state))
-            if self.home_protect_process.alarm_state:
-                print("websocket: {0}".format(self.ws))
-                print('Sending alarm message to Hal Server.')
-                alarm_message = json.dumps({"client": "protectHome","event": "alarm", "data": {"message": message}})
-                print("Alarm message: {0}".format(alarm_message))
-                print("socket is {0}".format(self.ws.sock != None))
-                self.ws.send(alarm_message)
-                time.sleep(3)
-            time.sleep(1)
-        print("Watching stoped!")
+    def alarm(self, message):
+        print('Sending alarm message to Hal Server.')
+        alarm_message = json.dumps({"client": "protectHome","event": "alarm", "data": {"message": message}})
+        print("Alarm message: {0}".format(alarm_message))
+        print("socket is {0}".format(self.ws.sock != None))
+        self.ws.send(alarm_message)
+        time.sleep(3)
+
+    def detect_opened_door(self, distance):
+        sub = distance - self.INITIAL_DISTANCE
+        print("sub: {0}".format(sub))
+        print("sub abs: {0}".format(abs(sub)))
+        return abs(sub) >= self.DIST_TOLERANCE
+
+    def watch_distance(self):
+        if platform.system() == 'Linux':
+            while self.protect_state:
+                distance = Distance()
+                cm = distance.detect()
+                print('Distance: {0} cm'.format(int(cm)))
+                if self.detect_opened_door(int(cm)):
+                    self.alarm("Dected changed distance: {0}!".format(int(cm)))
+                time.sleep(1)
+        else:
+            self.alarm("Alarm debug in windows.")    
+
+    def watch_pir(self):
+        if platform.system() == 'Linux':
+            while self.protect_state:
+                time.sleep(0.1)
+                current_state = GPIO.input(PIR_SENSOR)
+                if current_state == 1:
+                    self.alarm_enabled = True
+                    self.alarm("Movement detected!")
+                    time.sleep(2)
+                else:
+                    self.alarm_enabled = False
+        else:
+            alarm_message = "Movement detected test windows!"
+            self.alarm(alarm_message)
+            time.sleep(3)
             
     def toggle_protect_home(self, state):
         print("toggle protect home state: {0}".format(state))
         if state:
-            self.watch_alarm_state = True
-            print("self.watch_alarm_state: {0}".format(self.watch_alarm_state))
-            try:
-                t = threading.Thread(target=self.watch_alarm)
-                t.setDaemon(True)
-                t.start()
-            except :
-                print("huj dupa i kamieni kupa")
-                raise
+            self.protect_state = True
+            print("self.watch_alarm_state: {0}".format(self.protect_state))
+            t = threading.Thread(target=self.watch_pir)
+            t.setDaemon(True)
+            t.start()
         else:
-            self.watch_alarm_state = False
-            self.home_protect_process.terminate()
+            self.protect_state = False
                 
     def on_message(self, ws, message):
         dataObj = json.loads(message)

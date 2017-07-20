@@ -1,24 +1,36 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import multiprocessing
 import time
 import platform
+import threading
 if platform.system() == 'Linux':
     from pymove import PyMove
     from distance import Distance
 
 
-class RaspieAutopilotProcess(multiprocessing.Process):
+class RaspieAutopilot():
 
     DIST_TOLERANCE = 4
     OBSTACLE_DISTANCE = 50
+    AUTOPILOT_ENABLED = False
+    ws = None
     def __init__(self, ):
-        multiprocessing.Process.__init__(self)
-        self.exit = multiprocessing.Event()
-        
+        pass
+
+    def toggle_autopilot(self, state):
+        print("toggle autopilot state: {0}".format(state))
+        if state:
+            self.AUTOPILOT_ENABLED = True
+            print("self.watch_alarm_state: {0}".format(self.AUTOPILOT_ENABLED))
+            t = threading.Thread(target=self.autopilot_thread)
+            t.setDaemon(True)
+            t.start()
+        else:
+            self.AUTOPILOT_ENABLED = False
+
     def detect_no_movement(self, now_distance, last_distance):
         sub = now_distance - last_distance
-        return sub <= self.DIST_TOLERANCE
+        return abs(sub) <= self.DIST_TOLERANCE
         
     def skip_obstacle(self):
         print "Skiping obstacle!"
@@ -49,8 +61,8 @@ class RaspieAutopilotProcess(multiprocessing.Process):
             print "Run!"
             PyMove().run_up_start()
             
-    def start(self):
-        while not self.exit.is_set():
+    def autopilot_thread(self):
+        while self.AUTOPILOT_ENABLED:
             if platform.system() == 'Linux':
                 self.search_free_road()
             else:
@@ -60,14 +72,60 @@ class RaspieAutopilotProcess(multiprocessing.Process):
 
     def terminate(self):
         print "Terminating autopilot..."
-        self.exit.set()
+        self.AUTOPILOT_ENABLED = False
+
+    def check_connection(self):
+        state = False
+        try:
+            urllib2.urlopen('http://cieniu.pl', timeout=1)
+            state = True
+        except urllib2.URLError as err: 
+            state = False
+        print("self.check_connection() state: {0} ".format(state))
+        return state
+
+    def on_message(self, ws, message):
+        dataObj = json.loads(message)
+        print("Received server message: {0}".format(dataObj))
+        if dataObj['event'] == 'autopilot':
+            self.toggle_autopilot(dataObj['data']['state'])
+        if dataObj['event'] == 'message':
+            print(dataObj['data']['message'])
+
+    def on_error(self, ws, error):
+        print("jakis err")
+        print(error)
+
+    def on_close(self, ws):
+        print("### connection closed ###")
+
+    def on_open(self, ws):
+        time.sleep(1)
+        print('Sending initial request to HalServer')
+        initMessage = json.dumps({"client": "autopilot","event": "init", "data": {'mesage': 'hello server!'}})
+        ws.send(initMessage)   
+
+    def connect(self):
+        print("Connecting to websocket...")
+        websocket.enableTrace(True)
+        self.ws = websocket.WebSocketApp(WEBSOCKET_HOST,
+                          on_message = self.on_message,
+                          on_error = self.on_error,
+                          on_close = self.on_close)
+        self.ws.on_open = self.on_open
+        self.ws.run_forever()
+
+    def start(self):
+        count = 0
+        while self.check_connection() == False:
+            count = count + 1
+            print("Not found connetion network! Reconnecting ({0})in 15 seconds...".format(count))
+            time.sleep(15)
+        
+        print('Internet connection enabled! Starting socket client...')
+        self.connect()
 
 
 if __name__ == "__main__":
-    process = RaspieAutopilotProcess()
-    process.start()
-    print "Waiting for a while"
-    time.sleep(3)
-    process.terminate()
-    time.sleep(3)
-    print "Child process state: %d" % process.is_alive()
+    autopilot = RaspieAutopilot()
+    autopilot.start()

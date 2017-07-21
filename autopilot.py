@@ -66,6 +66,7 @@ class RaspieAutopilot():
         else:
             print "Run!"
             PyMove().run_up_start()
+            last_distance = int(cm)
             
     def autopilot_thread(self):
         while self.AUTOPILOT_ENABLED:

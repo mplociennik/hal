@@ -4,6 +4,7 @@ import time
 import platform
 import urllib2
 import threading
+import websocket
 if platform.system() == 'Linux':
     from pymove import PyMove
     from distance import Distance

@@ -76,6 +76,12 @@
     ws.send(JSON.stringify(requestData));
   };
 
+  var autopilot = function(state){
+    console.log('Autopilot state: ', state);
+    var requestData = {client: 'halClient', event: 'autopilot', date: Date.now(), data:{state: state}};
+    ws.send(JSON.stringify(requestData));
+  };
+
   var lastMove = null;
   document.onkeydown = function(e) {
     switch (e.keyCode) {
@@ -125,7 +131,12 @@
           <button class="btn btn-primary control-arrow arrow-down" onmousedown="move('down', true)" onmouseup="move('down', false)"><span class="glyphicon glyphicon-arrow-down"></span></button>
         </div>
         <div class="row">
-          <button class="btn btn-primary control-arrow arrow-up" onmousedown="protectHome(true)" onmouseup="protectHome(false)">protect home</button>
+          <button class="btn btn-primary" onmousedown="protectHome(true)">protect home on</button>
+          <button class="btn btn-primary" onmousedown="protectHome(false)">protect home off</button>
+        </div>        
+        <div class="row">
+          <button class="btn btn-primary control-arrow arrow-up" onmousedown="autopilot(true)">autopilot on</button>
+          <button class="btn btn-primary control-arrow arrow-up" onmousedown="autopilot(false)">autopilot off</button>
         </div>
       </div>
     </div>

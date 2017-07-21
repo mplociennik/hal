@@ -68,6 +68,7 @@ class RaspieAutopilot():
             
     def autopilot_thread(self):
         while self.AUTOPILOT_ENABLED:
+            print("autopilot driving...")
             if platform.system() == 'Linux':
                 self.search_free_road()
             else:

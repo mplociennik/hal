@@ -35,6 +35,7 @@ class RaspieAutopilot():
 
     def detect_no_movement(self, now_distance, last_distance):
         sub = now_distance - last_distance
+        print("abs(sub): {0}".format(abs(sub)))
         return abs(sub) <= self.DIST_TOLERANCE
         
     def skip_obstacle(self):

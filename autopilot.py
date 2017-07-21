@@ -9,6 +9,8 @@ if platform.system() == 'Linux':
     from pymove import PyMove
     from distance import Distance
 
+WEBSOCKET_HOST = 'ws://192.168.1.151:8083/'
+
 
 class RaspieAutopilot():
 

@@ -3,6 +3,7 @@
 import multiprocessing
 import time
 import platform
+import urllib2
 if platform.system() == 'Linux':
     from pymove import PyMove
     from distance import Distance

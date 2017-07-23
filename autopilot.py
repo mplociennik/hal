@@ -101,11 +101,15 @@ class RaspieAutopilot():
             print(dataObj['data']['message'])
 
     def on_error(self, ws, error):
-        print("jakis err")
+        print("Connection error! Reconectiong after 3 seconds")
+        time.sleep(3)
+        self.start()
         print(error)
 
     def on_close(self, ws):
-        print("### connection closed ###")
+        print("connection closed! Reconnection after 3 seconds...")
+        time.sleep(3)
+        self.start()
 
     def on_open(self, ws):
         time.sleep(1)

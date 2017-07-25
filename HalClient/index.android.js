@@ -15,7 +15,7 @@ export default class HalClient extends Component {
 
   constructor(props){
     super(props);
-    this.state = {moveDirection: null, moveState: null, socketResponse: null, protectHomeState: false};
+    this.state = {moveDirection: null, moveState: null, socketResponse: null, protectHomeState: false, autopilotState: false};
     this.socketStream = null;
   }
 
@@ -30,10 +30,8 @@ export default class HalClient extends Component {
     console.log(this.socketStream);
 
     this.socketStream.onmessage = (request)=>{
-      console.log(request)
-      console.log('requestData1: ',request.data);
+      console.log('Received message request: ', request);
       var requestData = JSON.parse(request.data);
-      console.log('requestData2: ',requestData);
       switch(requestData.event){
         case 'message':
           self.setState({socketResponse: requestData.data.message});
@@ -43,7 +41,10 @@ export default class HalClient extends Component {
           break;
         case 'protectHome':
           self.setState({socketResponse: requestData.data.message});
-          break;        
+          break;     
+        case 'autopilot':
+          self.setState({socketResponse: requestData.data.message});
+          break;   
         case 'protectHomeAlarm':
           this._protectHomeAlarm(requestData.data.message);
           break;
@@ -76,10 +77,18 @@ export default class HalClient extends Component {
   }
 
   _protectHome(state){
-    console.log('ProtectHome state: ', state);
+    console.log('Sending ProtectHome state: ', state);
     const requestData = {client: 'halClient', event: 'protectHome', date: Date.now(), data:{state: state}};
     this.socketStream.send(JSON.stringify(requestData));
     this.setState({protectHomeState: state});
+  }
+  
+  
+  _autopilot(state){
+    console.log('Sending Autopilot state: ', state);
+    const requestData = {client: 'halClient', event: 'autopilot', date: Date.now(), data:{state: state}};
+    this.socketStream.send(JSON.stringify(requestData));
+    this.setState({autopilotState: state});
   }
 
   _protectHomeAlarm(message){
@@ -98,64 +107,74 @@ export default class HalClient extends Component {
   render() {
     return (
       <View style={styles.container}>
-      <View style={{flex: .05, backgroundColor: '#4f4f4f', paddingTop: 10,}}>
-      <Text style={{color: '#fff', marginTop:10, marginLeft:5}}>Hal Client</Text>
-      </View>
-      <View style={{flex: .25}}>
-      <View style={{flexDirection:'row'}}>
-      <View>
-      <Text>Home Protection: </Text>
-      </View>
-      <View>
-      <Switch onValueChange={(value)=>{this._protectHome(value);}} value = {this.state.protectHomeState}/>
-      </View>
-      </View>
-      <Text>
-      SocketResponse: { this.state.socketResponse }
-      </Text>
-      <Text>Move direction: {this.state.moveDirection}, Move state: {String(this.state.moveState)}</Text>
-      <Button onPress={()=>this._connectSocket()} title="Connect socket"/>
-      </View>
-      <View style={{flex:.5,flexDirection:'column', justifyContent: 'center', alignItems: 'center',}}>
-      <View style={{flexDirection:'row'}}>
-      <TouchableWithoutFeedback 
-      onPressIn={()=>this._move('up', true)} onPressOut={()=>this._move('up', false)}>
-      <View style={styles.button}>
-      <Text>
-      UP
-      </Text>
-      </View>
-      </TouchableWithoutFeedback>
-      </View>
-      <View style={{flexDirection:'row'}}>
-      <TouchableWithoutFeedback 
-      onPressIn={()=>this._move('left', true)} onPressOut={()=>this._move('left', false)}>
-      <View style={styles.buttonLeft}>
-      <Text>
-      LEFT
-      </Text>
-      </View>
-      </TouchableWithoutFeedback>      
-      <TouchableWithoutFeedback 
-      onPressIn={()=>this._move('right', true)} onPressOut={()=>this._move('right', false)}>
-      <View style={styles.buttonRight}>
-      <Text>
-      RIGHT
-      </Text>
-      </View>
-      </TouchableWithoutFeedback>
-      </View>
-      <View style={{flexDirection:'row'}}>
-      <TouchableWithoutFeedback 
-      onPressIn={()=>this._move('down', true)} onPressOut={()=>this._move('down', false)}>
-      <View style={styles.button}>
-      <Text>
-      DOWN
-      </Text>
-      </View>
-      </TouchableWithoutFeedback>  
-      </View>
-      </View>
+        <View style={styles.header}>
+          <Text style={styles.headerText}>Hal Client</Text>
+        </View>
+        <View style={{flex: .25, marginTop:20}}>
+          <View style={{flexDirection:'row'}}>
+            <View>
+              <Text>Home Protection: </Text>
+            </View>
+            <View>
+              <Switch onValueChange={(value)=>{this._protectHome(value);}} value = {this.state.protectHomeState}/>
+            </View>
+            <View>
+              <Text>Autopilot: </Text>
+            </View>
+            <View>
+              <Switch onValueChange={(value)=>{this._autopilot(value);}} value = {this.state.autopilotState}/>
+            </View>
+          </View>
+          <View style={{flexDirection:'row'}}>
+            <Text>
+            SocketResponse: { this.state.socketResponse }
+            </Text>
+          </View>
+          <View style={{flexDirection:'column'}}>
+            <Text>Move direction: {this.state.moveDirection}, Move state: {String(this.state.moveState)}</Text>
+            <Button onPress={()=>this._connectSocket()} title="Connect socket"/>
+          </View>
+        </View>
+        <View style={{flex:.5,flexDirection:'column', justifyContent: 'center', alignItems: 'center',}}>
+        <View style={{flexDirection:'row'}}>
+        <TouchableWithoutFeedback 
+        onPressIn={()=>this._move('up', true)} onPressOut={()=>this._move('up', false)}>
+        <View style={styles.button}>
+        <Text>
+        UP
+        </Text>
+        </View>
+        </TouchableWithoutFeedback>
+        </View>
+        <View style={{flexDirection:'row'}}>
+        <TouchableWithoutFeedback 
+        onPressIn={()=>this._move('left', true)} onPressOut={()=>this._move('left', false)}>
+        <View style={styles.buttonLeft}>
+        <Text>
+        LEFT
+        </Text>
+        </View>
+        </TouchableWithoutFeedback>      
+        <TouchableWithoutFeedback 
+        onPressIn={()=>this._move('right', true)} onPressOut={()=>this._move('right', false)}>
+        <View style={styles.buttonRight}>
+        <Text>
+        RIGHT
+        </Text>
+        </View>
+        </TouchableWithoutFeedback>
+        </View>
+        <View style={{flexDirection:'row'}}>
+        <TouchableWithoutFeedback 
+        onPressIn={()=>this._move('down', true)} onPressOut={()=>this._move('down', false)}>
+        <View style={styles.button}>
+        <Text>
+        DOWN
+        </Text>
+        </View>
+        </TouchableWithoutFeedback>  
+        </View>
+        </View>
       </View>
       );
 }
@@ -166,8 +185,19 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingTop: 10,
     backgroundColor: '#ecf0f1',
+  },
+  header:{
+    flex: .08, 
+    backgroundColor: '#4f4f4f', 
+    paddingTop: 15,
+    alignSelf: 'stretch',
+    textAlign: 'center'
+  },
+  headerText:{
+    color: '#fff', 
+    marginTop:20, 
+    alignSelf: 'center'
   },
   paragraph: {
     margin: 24,

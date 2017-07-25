@@ -101,14 +101,14 @@ class RaspieAutopilot():
             print(dataObj['data']['message'])
 
     def on_error(self, ws, error):
-        print("Connection error! Reconectiong after 3 seconds")
-        time.sleep(3)
-        self.start()
+        print("Socket connection error. Reconnecting after 5 seconds...")
         print(error)
+        time.sleep(5)
+        self.start()
 
     def on_close(self, ws):
-        print("connection closed! Reconnection after 3 seconds...")
-        time.sleep(3)
+        print("Socket connection closed. Reconnecting after 5 seconds...")
+        time.sleep(5)
         self.start()
 
     def on_open(self, ws):

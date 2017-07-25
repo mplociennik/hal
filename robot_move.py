@@ -56,10 +56,15 @@ class RobotMove():
             print(dataObj['data']['message'])
 
     def on_error(self, ws, error):
+        print("Socket connection error. Reconnecting after 5 seconds...")
         print(error)
+        time.sleep(5)
+        self.start()
 
     def on_close(self, ws):
-        print("### connection closed ###")
+        print("Socket connection closed. Reconnecting after 5 seconds...")
+        time.sleep(5)
+        self.start()
 
     def on_open(self, ws):
         print('Sending initial request to HalServer')

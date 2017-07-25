@@ -2,10 +2,15 @@
 # -*- coding: utf-8 -*-
 import time
 import platform
+import urllib2
 import threading
+import json
+import websocket
 if platform.system() == 'Linux':
     from pymove import PyMove
     from distance import Distance
+
+WEBSOCKET_HOST = 'ws://192.168.1.151:8083/'
 
 
 class RaspieAutopilot():
@@ -30,6 +35,7 @@ class RaspieAutopilot():
 
     def detect_no_movement(self, now_distance, last_distance):
         sub = now_distance - last_distance
+        print("abs(sub): {0}".format(abs(sub)))
         return abs(sub) <= self.DIST_TOLERANCE
         
     def skip_obstacle(self):
@@ -60,9 +66,11 @@ class RaspieAutopilot():
         else:
             print "Run!"
             PyMove().run_up_start()
+            last_distance = int(cm)
             
     def autopilot_thread(self):
         while self.AUTOPILOT_ENABLED:
+            print("autopilot driving...")
             if platform.system() == 'Linux':
                 self.search_free_road()
             else:

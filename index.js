@@ -40,6 +40,12 @@ wss.protectHome = function(ws, state){
   wss.broadcastByClientName('protectHome', dataJson);
 }
 
+wss.autopilot = function(ws, state){
+  console.log("Autopilot request state: ", state);
+  dataJson = JSON.stringify({event:'autopilot', data:{state: state}});
+  wss.broadcastByClientName('autopilot', dataJson);
+}
+
 wss.serveHalClient = function(ws, dataObj){
   if (typeof dataObj.event !== 'undefined') {
       switch(dataObj.event){
@@ -58,11 +64,31 @@ wss.serveHalClient = function(ws, dataObj){
             break;
         case 'protectHome':
             wss.protectHome(ws, dataObj.data.state);
+            break;        
+        case 'autopilot':
+            wss.autopilot(ws, dataObj.data.state);
             break;
       }    
   }else{
     console.log('Event is undefined: ', dataObj);
   }
+};
+
+wss.serveAutopilot = function(ws, dataObj){
+  if (typeof dataObj.event !== 'undefined') {
+    switch(dataObj.event){
+      case 'init':
+        ws.client = dataObj.client;
+        dataJson = JSON.stringify({event:'message', data:{message: 'Init ready!'}});
+        ws.send(dataJson);
+        break;
+      case 'message':
+        console.log('Message from "' + dataObj.client + '": ' + dataObj.data.message);
+        break;
+    }    
+  }else{
+    console.log('Event is undefined: ', dataObj);
+  }          
 };
 
 wss.serveProtectHome = function(ws, dataObj){
@@ -130,10 +156,13 @@ wss.on('connection', function connection(ws) {
           break;        
         case 'protectHome':
           wss.serveProtectHome(ws, dataObj);
-          break;        
+          break;   
         case 'robotMove':
           wss.serveRobotMove(ws, dataObj);
           break;
+        case 'autopilot':
+          wss.serveAutopilot(ws, dataObj);
+          break;        
       }
     } else {
       console.log('Undefined client!');

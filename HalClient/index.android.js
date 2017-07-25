@@ -188,11 +188,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#ecf0f1',
   },
   header:{
-    flex: .08, 
+    flex: 0.08, 
     backgroundColor: '#4f4f4f', 
     paddingTop: 15,
     alignSelf: 'stretch',
-    textAlign: 'center'
+    alignItems: 'center'
   },
   headerText:{
     color: '#fff', 

@@ -54,7 +54,7 @@ export default class HalClient extends Component {
     this.socketStream.onclose = (e)=>{
       console.log('Socket connection closed.', e);
       console.log(e.code, e.reason);
-      self.setState({socketResponse: 'Socket connection closed.', protectHomeState: false});
+      self.setState({socketResponse: 'Socket connection closed.', protectHomeState: false, autopilotState: false});
 
     };
 

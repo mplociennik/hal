@@ -105,7 +105,7 @@ class HomeProtect():
     def on_open(self, ws):
         time.sleep(1)
         print('Sending initial request to HalServer')
-        initMessage = json.dumps({"client": "protectHome","event": "init", "data": {'mesage': 'hello server!'}})
+        initMessage = json.dumps({"client": "protectHome","event": "init", "data": {'message': 'hello server!'}})
         ws.send(initMessage)
 
     def check_connection(self):

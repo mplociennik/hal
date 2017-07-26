@@ -31,7 +31,6 @@ wss.broadcast = function broadcast(data) {
 // Broadcast by client type.
 wss.broadcastByClientName = function broadcast(clientName, data) {
   wss.clients.forEach(function each(client) {
-    console.log('Client client: ',client.client);
     if (client.client === clientName && client.readyState === WebSocket.OPEN) {
       client.send(data);
     }
@@ -60,22 +59,14 @@ wss.serveHalClient = function(ws, dataObj){
   if (typeof dataObj.event !== 'undefined') {
       switch(dataObj.event){
         case 'init':
-          if (wss.getClientByType('halClient') === null) {
-            ws.client = dataObj.client;
-            dataJson = JSON.stringify({event:'message', data:{message: 'Init ready!'}});
-            ws.send(dataJson);
-          }else{
-            dataJson = JSON.stringify({event:'message', data:{message: 'Client is already connected!'}});
-            ws.send(dataJson);
-            ws.terminate();
-          }
+          ws.client = dataObj.client;
+          dataJson = JSON.stringify({event:'message', data:{message: 'Init ready!'}});
+          ws.send(dataJson);
           break;
         case 'message':
           console.log('Message from "' + dataObj.client + '": ' + dataObj.data.message);
           break;
         case 'move':
-            console.log('dataObj.data.direction: ', dataObj.data.direction);
-            console.log('dataObj.data.state: ', dataObj.data.state);
             wss.move(ws, dataObj.data.direction, dataObj.data.state);
             break;
         case 'protectHome':

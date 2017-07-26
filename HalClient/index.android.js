@@ -15,7 +15,7 @@ export default class HalClient extends Component {
 
   constructor(props){
     super(props);
-    this.state = {moveDirection: null, moveState: null, socketResponse: null, protectHomeState: false, autopilotState: false};
+    this.state = {moveDirection: null, moveState: null, socketResponse: null, protectHomeState: false, autopilotState: false, socketConnected: false, messages: []};
     this.socketStream = null;
   }
 
@@ -24,13 +24,17 @@ export default class HalClient extends Component {
   }
 
   _connectSocket(){
-    console.log('Starting connection...');
+    this.renderMessage('Starting connection...');
     var self = this;
     this.socketStream = new WebSocket("ws://192.168.1.151:8083");
-    console.log(this.socketStream);
-
+    this.socketStream.onopen = (evt)=>{ 
+      self.setState({socketConnected: true});
+      this.renderMessage('Socket connection opened.')
+      const requestData = {client: 'halClient', event: 'init', date: Date.now(), data:{message: 'Hello Server!'}};
+      self.socketStream.send(JSON.stringify(requestData))
+    };
     this.socketStream.onmessage = (request)=>{
-      console.log('Received message request: ', request);
+      this.renderMessage('Received message request: ' + request);
       var requestData = JSON.parse(request.data);
       switch(requestData.event){
         case 'message':
@@ -52,17 +56,23 @@ export default class HalClient extends Component {
     };    
 
     this.socketStream.onclose = (e)=>{
-      console.log('Socket connection closed.', e);
-      console.log(e.code, e.reason);
-      self.setState({socketResponse: 'Socket connection closed.', protectHomeState: false, autopilotState: false});
+      this.renderMessage('Socket connection closed.');
+      self.setState({protectHomeState: false, autopilotState: false, socketConnected: false});
+      self._reconnectSocket();
 
     };
 
-    this.socketStream.onopen = (evt)=>{ 
-      self.setState({socketResponse: 'Socket connection opened.'});
-      const requestData = {client: 'halClient', event: 'init', date: Date.now(), data:{message: 'Hello Server!'}};
-      self.socketStream.send(JSON.stringify(requestData))
-    };
+  }
+
+  renderMessage(message){
+    this.setState({socketResponse: message, messages: [this.state.messages,message]} ); // socketResponse tymczasowo
+    console.log(message);
+    console.log(this.state.messages);
+  }
+
+  _reconnectSocket(){
+    this.renderMessage('Reconnecting...');
+    this._connectSocket();
   }
 
   _disconnectSocket(){
@@ -116,18 +126,18 @@ export default class HalClient extends Component {
               <Text>Home Protection: </Text>
             </View>
             <View>
-              <Switch onValueChange={(value)=>{this._protectHome(value);}} value = {this.state.protectHomeState}/>
+              <Switch onValueChange={(value)=>{this._protectHome(value);}} value = {this.state.protectHomeState} disabled={!this.state.socketConnected}/>
             </View>
             <View>
               <Text>Autopilot: </Text>
             </View>
             <View>
-              <Switch onValueChange={(value)=>{this._autopilot(value);}} value = {this.state.autopilotState}/>
+              <Switch onValueChange={(value)=>{this._autopilot(value);}} value = {this.state.autopilotState} disabled={!this.state.socketConnected}/>
             </View>
           </View>
           <View style={{flexDirection:'row'}}>
             <Text>
-            SocketResponse: { this.state.socketResponse }
+            Messages: { this.state.socketResponse }
             </Text>
           </View>
           <View style={{flexDirection:'column'}}>
@@ -138,7 +148,7 @@ export default class HalClient extends Component {
         <View style={{flex:.5,flexDirection:'column', justifyContent: 'center', alignItems: 'center',}}>
         <View style={{flexDirection:'row'}}>
         <TouchableWithoutFeedback 
-        onPressIn={()=>this._move('up', true)} onPressOut={()=>this._move('up', false)}>
+        onPressIn={()=>this._move('up', true)} onPressOut={()=>this._move('up', false)} disabled={!this.state.socketConnected}>
         <View style={styles.button}>
         <Text>
         UP
@@ -148,15 +158,15 @@ export default class HalClient extends Component {
         </View>
         <View style={{flexDirection:'row'}}>
         <TouchableWithoutFeedback 
-        onPressIn={()=>this._move('left', true)} onPressOut={()=>this._move('left', false)}>
-        <View style={styles.buttonLeft}>
-        <Text>
-        LEFT
-        </Text>
-        </View>
+        onPressIn={()=>this._move('left', true)} onPressOut={()=>this._move('left', false)} disabled={!this.state.socketConnected}>
+          <View style={styles.buttonLeft}>
+            <Text>
+              LEFT
+            </Text>
+          </View>
         </TouchableWithoutFeedback>      
         <TouchableWithoutFeedback 
-        onPressIn={()=>this._move('right', true)} onPressOut={()=>this._move('right', false)}>
+        onPressIn={()=>this._move('right', true)} onPressOut={()=>this._move('right', false)} disabled={!this.state.socketConnected}>
         <View style={styles.buttonRight}>
         <Text>
         RIGHT
@@ -166,7 +176,7 @@ export default class HalClient extends Component {
         </View>
         <View style={{flexDirection:'row'}}>
         <TouchableWithoutFeedback 
-        onPressIn={()=>this._move('down', true)} onPressOut={()=>this._move('down', false)}>
+        onPressIn={()=>this._move('down', true)} onPressOut={()=>this._move('down', false)} disabled={!this.state.socketConnected}>
         <View style={styles.button}>
         <Text>
         DOWN

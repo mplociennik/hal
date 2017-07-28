@@ -9,6 +9,16 @@ function heartbeat() {
   this.isAlive = true;
 }
 
+wss.getClientByType = function(clientType){
+  var client = null;
+  wss.clients.forEach(function each(item){
+    if (item.client === clientType) {
+      client = item;
+    }
+  });
+  return client;
+};
+
 // Broadcast to all.
 wss.broadcast = function broadcast(data) {
   wss.clients.forEach(function each(client) {
@@ -21,7 +31,6 @@ wss.broadcast = function broadcast(data) {
 // Broadcast by client type.
 wss.broadcastByClientName = function broadcast(clientName, data) {
   wss.clients.forEach(function each(client) {
-    console.log('Client client: ',client.client);
     if (client.client === clientName && client.readyState === WebSocket.OPEN) {
       client.send(data);
     }
@@ -58,8 +67,6 @@ wss.serveHalClient = function(ws, dataObj){
           console.log('Message from "' + dataObj.client + '": ' + dataObj.data.message);
           break;
         case 'move':
-            console.log('dataObj.data.direction: ', dataObj.data.direction);
-            console.log('dataObj.data.state: ', dataObj.data.state);
             wss.move(ws, dataObj.data.direction, dataObj.data.state);
             break;
         case 'protectHome':
@@ -106,6 +113,9 @@ wss.serveProtectHome = function(ws, dataObj){
         dataJson = JSON.stringify({event:'protectHomeAlarm', data:{message:dataObj.data.message}});
         wss.broadcastByClientName('halClient', dataJson);
         break;
+      default:
+        console.log('Event not found!');
+        break;
     }    
   }else{
     console.log('Event is undefined: ', dataObj);
@@ -132,13 +142,9 @@ wss.serveRobotMove = function(ws, dataObj){
 
 wss.on('connection', function connection(ws) {
   ws.isAlive = true;
-
   ws.on('pong', heartbeat);
-
   ws.on('open', function open() {
     ws.uid = md5sum.digest('hex');
-    console.log('Connected client: ', ws);
-    console.log('socket uid: ', ws.uid);
     dataJson = JSON.stringify({event:'message', data: { message: 'You are connected to server!' }});
     if (ws.readyState === WebSocket.OPEN) {
       ws.send(dataJson);
@@ -170,8 +176,7 @@ wss.on('connection', function connection(ws) {
     return true;
   });
 
-  ws.on('close', function close(ws) {
-    console.log('ws: ', ws);
+  ws.on('close', function close() {
     console.log('Client disconected: ', ws.client);
   });
 

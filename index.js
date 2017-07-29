@@ -30,11 +30,16 @@ wss.broadcast = function broadcast(data) {
 
 // Broadcast by client type.
 wss.broadcastByClientName = function broadcast(clientName, data) {
+  state = false;
   wss.clients.forEach(function each(client) {
+    console.log('client.client : ', client.client)
     if (client.client === clientName && client.readyState === WebSocket.OPEN) {
+      state = true;
       client.send(data);
     }
   });
+  console.log('broadcastByClientName state is: ', state);
+  return state;
 };
 
 wss.move = function(ws, direction, state){
@@ -194,6 +199,9 @@ wss.on('connection', function connection(ws) {
           break;
         case 'autopilot':
           wss.serveAutopilot(ws, dataObj);
+          break;             
+        case 'robotCamera':
+          wss.serveRobotCamera(ws, dataObj);
           break;        
       }
     } else {

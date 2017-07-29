@@ -114,6 +114,12 @@ export default class HalClient extends Component {
       )
   }
 
+  _getCameraImage = function(){
+    console.log('Sending camera image request...');
+    var requestData = {client: 'halClient', event: 'getRobotCameraImage', date: Date.now(), data:{}};
+    this.socketStream.send(JSON.stringify(requestData));
+  }
+
   render() {
     return (
       <View style={styles.container}>
@@ -142,7 +148,7 @@ export default class HalClient extends Component {
           </View>
           <View style={{flexDirection:'column'}}>
             <Text>Move direction: {this.state.moveDirection}, Move state: {String(this.state.moveState)}</Text>
-            <Button onPress={()=>this._connectSocket()} title="Connect socket"/>
+            <Button onPress={()=>this._getCameraImage()} title="Get camera image"/>
           </View>
         </View>
         <View style={{flex:.5,flexDirection:'column', justifyContent: 'center', alignItems: 'center',}}>

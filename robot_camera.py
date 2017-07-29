@@ -19,7 +19,7 @@ class RobotCamera():
 
     def get_photo(self):
         photo_name_path = 'camera/camera{0}.jpg'.format(datetime.datetime.now().strftime("%Y-%m-%d-%H:%M:%S"))
-        self.camera.capture(file_name_path)
+        self.camera.capture(photo_name_path)
         time.sleep(0.1)
         photo_object = open(photo_name_path, "r")
         os.remove(photo_name_path)

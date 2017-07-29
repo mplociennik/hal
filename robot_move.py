@@ -11,7 +11,7 @@ if platform.system() == 'Linux':
 WEBSOCKET_HOST = 'ws://192.168.1.151:8083/'
 
 class RobotMove():
-    ''' not working websocket connection after alarm '''
+
     def __init__(self):
         pass
 

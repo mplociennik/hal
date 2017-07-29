@@ -84,7 +84,7 @@
 
   var getCameraImage = function(){
     console.log('Sending camera image request...');
-    var requestData = {client: 'halClient', event: 'robotCamera', date: Date.now(), data:{}};
+    var requestData = {client: 'halClient', event: 'getRobotCameraImage', date: Date.now(), data:{}};
     ws.send(JSON.stringify(requestData));
   }
 

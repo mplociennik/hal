@@ -55,7 +55,6 @@ export default class HalClient extends Component {
           break;
         case 'photo':
           console.log(requestData);
-          console.log('requestData.data: ',requestData.data);
           break;
       }
     };    

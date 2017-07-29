@@ -223,5 +223,5 @@ wss.on('connection', function connection(ws) {
       ws.isAlive = false;
       ws.ping('', false, true);
     });
-  }, 90000000000000000);
+  }, 30000);
 });

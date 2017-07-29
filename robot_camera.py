@@ -34,7 +34,7 @@ class RobotCamera():
         if dataObj['event'] == 'photo':
             photo_object = self.get_photo()
             photo_content = base64.b64encode(photo_object.read())
-            responseJson = json.dumps({"client": "robotCamera","event": "photo", "data": {'photo_data': photo_content}})
+            responseJson = json.dumps({"client": "robotCamera","event": "photo", "data": {'photo_data': photo_content, 'message': 'Streaming photo...'}})
             ws.send(responseJson)
         if dataObj['event'] == 'message':
             print(dataObj['data']['message'])

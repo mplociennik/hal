@@ -8,7 +8,8 @@ import {
   Button,
   Switch,
   Vibration,
-  Alert
+  Alert,
+  Image
 } from 'react-native';
 
 export default class HalClient extends Component {
@@ -51,6 +52,10 @@ export default class HalClient extends Component {
           break;   
         case 'protectHomeAlarm':
           this._protectHomeAlarm(requestData.data.message);
+          break;
+        case 'photo':
+          console.log(requestData);
+          console.log('requestData.data: ',requestData.data);
           break;
       }
     };    

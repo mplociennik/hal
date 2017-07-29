@@ -82,6 +82,12 @@
     ws.send(JSON.stringify(requestData));
   };
 
+  var getCameraImage = function(){
+    console.log('Sending camera image request...');
+    var requestData = {client: 'halClient', event: 'robotCamera', date: Date.now(), data:{}};
+    ws.send(JSON.stringify(requestData));
+  }
+
   var lastMove = null;
   document.onkeydown = function(e) {
     switch (e.keyCode) {
@@ -137,6 +143,9 @@
         <div class="row">
           <button class="btn btn-primary control-arrow arrow-up" onmousedown="autopilot(true)">autopilot on</button>
           <button class="btn btn-primary control-arrow arrow-up" onmousedown="autopilot(false)">autopilot off</button>
+        </div>        
+        <div class="row">
+          <button class="btn btn-primary control-arrow arrow-up" onclick="getCameraImage()">Get image</button>
         </div>
       </div>
     </div>

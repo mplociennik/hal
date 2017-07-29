@@ -55,6 +55,11 @@ wss.autopilot = function(ws, state){
   wss.broadcastByClientName('autopilot', dataJson);
 }
 
+wss.getRobotCameraImage = function(ws){
+  dataJson = JSON.stringify({event:'photo', data:{}});
+  wss.broadcastByClientName('robotCamera', dataJson);
+}
+
 wss.serveHalClient = function(ws, dataObj){
   if (typeof dataObj.event !== 'undefined') {
       switch(dataObj.event){
@@ -74,6 +79,9 @@ wss.serveHalClient = function(ws, dataObj){
             break;        
         case 'autopilot':
             wss.autopilot(ws, dataObj.data.state);
+            break;        
+        case 'getRobotCameraImage':
+            wss.getRobotCameraImage(ws);
             break;
       }    
   }else{
@@ -130,6 +138,24 @@ wss.serveRobotMove = function(ws, dataObj){
         dataJson = JSON.stringify({event:'message', data:{message: 'Init ready!'}});
         ws.send(dataJson);
         console.log('RobotMove initialized!');
+        break;
+      case 'message':
+        console.log('Message from "' + dataObj.client + '": ' + dataObj.data.message);
+        break;
+    }    
+  }else{
+    console.log('Event is undefined: ', dataObj);
+  } 
+};
+
+wss.serveRobotCamera = function(ws, dataObj){
+  if (typeof dataObj.event !== 'undefined') {
+    switch(dataObj.event){
+      case 'init':
+        ws.client = dataObj.client;
+        dataJson = JSON.stringify({event:'message', data:{message: 'Init ready!'}});
+        ws.send(dataJson);
+        console.log('RobotCamera initialized!');
         break;
       case 'message':
         console.log('Message from "' + dataObj.client + '": ' + dataObj.data.message);

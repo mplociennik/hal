@@ -17,8 +17,7 @@ class RobotCamera():
         # camera.resolution = (2592, 1944)
 
     def get_photo(self):
-        self.camera.capture('camera/camera.jpg')
-        print('dupa********************************ssssssssss**************')
+        self.camera.capture('camera/camera{0}.jpg'.format(datetime.datetime.now().strftime("%Y-%m-%d-%H:%M:%S")))
 
     def on_message(self, ws, message):
         print('json message: ', message)

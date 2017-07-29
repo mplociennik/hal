@@ -162,6 +162,8 @@ wss.serveRobotCamera = function(ws, dataObj){
         ws.send(dataJson);
         console.log('RobotCamera initialized!');
         break;
+      case 'photo':
+        dataJson = JSON.stringify({event:'photo', data: { message: 'New photo created!', photo_data: dataObj.data.photo_data }});
       case 'message':
         console.log('Message from "' + dataObj.client + '": ' + dataObj.data.message);
         break;
@@ -212,6 +214,7 @@ wss.on('connection', function connection(ws) {
 
   ws.on('close', function close() {
     console.log('Client disconected: ', ws.client);
+    console.log('**********************************************')
   });
 
   const interval = setInterval(function ping() {

@@ -18,15 +18,20 @@ class RobotCamera():
         # camera.resolution = (2592, 1944)
 
     def get_photo(self):
-        self.camera.capture('camera/camera{0}.jpg'.format(datetime.datetime.now().strftime("%Y-%m-%d-%H:%M:%S")))
+        photo_name_path = 'camera/camera{0}.jpg'.format(datetime.datetime.now().strftime("%Y-%m-%d-%H:%M:%S"))
+        self.camera.capture(file_name_path)
+        time.sleep(0.1)
+        photo_object = open(photo_name_path, "r")
+        os.remove(photo_name_path)
+        return photo_object
 
     def on_message(self, ws, message):
         print('json message: ', message)
         dataObj = json.loads(message)
         print("Received message: {0}".format(dataObj))
         if dataObj['event'] == 'photo':
-            photo = self.get_photo()
-            responseJson = json.dumps({"client": "robotCamera","event": "init", "data": {'mesage': 'hello server!'}})
+            photo_object = self.get_photo()
+            responseJson = json.dumps({"client": "robotCamera","event": "photo", "data": {'photo_data': photo_object}})
             ws.send(responseJson)
         if dataObj['event'] == 'message':
             print(dataObj['data']['message'])

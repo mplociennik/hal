@@ -32,13 +32,11 @@ wss.broadcast = function broadcast(data) {
 wss.broadcastByClientName = function broadcast(clientName, data) {
   state = false;
   wss.clients.forEach(function each(client) {
-    console.log('client.client : ', client.client)
     if (client.client === clientName && client.readyState === WebSocket.OPEN) {
       state = true;
       client.send(data);
     }
   });
-  console.log('broadcastByClientName state is: ', state);
   return state;
 };
 
@@ -164,6 +162,7 @@ wss.serveRobotCamera = function(ws, dataObj){
         break;
       case 'photo':
         dataJson = JSON.stringify({event:'photo', data: { message: 'New photo created!', photo_data: dataObj.data.photo_data }});
+        wss.broadcastByClientName('halClient', dataJson);
       case 'message':
         console.log('Message from "' + dataObj.client + '": ' + dataObj.data.message);
         break;

@@ -16,7 +16,7 @@ export default class HalClient extends Component {
 
   constructor(props){
     super(props);
-    this.state = {moveDirection: null, moveState: null, socketResponse: null, protectHomeState: false, autopilotState: false, socketConnected: false, messages: []};
+    this.state = {moveDirection: null, moveState: null, socketResponse: null, protectHomeState: false, autopilotState: false, socketConnected: false, messages: [], receivedImage: null};
     this.socketStream = null;
   }
 
@@ -54,7 +54,8 @@ export default class HalClient extends Component {
           this._protectHomeAlarm(requestData.data.message);
           break;
         case 'photo':
-          console.log(requestData);
+          console.log(requestData.data.photo_data);
+          this.setState({receivedImage: requestData.data.photo_data})
           break;
       }
     };    
@@ -124,6 +125,16 @@ export default class HalClient extends Component {
     this.socketStream.send(JSON.stringify(requestData));
   }
 
+  renderCameraImage(){
+    console.log('rendering image:');
+    console.log(this.state.receivedImage);
+    if(this.state.receivedImage !== null){
+      return(<Image source={{uri: `data:image/gif;base64,${this.state.receivedImage}`}} />)
+    }else{
+      return null;
+    }
+  }
+
   render() {
     return (
       <View style={styles.container}>
@@ -149,6 +160,9 @@ export default class HalClient extends Component {
             <Text>
             Messages: { this.state.socketResponse }
             </Text>
+          </View>          
+          <View style={{flexDirection:'row'}}>
+            {this.renderCameraImage()}
           </View>
           <View style={{flexDirection:'column'}}>
             <Text>Move direction: {this.state.moveDirection}, Move state: {String(this.state.moveState)}</Text>

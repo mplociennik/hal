@@ -32,6 +32,7 @@ class RobotCamera():
         dataObj = json.loads(message)
         print("Received message: {0}".format(dataObj))
         if dataObj['event'] == 'photo':
+            # its not working must implement stream function
             photo_object = self.get_photo()
             photo_content = base64.b64encode(photo_object.read())
             responseJson = json.dumps({"client": "robotCamera","event": "photo", "data": {'photo_data': photo_content, 'message': 'Streaming photo...'}})

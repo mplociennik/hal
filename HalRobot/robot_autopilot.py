@@ -2,23 +2,19 @@
 # -*- coding: utf-8 -*-
 import time
 import platform
-import urllib2
 import threading
 import json
-import websocket
+from robot_websocket_client import RobotWebsocketClient
 if platform.system() == 'Linux':
     from pymove import PyMove
     from distance import Distance
 
-WEBSOCKET_HOST = 'ws://192.168.1.151:8083/'
 
-
-class RaspieAutopilot():
+class RobotAutopilot(RobotWebsocketClient):
 
     DIST_TOLERANCE = 4
     OBSTACLE_DISTANCE = 50
     AUTOPILOT_ENABLED = False
-    ws = None
     def __init__(self, ):
         pass
 
@@ -82,16 +78,6 @@ class RaspieAutopilot():
         print "Terminating autopilot..."
         self.AUTOPILOT_ENABLED = False
 
-    def check_connection(self):
-        state = False
-        try:
-            urllib2.urlopen('http://cieniu.pl', timeout=1)
-            state = True
-        except urllib2.URLError as err: 
-            state = False
-        print("self.check_connection() state: {0} ".format(state))
-        return state
-
     def on_message(self, ws, message):
         dataObj = json.loads(message)
         print("Received server message: {0}".format(dataObj))
@@ -100,32 +86,11 @@ class RaspieAutopilot():
         if dataObj['event'] == 'message':
             print(dataObj['data']['message'])
 
-    def on_error(self, ws, error):
-        print("Socket connection error. Reconnecting after 5 seconds...")
-        print(error)
-        time.sleep(5)
-        self.start()
-
-    def on_close(self, ws):
-        print("Socket connection closed. Reconnecting after 5 seconds...")
-        time.sleep(5)
-        self.start()
-
     def on_open(self, ws):
         time.sleep(1)
         print('Sending initial request to HalServer')
-        initMessage = json.dumps({"client": "autopilot","event": "init", "data": {'mesage': 'hello server!'}})
-        ws.send(initMessage)   
-
-    def connect(self):
-        print("Connecting to websocket...")
-        websocket.enableTrace(True)
-        self.ws = websocket.WebSocketApp(WEBSOCKET_HOST,
-                          on_message = self.on_message,
-                          on_error = self.on_error,
-                          on_close = self.on_close)
-        self.ws.on_open = self.on_open
-        self.ws.run_forever()
+        initMessage = json.dumps({"client": "autopilot","event": "init", "data": {'message': 'hello server!'}})
+        ws.send(initMessage)
 
     def start(self):
         count = 0
@@ -137,7 +102,7 @@ class RaspieAutopilot():
         print('Internet connection enabled! Starting socket client...')
         self.connect()
 
-
+        
 if __name__ == "__main__":
-    autopilot = RaspieAutopilot()
+    autopilot = RobotAutopilot()
     autopilot.start()

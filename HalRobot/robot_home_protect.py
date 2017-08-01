@@ -3,9 +3,8 @@
 import time
 import platform
 import json
-import urllib2
-import websocket
 import threading
+from robot_websocket_client import 
 
 
 if platform.system() == 'Linux':
@@ -16,11 +15,8 @@ if platform.system() == 'Linux':
     from speech import Speech
     from distance import Distance
 
-WEBSOCKET_HOST = 'ws://192.168.1.151:8083/'
 
-
-class HomeProtect():
-    ws = None
+class RobotHomeProtect(RobotWebsocketClient):
     DIST_TOLERANCE = 10
     alarm_state = False
     def __init__(self):
@@ -91,42 +87,11 @@ class HomeProtect():
         if dataObj['event'] == 'message':
             print(dataObj['data']['message'])
 
-    def on_error(self, ws, error):
-        print("Socket connection error. Reconnecting after 5 seconds...")
-        print(error)
-        time.sleep(5)
-        self.start()
-
-    def on_close(self, ws):
-        print("Socket connection closed. Reconnecting after 5 seconds...")
-        time.sleep(5)
-        self.start()
-
     def on_open(self, ws):
         time.sleep(1)
         print('Sending initial request to HalServer')
         initMessage = json.dumps({"client": "protectHome","event": "init", "data": {'message': 'hello server!'}})
         ws.send(initMessage)
-
-    def check_connection(self):
-        state = False
-        try:
-            urllib2.urlopen('http://cieniu.pl', timeout=1)
-            state = True
-        except urllib2.URLError as err: 
-            state = False
-        print("self.check_connection() state: {0} ".format(state))
-        return state
-        
-    def connect(self):
-        print("Connectiong to websocket...")
-        websocket.enableTrace(True)
-        self.ws = websocket.WebSocketApp(WEBSOCKET_HOST,
-                          on_message = self.on_message,
-                          on_error = self.on_error,
-                          on_close = self.on_close)
-        self.ws.on_open = self.on_open
-        self.ws.run_forever()
 
     def start(self):
         count = 0
@@ -140,6 +105,5 @@ class HomeProtect():
         
 
 if __name__ == "__main__":
-    home_protect = HomeProtect()
-    # home_protect = HomeProtectProcess()
+    home_protect = RobotHomeProtect()
     home_protect.start()

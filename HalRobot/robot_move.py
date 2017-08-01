@@ -1,16 +1,15 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import sys
 import time
 import json
 import platform
-import websocket
-import urllib2
+from robot_websocket_client import RobotWebsocketClient
 if platform.system() == 'Linux':
     from pymove import PyMove
 
-WEBSOCKET_HOST = 'ws://192.168.1.151:8083/'
 
-class RobotMove():
+class RobotMove(RobotWebsocketClient):
 
     def __init__(self):
         pass
@@ -55,40 +54,10 @@ class RobotMove():
         if dataObj['event'] == 'message':
             print(dataObj['data']['message'])
 
-    def on_error(self, ws, error):
-        print("Socket connection error. Reconnecting after 5 seconds...")
-        print(error)
-        time.sleep(5)
-        self.start()
-
-    def on_close(self, ws):
-        print("Socket connection closed. Reconnecting after 5 seconds...")
-        time.sleep(5)
-        self.start()
-
     def on_open(self, ws):
         print('Sending initial request to HalServer')
         initMessage = json.dumps({"client": "robotMove","event": "init", "data": {'mesage': 'hello server!'}})
         ws.send(initMessage)
-
-    def check_connection(self):
-        state = False
-        try:
-            urllib2.urlopen('http://cieniu.pl', timeout=1)
-            state = True
-        except urllib2.URLError as err: 
-            state = False
-        return state
-        
-    def connect(self):
-        print("Connectiong to websocket...")
-        websocket.enableTrace(True)
-        self.ws = websocket.WebSocketApp(WEBSOCKET_HOST,
-                          on_message = self.on_message,
-                          on_error = self.on_error,
-                          on_close = self.on_close)
-        self.ws.on_open = self.on_open
-        self.ws.run_forever()
 
     def start(self):
         count = 0

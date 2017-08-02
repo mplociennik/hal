@@ -35,12 +35,6 @@ class RobotWebsocketClient():
 
     def reconnect(self, count=None):
         reconnect_time = 5
-        if count > 3:
-            reconnect_time = 10
-        else if count > 10:
-            reconnect_time = 30
-        else if count > 30:
-            reconnect_time = 60
         print('Reconnecting after {0} seconds'.format(reconnect_time))
         time.sleep(reconnect_time)
         self.start()

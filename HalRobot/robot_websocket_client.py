@@ -4,8 +4,8 @@ import websocket
 import time
 import urllib2
 
-WEBSOCKET_HOST = 'ws://localhost:8083/'
-# WEBSOCKET_HOST = 'ws://192.168.1.151:8083/'
+# WEBSOCKET_HOST = 'ws://localhost:8083/'
+WEBSOCKET_HOST = 'ws://192.168.1.151:8083/'
 
 
 class RobotWebsocketClient():

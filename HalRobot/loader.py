@@ -1,7 +1,7 @@
 import os
 import time
 
-LOADER_ENABLED = False
+LOADER_ENABLED = True
 
 if LOADER_ENABLED:
     time.sleep(5)

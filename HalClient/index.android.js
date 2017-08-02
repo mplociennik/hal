@@ -5,18 +5,20 @@ import {
   Text,
   View,
   TouchableWithoutFeedback,
+  TouchableHighlight,
   Button,
   Switch,
   Vibration,
   Alert,
-  Image
+  Image,
+  Modal
 } from 'react-native';
 
 export default class HalClient extends Component {
 
   constructor(props){
     super(props);
-    this.state = {moveDirection: null, moveState: null, socketResponse: null, protectHomeState: false, autopilotState: false, socketConnected: false, messages: [], receivedImage: null};
+    this.state = {moveDirection: null, moveState: null, socketResponse: null, protectHomeState: false, autopilotState: false, socketConnected: false, messages: [], receivedImage: null, cameraModalVisible: false};
     this.socketStream = null;
   }
 
@@ -54,8 +56,7 @@ export default class HalClient extends Component {
           this._protectHomeAlarm(requestData.data.message);
           break;
         case 'photo':
-          console.log(requestData.data.photo_data);
-          this.setState({receivedImage: requestData.data.photo_data})
+          this.setState({receivedImage: requestData.data.photo_data, cameraModalVisible: true})
           break;
       }
     };    
@@ -125,12 +126,39 @@ export default class HalClient extends Component {
     this.socketStream.send(JSON.stringify(requestData));
   }
 
+  setCameraModalVisible(visible) {
+    this.setState({cameraModalVisible: visible});
+  }
+
+  renderCameraModal(){
+    return(<View style={{marginTop: 22}}>
+        <Modal
+          animationType={"slide"}
+          transparent={false}
+          visible={this.state.cameraModalVisible}
+          onRequestClose={() => {alert("Modal has been closed.")}}
+          >
+         <View style={{marginTop: 22}}>
+          <View>
+            {this.renderCameraImage()}
+            <TouchableHighlight onPress={() => {
+              this.setCameraModalVisible(!this.state.cameraModalVisible)
+            }}>
+              <Text>Hide Modal</Text>
+            </TouchableHighlight>
+          </View>
+         </View>
+        </Modal>
+      </View>)
+  }
+
   renderCameraImage(){
     if(this.state.receivedImage !== null){
       console.log('rendering image...');
-      return(<Image source={{'uri': 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEsAAABLCAQAAACSR7JhAAADtUlEQVR4Ac3YA2Bj6QLH0XPT1Fzbtm29tW3btm3bfLZtv7e2ObZnms7d8Uw098tuetPzrxv8wiISrtVudrG2JXQZ4VOv+qUfmqCGGl1mqLhoA52oZlb0mrjsnhKpgeUNEs91Z0pd1kvihA3ULGVHiQO2narKSHKkEMulm9VgUyE60s1aWoMQUbpZOWE+kaqs4eLEjdIlZTcFZB0ndc1+lhB1lZrIuk5P2aib1NBpZaL+JaOGIt0ls47SKzLC7CqrlGF6RZ09HGoNy1lYl2aRSWL5GuzqWU1KafRdoRp0iOQEiDzgZPnG6DbldcomadViflnl/cL93tOoVbsOLVM2jylvdWjXolWX1hmfZbGR/wjypDjFLSZIRov09BgYmtUqPQPlQrPapecLgTIy0jMgPKtTeob2zWtrGH3xvjUkPCtNg/tm1rjwrMa+mdUkPd3hWbH0jArPGiU9ufCsNNWFZ40wpwn+62/66R2RUtoso1OB34tnLOcy7YB1fUdc9e0q3yru8PGM773vXsuZ5YIZX+5xmHwHGVvlrGPN6ZSiP1smOsMMde40wKv2VmwPPVXNut4sVpUreZiLBHi0qln/VQeI/LTMYXpsJtFiclUN+5HVZazim+Ky+7sAvxWnvjXrJFneVtLWLyPJu9K3cXLWeOlbMTlrIelbMDlrLenrjEQOtIF+fuI9xRp9ZBFp6+b6WT8RrxEpdK64BuvHgDk+vUy+b5hYk6zfyfs051gRoNO1usU12WWRWL73/MMEy9pMi9qIrR4ZpV16Rrvduxazmy1FSvuFXRkqTnE7m2kdb5U8xGjLw/spRr1uTov4uOgQE+0N/DvFrG/Jt7i/FzwxbA9kDanhf2w+t4V97G8lrT7wc08aA2QNUkuTfW/KimT01wdlfK4yEw030VfT0RtZbzjeMprNq8m8tnSTASrTLti64oBNdpmMQm0eEwvfPwRbUBywG5TzjPCsdwk3IeAXjQblLCoXnDVeoAz6SfJNk5TTzytCNZk/POtTSV40NwOFWzw86wNJRpubpXsn60NJFlHeqlYRbslqZm2jnEZ3qcSKgm0kTli3zZVS7y/iivZTweYXJ26Y+RTbV1zh3hYkgyFGSTKPfRVbRqWWVReaxYeSLarYv1Qqsmh1s95S7G+eEWK0f3jYKTbV6bOwepjfhtafsvUsqrQvrGC8YhmnO9cSCk3yuY984F1vesdHYhWJ5FvASlacshUsajFt2mUM9pqzvKGcyNJW0arTKN1GGGzQlH0tXwLDgQTurS8eIQAAAABJRU5ErkJggg=='}} />)
+      const renderedImage = 'data:image//png;base64,' + this.state.receivedImage;
+      return(<Image source={{uri: renderedImage}} style={{width:350, height:250}}/>)
     }else{
-      return null;
+      return (<Text>Receiving image...</Text>);
     }
   }
 
@@ -161,7 +189,7 @@ export default class HalClient extends Component {
             </Text>
           </View>          
           <View style={{flexDirection:'row'}}>
-            {this.renderCameraImage()}
+            {this.renderCameraModal()}
           </View>
           <View style={{flexDirection:'column'}}>
             <Text>Move direction: {this.state.moveDirection}, Move state: {String(this.state.moveState)}</Text>

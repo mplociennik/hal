@@ -6,22 +6,28 @@ import json
 import platform
 import datetime
 import base64
+from robot_websocket_client import RobotWebsocketClient
 if platform.system() == 'Linux':
     from picamera import PiCamera
 
 
-class RobotCamera():
+class RobotCamera(RobotWebsocketClient):
 
     def __init__(self):
-        self.camera = PiCamera()
+        if platform.system() == 'Linux':
+            self.camera = PiCamera()
         # camera.resolution = (2592, 1944)
 
     def get_photo(self):
-        photo_name_path = 'camera/camera{0}.jpg'.format(datetime.datetime.now().strftime("%Y-%m-%d-%H:%M:%S"))
-        self.camera.capture(photo_name_path)
-        time.sleep(0.1)
-        photo_object = open(photo_name_path, "r")
-        os.remove(photo_name_path)
+        if platform.system() == 'Linux':
+            photo_name_path = 'camera/camera{0}.jpg'.format(datetime.datetime.now().strftime("%Y-%m-%d-%H:%M:%S"))
+            self.camera.capture(photo_name_path)
+            time.sleep(0.1)
+            photo_object = open(photo_name_path, "r")
+            os.remove(photo_name_path)
+        else:
+            photo_object = {windows: 'test'}
+            print('windows test')
         return photo_object
 
     def on_message(self, ws, message):

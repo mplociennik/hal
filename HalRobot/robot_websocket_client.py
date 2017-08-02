@@ -15,15 +15,13 @@ class RobotWebsocketClient():
         pass
 
     def on_error(self, ws, error):
-        print("Socket connection error. Reconnecting after 5 seconds...")
+        print("Socket connection error.")
         print(error)
-        time.sleep(5)
-        self.start()
+        self.reconnect()
 
     def on_close(self, ws):
-        print("Socket connection closed. Reconnecting after 5 seconds...")
-        time.sleep(5)
-        self.start()
+        print("Socket connection closed.")
+        self.reconnect()
 
     def check_connection(self):
         state = False
@@ -34,6 +32,18 @@ class RobotWebsocketClient():
             state = False
         print("self.check_connection() state: {0} ".format(state))
         return state
+
+    def reconnect(self, count=None):
+        reconnect_time = 5
+        if count > 3:
+            reconnect_time = 10
+        else if count > 10:
+            reconnect_time = 30
+        else if count > 30:
+            reconnect_time = 60
+        print('Reconnecting after {0} seconds'.format(reconnect_time))
+        time.sleep(reconnect_time)
+        self.start()
 
     def connect(self):
         print("Connecting to websocket...")

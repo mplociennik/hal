@@ -2,14 +2,33 @@
 # -*- coding: utf-8 -*-
 import os
 import subprocess
+from time import sleep
 
 
 class RobotHardware():
 
-    def get_temperature(self):
-        command_response = subprocess.check_output('/opt/vc/bin/vcgencmd measure_temp',shell=True, stderr=subprocess.STDOUT)
+    def measure_temp(self):
+        command_response = subprocess.check_output('vcgencmd measure_temp',shell=True, stderr=subprocess.STDOUT)
+        return command_response    
+
+    def measure_volts(self):
+        command_response = subprocess.check_output('vcgencmd measure_volts',shell=True, stderr=subprocess.STDOUT)
         return command_response
+
+    def disable_hdmi(self):
+        command_response = subprocess.check_output('tvservice -o',shell=True, stderr=subprocess.STDOUT)
+        return command_response
+
+    def enable_hdmi(self):
+        command_response = subprocess.check_output('tvservice -p',shell=True, stderr=subprocess.STDOUT)
+        return command_response
+
 
 if __name__ == "__main__":
     robot_hardware = RobotHardware()
-    print robot_hardware.get_temperature()
+    print robot_hardware.measure_temp()
+    print robot_hardware.measure_volts()
+    print robot_hardware.disable_hdmi()
+    sleep(2)
+    print robot_hardware.measure_temp()
+    print robot_hardware.measure_volts()

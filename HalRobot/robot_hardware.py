@@ -12,4 +12,4 @@ class RobotHardware():
 
 if __name__ == "__main__":
     robot_hardware = RobotHardware()
-    robot_hardware.get_temperature()
+    print robot_hardware.get_temperature()

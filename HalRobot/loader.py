@@ -1,9 +1,12 @@
 import os
 import time
+from robot_hardware import RobotHardware
 
 LOADER_ENABLED = True
 
 if LOADER_ENABLED:
+    robot_hardware = RobotHardware()
+    print robot_hardware.disable_hdmi()
     time.sleep(5)
     robot_move = os.popen('python /home/pi/hal/HalRobot/robot_move.py')
     time.sleep(1)

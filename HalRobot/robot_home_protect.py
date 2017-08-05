@@ -4,7 +4,7 @@ import time
 import platform
 import json
 import threading
-from robot_websocket_client import 
+from robot_websocket_client import RobotWebsocketClient
 
 
 if platform.system() == 'Linux':

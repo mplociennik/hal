@@ -160,8 +160,8 @@ wss.serveRobotCamera = function(ws, dataObj){
         ws.send(dataJson);
         console.log('RobotCamera initialized!');
         break;
-      case 'photo':
-        dataJson = JSON.stringify({event:'photo', data: { message: 'New photo created!', photo_data: dataObj.data.photo_data }});
+      case 'stream_photo':
+        dataJson = JSON.stringify({event:'stream_photo', data: dataObj.data});
         wss.broadcastByClientName('halClient', dataJson);
       case 'message':
         console.log('Message from "' + dataObj.client + '": ' + dataObj.data.message);

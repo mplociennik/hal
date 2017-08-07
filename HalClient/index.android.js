@@ -18,7 +18,18 @@ export default class HalClient extends Component {
 
   constructor(props){
     super(props);
-    this.state = {moveDirection: null, moveState: null, socketResponse: null, protectHomeState: false, autopilotState: false, socketConnected: false, messages: [], receivedImage: null, cameraModalVisible: false};
+    this.state = {
+      moveDirection: null, 
+      moveState: null, 
+      socketResponse: null, 
+      protectHomeState: false, 
+      autopilotState: false, 
+      socketConnected: false, 
+      messages: [], 
+      receivedImage: null, 
+      streamImageBuffer: null,
+      cameraModalVisible: false
+    };
     this.socketStream = null;
   }
 
@@ -55,7 +66,8 @@ export default class HalClient extends Component {
         case 'protectHomeAlarm':
           this._protectHomeAlarm(requestData.data.message);
           break;
-        case 'photo':
+        case 'stream_photo':
+          this.receiveImageStream(requestData.data);
           this.setState({receivedImage: requestData.data.photo_data, cameraModalVisible: true})
           break;
       }
@@ -68,6 +80,14 @@ export default class HalClient extends Component {
 
     };
 
+  }
+
+  receiveImageStream(data){
+    if (data.in_progress) {
+      this.setState({streamImageBuffer: this.state.streamImageBuffer + data.photo_data});
+    }else{
+      this.setState({receivedImage: this.state.streamImageBuffer, cameraModalVisible: true, streamImageBuffer: null});
+    }
   }
 
   renderMessage(message){

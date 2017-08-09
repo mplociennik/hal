@@ -14,6 +14,9 @@ import {
   Modal
 } from 'react-native';
 
+import { CameraImage} from './components/CameraImage';
+import { CameraImage} from './components/CameraImage';
+
 export default class HalClient extends Component {
 
   constructor(props){
@@ -160,7 +163,7 @@ export default class HalClient extends Component {
           >
          <View style={{marginTop: 22}}>
           <View>
-            {this.renderCameraImage()}
+            <CameraImage image={this.state.receivedImage}></CameraImage>
             <TouchableHighlight onPress={() => {
               this.setCameraModalVisible(!this.state.cameraModalVisible)
             }}>
@@ -170,16 +173,6 @@ export default class HalClient extends Component {
          </View>
         </Modal>
       </View>)
-  }
-
-  renderCameraImage(){
-    if(this.state.receivedImage !== null){
-      console.log('rendering image...');
-      const renderedImage = 'data:image//png;base64,' + this.state.receivedImage;
-      return(<Image source={{uri: renderedImage}} style={{width:350, height:250}}/>)
-    }else{
-      return (<Text>Receiving image...</Text>);
-    }
   }
 
   render() {

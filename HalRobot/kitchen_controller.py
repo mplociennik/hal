@@ -4,6 +4,7 @@
 from time import sleep
 from robot_websocket_client import RobotWebsocketClient
 import RPi.GPIO as GPIO
+import json
 
 GPIO.setmode(GPIO.BCM)
 SIGNAL_PIN = 2

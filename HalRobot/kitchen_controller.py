@@ -19,6 +19,7 @@ class KitchenController(RobotWebsocketClient):
         GPIO.output(SIGNAL_PIN, state)
 
     def on_message(self, ws, message):
+        print('dupa')
         dataObj = json.loads(message)
         print("Received server response: {0}".format(dataObj))
         if dataObj['event'] == 'toggle_kitchen_light':

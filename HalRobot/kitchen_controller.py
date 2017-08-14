@@ -14,15 +14,17 @@ GPIO.output(SIGNAL_PIN, False)
 
 class KitchenController(RobotWebsocketClient):
 
+    def revert_state(self, state):
+        return not state
+
     def toggle_light(self, state):
         print('Light {0}!'.format(state))
-        GPIO.output(SIGNAL_PIN, state)
+        GPIO.output(SIGNAL_PIN, self.revert_state(state))
 
     def on_message(self, ws, message):
         dataObj = json.loads(message)
         print("Received server response: {0}".format(dataObj))
         if dataObj['event'] == 'toggleKitchenLight':
-            print('kupa')
             self.toggle_light(dataObj['data']['state'])
         if dataObj['event'] == 'message':
             print(dataObj['data']['message'])
@@ -44,5 +46,10 @@ class KitchenController(RobotWebsocketClient):
         self.connect()
 
 if __name__ == "__main__":
-    kitchen_controller = KitchenController()
-    kitchen_controller.start()
+    try:
+        kitchen_controller = KitchenController()
+        kitchen_controller.start()
+    except KeyboardInterrupt:
+        print "interrupt"
+    finally:
+        GPIO.cleanup()

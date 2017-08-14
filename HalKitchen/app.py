@@ -1,28 +1,30 @@
 #!/usr/bin/env python2
 #encoding: utf-8
-import platform
+
 from time import sleep
+import RPi.GPIO as GPIO
+GPIO.setmode(GPIO.BOARD)
+SIGNAL_PIN = 3
+GPIO.setup(SIGNAL_PIN,GPIO.OUT)
+GPIO.output(SIGNAL_PIN, False)
 
-if platform.system() == 'Linux':
-    import RPi.GPIO as GPIO
-    GPIO.setmode(GPIO.BOARD)
-    SIGNAL_PIN = 3
-    GPIO.setup(SIGNAL_PIN,GPIO.OUT)
-    GPIO.output(SIGNAL_PIN, False)
+class KitchenController():
 
-try:
-    while True:
-        GPIO.output(SIGNAL_PIN, True)
-        sleep(2)
-        GPIO.output(SIGNAL_PIN, False)
-        sleep(2)
-        GPIO.output(SIGNAL_PIN, True)
-        sleep(2)
-        GPIO.output(SIGNAL_PIN, False)
-        sleep(2)
+    def light(self, state):
+        print('Light {0}!'.format(state))
+        GPIO.output(SIGNAL_PIN, state)
 
-except KeyboardInterrupt:
-    GPIO.cleanup()  # clean up GPIO on CTRL+C exit
-GPIO.cleanup()
+if __name__ == "__main__":
+    try:
+        kitchen_controller = KitchenController()
+        while True:
+            kitchen_controller.light(True)
+            sleep(2)
+            kitchen_controller.light(False)
+            sleep(2)
+    except KeyboardInterrupt:
+            print "interrupt"
+    finally:
+        GPIO.cleanup()
 
 

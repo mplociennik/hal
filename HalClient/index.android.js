@@ -124,7 +124,7 @@ export default class HalClient extends Component {
 
   _toggleKitchenLight(state){
     console.log('Sending kitchenLight state: ', state);
-    const requestData = {client: 'halClient', event: 'kitchenLight', date: Date.now(), data:{state: state}};
+    const requestData = {client: 'halClient', event: 'toggleKitchenLight', date: Date.now(), data:{state: state}};
     this.socketStream.send(JSON.stringify(requestData));
     this.setState({kitchenLightState: state});
   }

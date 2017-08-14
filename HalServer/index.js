@@ -63,9 +63,9 @@ wss.getRobotCameraImage = function(ws){
   wss.broadcastByClientName('robotCamera', dataJson);
 }
 
-wss.toggleKitchenLight = function(ws){
+wss.toggleKitchenLight = function(ws, state){
   console.log("KitchenLight request state: ", state);
-  dataJson = JSON.stringify({event:'kitchenLight', data:{state: state}});
+  dataJson = JSON.stringify({event:'toggleKitchenLight', data:{state: state}});
   wss.broadcastByClientName('kitchenLight', dataJson);
 }
 
@@ -93,7 +93,7 @@ wss.serveHalClient = function(ws, dataObj){
             wss.getRobotCameraImage(ws);
             break;        
         case 'toggleKitchenLight':
-            wss.toggleKitchenLight(ws);
+            wss.toggleKitchenLight(ws, dataObj.data.state);
             break;
       }    
   }else{

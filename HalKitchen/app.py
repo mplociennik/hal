@@ -4,7 +4,7 @@
 from time import sleep
 import RPi.GPIO as GPIO
 GPIO.setmode(GPIO.BCM)
-SIGNAL_PIN = 3
+SIGNAL_PIN = 2
 GPIO.setup(SIGNAL_PIN,GPIO.OUT)
 GPIO.output(SIGNAL_PIN, False)
 

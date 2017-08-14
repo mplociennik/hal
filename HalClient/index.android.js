@@ -14,11 +14,25 @@ import {
   Modal
 } from 'react-native';
 
+import { CameraImage} from './components/CameraImage';
+import { CameraImage} from './components/CameraImage';
+
 export default class HalClient extends Component {
 
   constructor(props){
     super(props);
-    this.state = {moveDirection: null, moveState: null, socketResponse: null, protectHomeState: false, autopilotState: false, socketConnected: false, messages: [], receivedImage: null, cameraModalVisible: false};
+    this.state = {
+      moveDirection: null, 
+      moveState: null, 
+      socketResponse: null, 
+      protectHomeState: false, 
+      autopilotState: false, 
+      socketConnected: false, 
+      messages: [], 
+      receivedImage: null, 
+      streamImageBuffer: null,
+      cameraModalVisible: false
+    };
     this.socketStream = null;
   }
 
@@ -55,7 +69,8 @@ export default class HalClient extends Component {
         case 'protectHomeAlarm':
           this._protectHomeAlarm(requestData.data.message);
           break;
-        case 'photo':
+        case 'stream_photo':
+          this.receiveImageStream(requestData.data);
           this.setState({receivedImage: requestData.data.photo_data, cameraModalVisible: true})
           break;
       }
@@ -68,6 +83,14 @@ export default class HalClient extends Component {
 
     };
 
+  }
+
+  receiveImageStream(data){
+    if (data.in_progress) {
+      this.setState({streamImageBuffer: this.state.streamImageBuffer + data.photo_data});
+    }else{
+      this.setState({receivedImage: this.state.streamImageBuffer, cameraModalVisible: true, streamImageBuffer: null});
+    }
   }
 
   renderMessage(message){
@@ -140,7 +163,7 @@ export default class HalClient extends Component {
           >
          <View style={{marginTop: 22}}>
           <View>
-            {this.renderCameraImage()}
+            <CameraImage image={this.state.receivedImage}></CameraImage>
             <TouchableHighlight onPress={() => {
               this.setCameraModalVisible(!this.state.cameraModalVisible)
             }}>
@@ -150,16 +173,6 @@ export default class HalClient extends Component {
          </View>
         </Modal>
       </View>)
-  }
-
-  renderCameraImage(){
-    if(this.state.receivedImage !== null){
-      console.log('rendering image...');
-      const renderedImage = 'data:image//png;base64,' + this.state.receivedImage;
-      return(<Image source={{uri: renderedImage}} style={{width:350, height:250}}/>)
-    }else{
-      return (<Text>Receiving image...</Text>);
-    }
   }
 
   render() {

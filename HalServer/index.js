@@ -160,8 +160,8 @@ wss.serveRobotCamera = function(ws, dataObj){
         ws.send(dataJson);
         console.log('RobotCamera initialized!');
         break;
-      case 'photo':
-        dataJson = JSON.stringify({event:'photo', data: { message: 'New photo created!', photo_data: dataObj.data.photo_data }});
+      case 'stream_photo':
+        dataJson = JSON.stringify({event:'stream_photo', data: dataObj.data});
         wss.broadcastByClientName('halClient', dataJson);
       case 'message':
         console.log('Message from "' + dataObj.client + '": ' + dataObj.data.message);
@@ -176,6 +176,7 @@ wss.on('connection', function connection(ws) {
   ws.isAlive = true;
   ws.on('pong', heartbeat);
   ws.on('open', function open() {
+    wss.renderMessage('Connected sockets count: ' + wss.clients.length);
     ws.uid = md5sum.digest('hex');
     dataJson = JSON.stringify({event:'message', data: { message: 'You are connected to server!' }});
     if (ws.readyState === WebSocket.OPEN) {
@@ -185,7 +186,7 @@ wss.on('connection', function connection(ws) {
   });
 
   ws.on('message', function incoming(data) {
-    console.log('Received data: ', data);
+    wss.renderMessage('Received data: ' + data);
     dataObj = JSON.parse(data);
     if (typeof dataObj.client !== 'undefined') {
       switch(dataObj.client){
@@ -212,8 +213,7 @@ wss.on('connection', function connection(ws) {
   });
 
   ws.on('close', function close() {
-    console.log('Client disconected: ', ws.client);
-    console.log('**********************************************')
+    wss.renderMessage('Client disconected: ' + ws.client);
   });
 
   const interval = setInterval(function ping() {
@@ -224,3 +224,10 @@ wss.on('connection', function connection(ws) {
     });
   }, 30000);
 });
+
+wss.renderMessage = function(message){
+  console.log('**********************************************');
+  console.log(message)
+  console.log('**********************************************');
+  return true;
+}

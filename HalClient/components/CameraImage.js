@@ -8,10 +8,14 @@ export default class CameraImage extends Component {
 
     render(){
         if(this.props.image !== null){
-          console.log('rendering image...');
           const renderedImage = 'data:image//png;base64,' + this.props.image;
-          return(<Image source={{uri: renderedImage}} style={{width:350, height:250}}/>)
+          return(
+            <Image source={{uri: renderedImage}} style={{width:350, height:250}}/>
+            );
         }else{
-          return (<Text>Receiving image...</Text>);
+          return (
+            <Text>Receiving image...</Text>
+            );
         }
+    }
 }

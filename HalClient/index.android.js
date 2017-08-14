@@ -15,7 +15,6 @@ import {
 } from 'react-native';
 
 import { CameraImage} from './components/CameraImage';
-import { CameraImage} from './components/CameraImage';
 
 export default class HalClient extends Component {
 
@@ -26,6 +25,7 @@ export default class HalClient extends Component {
       moveState: null, 
       socketResponse: null, 
       protectHomeState: false, 
+      kitchenLightState: false, 
       autopilotState: false, 
       socketConnected: false, 
       messages: [], 
@@ -121,6 +121,13 @@ export default class HalClient extends Component {
     this.socketStream.send(JSON.stringify(requestData));
     this.setState({protectHomeState: state});
   }
+
+  _toggleKitchenLight(state){
+    console.log('Sending kitchenLight state: ', state);
+    const requestData = {client: 'halClient', event: 'kitchenLight', date: Date.now(), data:{state: state}};
+    this.socketStream.send(JSON.stringify(requestData));
+    this.setState({kitchenLightState: state});
+  }
   
   
   _autopilot(state){
@@ -154,7 +161,8 @@ export default class HalClient extends Component {
   }
 
   renderCameraModal(){
-    return(<View style={{marginTop: 22}}>
+    return(
+      <View style={{marginTop: 22}}>
         <Modal
           animationType={"slide"}
           transparent={false}
@@ -163,7 +171,7 @@ export default class HalClient extends Component {
           >
          <View style={{marginTop: 22}}>
           <View>
-            <CameraImage image={this.state.receivedImage}></CameraImage>
+            // <CameraImage image={this.state.receivedImage}></CameraImage>
             <TouchableHighlight onPress={() => {
               this.setCameraModalVisible(!this.state.cameraModalVisible)
             }}>
@@ -172,7 +180,8 @@ export default class HalClient extends Component {
           </View>
          </View>
         </Modal>
-      </View>)
+      </View>
+      )
   }
 
   render() {
@@ -194,6 +203,14 @@ export default class HalClient extends Component {
             </View>
             <View>
               <Switch onValueChange={(value)=>{this._autopilot(value);}} value = {this.state.autopilotState} disabled={!this.state.socketConnected}/>
+            </View>            
+          </View>
+          <View style={{flexDirection:'row'}}>
+            <View>
+              <Text>Kitchen Light: </Text>
+            </View>
+            <View>
+              <Switch onValueChange={(value)=>{this._toggleKitchenLight(value);}} value = {this.state.kitchenLightState} disabled={!this.state.socketConnected}/>
             </View>
           </View>
           <View style={{flexDirection:'row'}}>

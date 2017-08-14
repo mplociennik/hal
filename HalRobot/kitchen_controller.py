@@ -21,7 +21,7 @@ class KitchenController(RobotWebsocketClient):
     def on_message(self, ws, message):
         dataObj = json.loads(message)
         print("Received server response: {0}".format(dataObj))
-        if dataObj['event'] == 'kitchenLight':
+        if dataObj['event'] == 'toggle_kitchen_light':
             self.toggle_light(dataObj['data']['state'])
         if dataObj['event'] == 'message':
             print(dataObj['data']['message'])

@@ -63,6 +63,12 @@ wss.getRobotCameraImage = function(ws){
   wss.broadcastByClientName('robotCamera', dataJson);
 }
 
+wss.toggleKitchenLight = function(ws){
+  console.log("KitchenLight request state: ", state);
+  dataJson = JSON.stringify({event:'kitchenLight', data:{state: state}});
+  wss.broadcastByClientName('kitchenLight', dataJson);
+}
+
 wss.serveHalClient = function(ws, dataObj){
   if (typeof dataObj.event !== 'undefined') {
       switch(dataObj.event){
@@ -85,6 +91,9 @@ wss.serveHalClient = function(ws, dataObj){
             break;        
         case 'getRobotCameraImage':
             wss.getRobotCameraImage(ws);
+            break;        
+        case 'toggleKitchenLight':
+            wss.toggleKitchenLight(ws);
             break;
       }    
   }else{
@@ -172,6 +181,27 @@ wss.serveRobotCamera = function(ws, dataObj){
   } 
 };
 
+wss.serveKitchenLight = function(ws, dataObj){
+  if (typeof dataObj.event !== 'undefined') {
+    switch(dataObj.event){
+      case 'init':
+        ws.client = dataObj.client;
+        dataJson = JSON.stringify({event:'message', data:{message: 'Init ready!'}});
+        ws.send(dataJson);
+        console.log('KitchenLight initialized!');
+        break;
+      case 'toggle_kitchen_light':
+        dataJson = JSON.stringify({event:'toggle_kitchen_light', data: dataObj.data});
+        wss.broadcastByClientName('kitchenLight', dataJson);
+      case 'message':
+        console.log('Message from "' + dataObj.client + '": ' + dataObj.data.message);
+        break;
+    }    
+  }else{
+    console.log('Event is undefined: ', dataObj);
+  } 
+};
+
 wss.on('connection', function connection(ws) {
   ws.isAlive = true;
   ws.on('pong', heartbeat);
@@ -204,6 +234,9 @@ wss.on('connection', function connection(ws) {
           break;             
         case 'robotCamera':
           wss.serveRobotCamera(ws, dataObj);
+          break;   
+        case 'kitchenLight':
+          wss.serveKitchenLight(ws, dataObj);
           break;        
       }
     } else {

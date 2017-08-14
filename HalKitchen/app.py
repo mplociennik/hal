@@ -3,7 +3,7 @@
 
 from time import sleep
 import RPi.GPIO as GPIO
-GPIO.setmode(GPIO.BOARD)
+GPIO.setmode(GPIO.BCM)
 SIGNAL_PIN = 3
 GPIO.setup(SIGNAL_PIN,GPIO.OUT)
 GPIO.output(SIGNAL_PIN, False)
@@ -18,9 +18,9 @@ if __name__ == "__main__":
     try:
         kitchen_controller = KitchenController()
         while True:
-            kitchen_controller.light(True)
+            kitchen_controller.light(1)
             sleep(2)
-            kitchen_controller.light(False)
+            kitchen_controller.light(0)
             sleep(2)
     except KeyboardInterrupt:
             print "interrupt"

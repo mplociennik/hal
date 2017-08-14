@@ -9,7 +9,7 @@ import json
 GPIO.setmode(GPIO.BCM)
 SIGNAL_PIN = 2
 GPIO.setup(SIGNAL_PIN,GPIO.OUT)
-GPIO.output(SIGNAL_PIN, False)
+GPIO.output(SIGNAL_PIN, True)
 
 
 class KitchenController(RobotWebsocketClient):

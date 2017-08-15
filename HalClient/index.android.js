@@ -13,8 +13,8 @@ import {
   Image,
   Modal
 } from 'react-native';
+import CameraModal from './components/CameraModal';
 
-import { CameraImage} from './components/CameraImage';
 
 export default class HalClient extends Component {
 
@@ -41,7 +41,7 @@ export default class HalClient extends Component {
   }
 
   _connectSocket(){
-    this.renderMessage('Starting connection...');
+    this.renderMessage('Connecting...');
     var self = this;
     this.socketStream = new WebSocket("ws://192.168.1.151:8083");
     this.socketStream.onopen = (evt)=>{ 
@@ -160,30 +160,6 @@ export default class HalClient extends Component {
     this.setState({cameraModalVisible: visible});
   }
 
-  renderCameraModal(){
-    return(
-      <View style={{marginTop: 22}}>
-        <Modal
-          animationType={"slide"}
-          transparent={false}
-          visible={this.state.cameraModalVisible}
-          onRequestClose={() => {alert("Modal has been closed.")}}
-          >
-         <View style={{marginTop: 22}}>
-          <View>
-            // <CameraImage image={this.state.receivedImage}></CameraImage>
-            <TouchableHighlight onPress={() => {
-              this.setCameraModalVisible(!this.state.cameraModalVisible)
-            }}>
-              <Text>Hide Modal</Text>
-            </TouchableHighlight>
-          </View>
-         </View>
-        </Modal>
-      </View>
-      )
-  }
-
   render() {
     return (
       <View style={styles.container}>
@@ -219,7 +195,7 @@ export default class HalClient extends Component {
             </Text>
           </View>          
           <View style={{flexDirection:'row'}}>
-            {this.renderCameraModal()}
+            <CameraModal cameraModalVisible={this.state.cameraModalVisible} setCameraModalVisible={this.setCameraModalVisible.bind(this)} receivedImage={this.state.receivedImage}></CameraModal>
           </View>
           <View style={{flexDirection:'column'}}>
             <Text>Move direction: {this.state.moveDirection}, Move state: {String(this.state.moveState)}</Text>

@@ -195,53 +195,15 @@ export default class HalClient extends Component {
             </Text>
           </View>          
           <View style={{flexDirection:'row'}}>
-            <CameraModal cameraModalVisible={this.state.cameraModalVisible} setCameraModalVisible={this.setCameraModalVisible.bind(this)} receivedImage={this.state.receivedImage}></CameraModal>
+            
           </View>
           <View style={{flexDirection:'column'}}>
             <Text>Move direction: {this.state.moveDirection}, Move state: {String(this.state.moveState)}</Text>
             <Button onPress={()=>this._getCameraImage()} title="Get camera image"/>
           </View>
         </View>
-        <View style={{flex:.5,flexDirection:'column', justifyContent: 'center', alignItems: 'center',}}>
-        <View style={{flexDirection:'row'}}>
-        <TouchableWithoutFeedback 
-        onPressIn={()=>this._move('up', true)} onPressOut={()=>this._move('up', false)} disabled={!this.state.socketConnected}>
-        <View style={styles.button}>
-        <Text>
-        UP
-        </Text>
-        </View>
-        </TouchableWithoutFeedback>
-        </View>
-        <View style={{flexDirection:'row'}}>
-        <TouchableWithoutFeedback 
-        onPressIn={()=>this._move('left', true)} onPressOut={()=>this._move('left', false)} disabled={!this.state.socketConnected}>
-          <View style={styles.buttonLeft}>
-            <Text>
-              LEFT
-            </Text>
-          </View>
-        </TouchableWithoutFeedback>      
-        <TouchableWithoutFeedback 
-        onPressIn={()=>this._move('right', true)} onPressOut={()=>this._move('right', false)} disabled={!this.state.socketConnected}>
-        <View style={styles.buttonRight}>
-        <Text>
-        RIGHT
-        </Text>
-        </View>
-        </TouchableWithoutFeedback>
-        </View>
-        <View style={{flexDirection:'row'}}>
-        <TouchableWithoutFeedback 
-        onPressIn={()=>this._move('down', true)} onPressOut={()=>this._move('down', false)} disabled={!this.state.socketConnected}>
-        <View style={styles.button}>
-        <Text>
-        DOWN
-        </Text>
-        </View>
-        </TouchableWithoutFeedback>  
-        </View>
-        </View>
+        <CameraModal cameraModalVisible={this.state.cameraModalVisible} setCameraModalVisible={this.setCameraModalVisible.bind(this)} receivedImage={this.state.receivedImage}></CameraModal>
+        <RobotModal move={this.move().bind(this)}></RobotModal>
       </View>
       );
 }
@@ -272,33 +234,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
     color: '#34495e',
-  },
-  button:{
-    alignItems: 'center',
-    marginBottom: 10,
-    borderWidth: 1,
-    borderRadius: 5,
-    borderColor: '#000',
-    padding: 20
-  },
-  buttonLeft:{
-    alignItems: 'center',
-    marginBottom: 10,
-    marginRight: 10,
-    borderWidth: 1,
-    borderRadius: 5,
-    borderColor: '#000',
-    padding: 20
-  },
-  buttonRight:{
-    alignItems: 'center',
-    marginBottom: 10,
-    marginLeft: 10,
-    borderWidth: 1,
-    borderRadius: 5,
-    borderColor: '#000',
-    padding: 20
-  },
+  },l
 });
 
 AppRegistry.registerComponent('HalClient', () => HalClient);

@@ -234,7 +234,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
     color: '#34495e',
-  },l
+  },
 });
 
 AppRegistry.registerComponent('HalClient', () => HalClient);

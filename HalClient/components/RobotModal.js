@@ -4,7 +4,18 @@ import {Image, Text, View, Modal, TouchableHighlight, TouchableWithoutFeedback} 
 export default class RobotModal extends Component {
     constructor(props){
         super(props);
-        console.log(props);
+        this.state{moveDirection:null, moveState:null};
+    }
+
+    move(direction, state){
+      const requestData = {client: 'halClient', event: 'move', date: Date.now(), data:{direction:direction, state: state}};
+      console.log('Move: ',requestData);
+      this.props.socketStream.send(JSON.stringify(requestData));
+      this.setState({moveDirection: direction, moveState: state});
+    }
+    
+    pressHideModal(){
+        this.props.setRobotModalVisible(false);
     }
 
     render(){
@@ -20,7 +31,7 @@ export default class RobotModal extends Component {
               <View>
                 <View style={{flexDirection:'row'}}>
                   <TouchableWithoutFeedback 
-                  onPressIn={()=>this.props.move('up', true)} onPressOut={()=>this.props.move('up', false)} disabled={!this.props.socketConnected}>
+                  onPressIn={()=>this.props.move('up', true)} onPressOut={()=>this.move('up', false)} disabled={!this.props.socketConnected}>
                     <View style={styles.button}>
                       <Text>
                         UP
@@ -30,7 +41,7 @@ export default class RobotModal extends Component {
                 </View>
                 <View style={{flexDirection:'row'}}>
                   <TouchableWithoutFeedback 
-                  onPressIn={()=>this._move('left', true)} onPressOut={()=>this._move('left', false)} disabled={!this.state.socketConnected}>
+                  onPressIn={()=>this._move('left', true)} onPressOut={()=>this.move('left', false)} disabled={!this.props.socketConnected}>
                     <View style={styles.buttonLeft}>
                       <Text>
                         LEFT
@@ -38,7 +49,7 @@ export default class RobotModal extends Component {
                     </View>
                   </TouchableWithoutFeedback>      
                   <TouchableWithoutFeedback 
-                  onPressIn={()=>this._move('right', true)} onPressOut={()=>this._move('right', false)} disabled={!this.state.socketConnected}>
+                  onPressIn={()=>this._move('right', true)} onPressOut={()=>this.move('right', false)} disabled={!this.props.socketConnected}>
                   <View style={styles.buttonRight}>
                   <Text>
                   RIGHT
@@ -48,7 +59,7 @@ export default class RobotModal extends Component {
                 </View>
                 <View style={{flexDirection:'row'}}>
                     <TouchableWithoutFeedback 
-                    onPressIn={()=>this._move('down', true)} onPressOut={()=>this._move('down', false)} disabled={!this.state.socketConnected}>
+                    onPressIn={()=>this._move('down', true)} onPressOut={()=>this.move('down', false)} disabled={!this.props.socketConnected}>
                       <View style={styles.button}>
                         <Text>
                           DOWN

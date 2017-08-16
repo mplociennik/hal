@@ -31,7 +31,8 @@ export default class HalClient extends Component {
       messages: [], 
       receivedImage: null, 
       streamImageBuffer: null,
-      cameraModalVisible: false
+      cameraModalVisible: false,
+      robotModalVisible: false,
     };
     this.socketStream = null;
   }
@@ -108,13 +109,6 @@ export default class HalClient extends Component {
     this.socketStream.close();
   }
 
-  _move(direction, state){
-    const requestData = {client: 'halClient', event: 'move', date: Date.now(), data:{direction:direction, state: state}};
-    console.log('Move: ',requestData);
-    this.socketStream.send(JSON.stringify(requestData));
-    this.setState({moveDirection: direction, moveState: state});
-  }
-
   _protectHome(state){
     console.log('Sending ProtectHome state: ', state);
     const requestData = {client: 'halClient', event: 'protectHome', date: Date.now(), data:{state: state}};
@@ -160,6 +154,10 @@ export default class HalClient extends Component {
     this.setState({cameraModalVisible: visible});
   }
 
+  setRobotaModalVisible(visible) {
+    this.setState({robotModalVisible: visible});
+  }
+
   render() {
     return (
       <View style={styles.container}>
@@ -203,7 +201,7 @@ export default class HalClient extends Component {
           </View>
         </View>
         <CameraModal cameraModalVisible={this.state.cameraModalVisible} setCameraModalVisible={this.setCameraModalVisible.bind(this)} receivedImage={this.state.receivedImage}></CameraModal>
-        <RobotModal move={this.move().bind(this)}></RobotModal>
+        <RobotModal socketStream={this.socketStream} socketConnected={this.state.socketConnected} setRobotModalVisible={this.setRobotModalVisible.bind(this)}></RobotModal>
       </View>
       );
 }

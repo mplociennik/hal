@@ -7,23 +7,32 @@ import platform
 from robot_websocket_client import RobotWebsocketClient
 
 if platform.system() == 'Linux':
-    import speech
+    from speech import Speech
 
 
 class RobotSpeech(RobotWebsocketClient):
-    
+
+    def __init__(self):
+        self.speech = Speech()
+
+    def text_to_speech(self, text):
+        self.speech.create_voice(text)
+
+    def text_to_dalek_voice(self, text):
+        self.speech.create_dalek_voice(text)
+
     def on_message(self, ws, message):
         print('json message: ', message)
         dataObj = json.loads(message)
         print("Received message: {0}".format(dataObj))
-        if dataObj['event'] == 'speech':
+        if dataObj['event'] == 'robotSpeech':
             print('Speech in progress...')
         if dataObj['event'] == 'message':
             print(dataObj['data']['message'])
 
     def on_open(self, ws):
         print('Sending initial request to HalServer')
-        initMessage = json.dumps({"client": "robotMove","event": "init", "data": {'mesage': 'hello server!'}})
+        initMessage = json.dumps({"client": "robotSpeech","event": "init", "data": {'mesage': 'hello server!'}})
         ws.send(initMessage)
 
     def start(self):

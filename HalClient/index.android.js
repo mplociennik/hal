@@ -1,22 +1,17 @@
 import React, { Component } from 'react';
-import {
-  AppRegistry,
-  StyleSheet,
-  Text,
-  View,
-  TouchableWithoutFeedback,
-  TouchableHighlight,
-  Button,
-  Switch,
-  Vibration,
-  Alert,
-  Image,
-  Modal
-} from 'react-native';
-import CameraModal from './components/CameraModal';
-
+import { AppRegistry, Text, View, StyleSheet, Image, TextInput, Button, ViewPagerAndroid, TouchableWithoutFeedback, TouchableHighlight, Dimensions, Switch, Vibration,  } from 'react-native';
+var windowWidth = Dimensions.get('window').width;
+var windowHeight = Dimensions.get('window').height;
 
 export default class HalClient extends Component {
+  render() {
+    return (
+      <Main></Main>
+    );
+  }
+}
+
+export class Main extends Component {
 
   constructor(props){
     super(props);
@@ -31,8 +26,7 @@ export default class HalClient extends Component {
       messages: [], 
       receivedImage: null, 
       streamImageBuffer: null,
-      cameraModalVisible: false,
-      robotModalVisible: false,
+      cameraModalVisible: false
     };
     this.socketStream = null;
   }
@@ -40,6 +34,7 @@ export default class HalClient extends Component {
   componentDidMount(){
     this._connectSocket();
   }
+
 
   _connectSocket(){
     this.renderMessage('Connecting...');
@@ -86,19 +81,12 @@ export default class HalClient extends Component {
 
   }
 
-  receiveImageStream(data){
-    if (data.in_progress) {
-      this.setState({streamImageBuffer: this.state.streamImageBuffer + data.photo_data});
-    }else{
-      this.setState({receivedImage: this.state.streamImageBuffer, cameraModalVisible: true, streamImageBuffer: null});
-    }
-  }
-
   renderMessage(message){
     this.setState({socketResponse: message, messages: [this.state.messages,message]} ); // socketResponse tymczasowo
     console.log(message);
     console.log(this.state.messages);
   }
+  
 
   _reconnectSocket(){
     this.renderMessage('Reconnecting...');
@@ -109,29 +97,100 @@ export default class HalClient extends Component {
     this.socketStream.close();
   }
 
-  _protectHome(state){
-    console.log('Sending ProtectHome state: ', state);
-    const requestData = {client: 'halClient', event: 'protectHome', date: Date.now(), data:{state: state}};
+
+  _getCameraImage = function(){
+    console.log('Sending camera image request...');
+    var requestData = {client: 'halClient', event: 'getrobotmodaCameraImage', date: Date.now(), data:{}};
     this.socketStream.send(JSON.stringify(requestData));
-    this.setState({protectHomeState: state});
   }
 
-  _toggleKitchenLight(state){
-    console.log('Sending kitchenLight state: ', state);
-    const requestData = {client: 'halClient', event: 'toggleKitchenLight', date: Date.now(), data:{state: state}};
-    this.socketStream.send(JSON.stringify(requestData));
-    this.setState({kitchenLightState: state});
+  setCameraModalVisible(visible) {
+    this.setState({cameraModalVisible: visible});
+  }
+  render(){
+    return(
+      <View style={styles.container}>
+        <View style={{flexDirection:'row', alignSelf: 'flex-end', marginRight:15}}>
+            <Button title="Settings" onPress={()=>console.log('dupa')}/>
+        </View>
+        <ViewPagerAndroid
+          initialPage={2}
+          style={styles.viewPager}
+        >
+          <View style={styles.pageStyle}>
+            <HomeView></HomeView>
+          </View>
+          <View style={styles.pageStyle}>
+            <RobotView socketConnected={this.state.socketConnected} socketStream={this.socketStream}></RobotView>
+          </View>
+          <View style={styles.pageStyle}>
+            <KitchenControlView socketConnected={this.state.socketConnected} socketStream={this.socketStream}></KitchenControlView> 
+          </View>
+          <View style={styles.pageStyle}>
+            <HomeProtectView></HomeProtectView> 
+          </View>
+        </ViewPagerAndroid>
+      </View>
+      );
+  }
+}
+
+export class HomeView extends Component {
+  constructor(props){
+    super(props);
+    this.state= {questionText: null};
   }
   
+  render(){
+    return(
+        <View>
+          <View style={styles.pageHeader}>
+            <Text style={styles.pageText}>HAL9000</Text>
+          </View>
+          <View style={styles.halEye}>
+              <Image source={{uri: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/HAL9000.svg/256px-HAL9000.svg.png'}} style={{width: 200, height: 200, alignItems:'center'}}/>
+          </View>
+          <View style={styles.halTextInput}>
+            <TextInput
+              style={{height: 50, width:250, borderColor: 'gray', borderWidth: 1, borderRadius: 5, padding: 10, }}
+              onChangeText={(questionText) => this.setState({questionText})}
+              value={this.state.questionText}
+              underlineColorAndroid="transparent"
+              placeholder="Type question or command."
+            />
+          </View>
+        </View>
+      );
+  }
+}
+
+export class RobotView extends Component{
+  constructor(props){
+    super(props);
+    this.state= {protectHomeState: false, autopilotState:false, moveDirection:null, moveState:false};
+  }
   
-  _autopilot(state){
+  move(direction, state){
+    const requestData = {client: 'halClient', event: 'move', date: Date.now(), data:{direction:direction, state: state}};
+    console.log('Move: ',requestData);
+    this.props.socketStream.send(JSON.stringify(requestData));
+    this.setState({moveDirection: direction, moveState: state});
+  }
+    
+  autopilot(state){
     console.log('Sending Autopilot state: ', state);
     const requestData = {client: 'halClient', event: 'autopilot', date: Date.now(), data:{state: state}};
-    this.socketStream.send(JSON.stringify(requestData));
+    this.props.socketStream.send(JSON.stringify(requestData));
     this.setState({autopilotState: state});
   }
-
-  _protectHomeAlarm(message){
+  
+  protectHome(state){
+    console.log('Sending ProtectHome state: ', state);
+    const requestData = {client: 'halClient', event: 'protectHome', date: Date.now(), data:{state: state}};
+    this.props.socketStream.send(JSON.stringify(requestData));
+    this.setState({protectHomeState: state});
+  }
+  protectHomeAlarm(message){
     console.log('Alarm alarm alarm!');
     Vibration.vibrate([0, 500, 200, 500], true);
     Alert.alert(
@@ -143,96 +202,282 @@ export default class HalClient extends Component {
       { cancelable: false }
       )
   }
-
-  _getCameraImage = function(){
-    console.log('Sending camera image request...');
-    var requestData = {client: 'halClient', event: 'getRobotCameraImage', date: Date.now(), data:{}};
-    this.socketStream.send(JSON.stringify(requestData));
-  }
-
-  setCameraModalVisible(visible) {
-    this.setState({cameraModalVisible: visible});
-  }
-
-  setRobotaModalVisible(visible) {
-    this.setState({robotModalVisible: visible});
-  }
-
-  render() {
-    return (
-      <View style={styles.container}>
-        <View style={styles.header}>
-          <Text style={styles.headerText}>Hal Client</Text>
+  
+  render(){
+    return(
+        <View style={styles.robotViewStyle}>
+          <View style={styles.pageHeader}>
+            <Text style={styles.pageText}>Robot control</Text>
+          </View>
+          <View style={styles.pageContent}>
+            <View style={styles.robotSwitches}>
+              <View>
+                <Text style={styles.pageText}>Home Protection: </Text>
+              </View>
+              <View>
+                <Switch onValueChange={(value)=>{this.protectHome(value);}} value = {this.state.protectHomeState} disabled={!this.props.socketConnected} thumbTintColor='#fff' tintColor='#fff'/>
+              </View>
+              <View>
+                <Text style={styles.pageText}>Autopilot: </Text>
+              </View>
+              <View>
+                <Switch onValueChange={(value)=>{this.autopilot(value);}} value = {this.state.autopilotState} disabled={!this.props.socketConnected} thumbTintColor='#fff' tintColor='#fff'/>
+              </View>            
+            </View>
+            <View style={styles.robotControlArrows}>
+              <View>
+                <TouchableWithoutFeedback 
+                onPressIn={()=>this.move('left', true)} onPressOut={()=>this.move('left', false)} disabled={!this.props.socketConnected}>
+                  <View style={styles.buttonLeft}>
+                    <Text>
+                      LEFT
+                    </Text>
+                  </View>
+                </TouchableWithoutFeedback>      
+              </View>
+              <View>
+                <TouchableWithoutFeedback 
+                onPressIn={()=>this.move('up', true)} onPressOut={()=>this.move('up', false)} disabled={!this.props.socketConnected}>
+                  <View style={styles.buttonUp}>
+                    <Text>
+                      UP
+                    </Text>
+                  </View>
+                </TouchableWithoutFeedback>
+                <TouchableWithoutFeedback 
+                onPressIn={()=>this.move('down', true)} onPressOut={()=>this.move('down', false)} disabled={!this.props.socketConnected}>
+                  <View style={styles.buttonDown}>
+                    <Text>
+                      DOWN
+                    </Text>
+                  </View>
+                </TouchableWithoutFeedback>  
+              </View>
+              <View>
+                <TouchableWithoutFeedback 
+                onPressIn={()=>this.move('right', true)} onPressOut={()=>this.move('right', false)} disabled={!this.props.socketConnected}>
+                <View style={styles.buttonRight}>
+                  <Text>
+                    RIGHT
+                  </Text>
+                </View>
+                </TouchableWithoutFeedback>
+              </View>
+            </View>
+          </View>
         </View>
-        <View style={{flex: .25, marginTop:20}}>
-          <View style={{flexDirection:'row'}}>
-            <View>
-              <Text>Home Protection: </Text>
-            </View>
-            <View>
-              <Switch onValueChange={(value)=>{this._protectHome(value);}} value = {this.state.protectHomeState} disabled={!this.state.socketConnected}/>
-            </View>
-            <View>
-              <Text>Autopilot: </Text>
-            </View>
-            <View>
-              <Switch onValueChange={(value)=>{this._autopilot(value);}} value = {this.state.autopilotState} disabled={!this.state.socketConnected}/>
-            </View>            
-          </View>
-          <View style={{flexDirection:'row'}}>
-            <View>
-              <Text>Kitchen Light: </Text>
-            </View>
-            <View>
-              <Switch onValueChange={(value)=>{this._toggleKitchenLight(value);}} value = {this.state.kitchenLightState} disabled={!this.state.socketConnected}/>
-            </View>
-          </View>
-          <View style={{flexDirection:'row'}}>
-            <Text>
-            Messages: { this.state.socketResponse }
-            </Text>
-          </View>          
-          <View style={{flexDirection:'row'}}>
-            
-          </View>
-          <View style={{flexDirection:'column'}}>
-            <Text>Move direction: {this.state.moveDirection}, Move state: {String(this.state.moveState)}</Text>
-            <Button onPress={()=>this._getCameraImage()} title="Get camera image"/>
-          </View>
-        </View>
-        <CameraModal cameraModalVisible={this.state.cameraModalVisible} setCameraModalVisible={this.setCameraModalVisible.bind(this)} receivedImage={this.state.receivedImage}></CameraModal>
-        <RobotModal socketStream={this.socketStream} socketConnected={this.state.socketConnected} setRobotModalVisible={this.setRobotModalVisible.bind(this)}></RobotModal>
-      </View>
       );
+  }
 }
+
+export class HomeProtectView extends Component{
+  constructor(props){
+    super(props);
+    this.state= {questionText: null};
+  }
+  
+  render(){
+    return(
+        <View>
+          <View style={styles.pageHeader}>
+            <Text style={styles.pageText}>Home protect view</Text>
+          </View>
+          <View style={styles.pageContent}>
+            <Text style={styles.pageText}>In progress...</Text>
+          </View>
+        </View>
+      );
+  }
+}
+
+export class KitchenControlView extends Component{
+  constructor(props){
+    super(props);
+    this.state= {kitchenLightState: false};
+  }
+  
+  changeKitchenLight(state){
+    console.log('Sending kitchenLight state: ', state);
+    const requestData = {client: 'halClient', event: 'toggleKitchenLight', date: Date.now(), data:{state: state}};
+    this.props.socketStream.send(JSON.stringify(requestData));
+    this.setState({kitchenLightState: state});
+  }
+  
+  getButtonTitle(){
+    return this.state.kitchenLightState ? "Kitchen Light is ON" : "Kitchen Light is OFF";
+  }
+
+  getButtonStyle(){
+    return this.state.kitchenLightState ? styles.buttonMediumOn : styles.buttonMediumOff;
+  }
+  
+  render(){
+    return(
+        <View style={styles.kitchenControlViewStyle}>
+          <View style={styles.pageHeader}>
+            <Text style={styles.pageText}>Kitchen Control</Text>
+          </View>
+          <View style={styles.pageContent}>
+            <View style={styles.kitchenControlButtons}>
+              <TouchableWithoutFeedback
+                onPress={()=>this.changeKitchenLight(!this.state.kitchenLightState)}
+                disabled={!this.props.socketConnected}
+              >
+                <View style={styles.buttonMedium}>
+                  <Text>
+                    {this.getButtonTitle()}
+                  </Text>
+                </View>
+              </TouchableWithoutFeedback>
+            </View>
+          </View>
+        </View>
+      );
+  }
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    paddingTop: 20,
+    backgroundColor: '#000',
+  },
+  viewPager:{
+    flex:1
+  },
+  homeView:{
+    flex:1
+  },
+  pageHeader:{
+    flex:0.04,
+    alignItems:'center'
+  },
+  halEye:{
+    flex:0.3,
+    flexDirection:'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  halTextInput:{
+    flex:0.4,
+    flexDirection:'row'
+  },
+  pageStyle: {
+    flex:1,
+    marginTop: 20,
+    alignItems: 'center',
+    padding:20,
+  },
+  pageContent:{
+    flex:0.97,
+    borderWidth:1,
+    borderColor:'#fff',
+    width: windowWidth
+  },
+  pageText: {
+    color: 'white'
+  },
+  button:{
+    alignItems: 'center',
+    borderWidth: 1,
+    borderRadius: 5,
+    borderColor: '#fff',
+    padding: 20,
+    width: 90, 
+    height: 90,
+    backgroundColor: '#fff',
+  },
+  buttonUp:{
+    marginBottom:40,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderRadius: 5,
+    borderColor: '#fff',
+    padding: 20,
+    width: 90, 
+    height: 90,
+    backgroundColor: '#fff',
+  },
+  buttonDown:{
+    marginTop:40,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderRadius: 5,
+    borderColor: '#fff',
+    padding: 20,
+    width: 90, 
+    height: 90,
+    backgroundColor: '#fff',
+  },
+  buttonLeft:{
+    alignItems: 'center',
+    borderWidth: 1,
+    borderRadius: 5,
+    borderColor: '#fff',
+    padding: 20,
+    width: 90, 
+    height: 90,
+    backgroundColor: '#fff',
+  },
+  buttonRight:{
+    alignItems: 'center',
+    borderWidth: 1,
+    borderRadius: 5,
+    borderColor: '#fff',
+    padding: 20,
+    width: 90, 
+    height: 90,
+    backgroundColor: '#fff',
+  },
+  robotViewStyle:{
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#ecf0f1',
   },
-  header:{
-    flex: 0.08, 
-    backgroundColor: '#4f4f4f', 
-    paddingTop: 15,
-    alignSelf: 'stretch',
-    alignItems: 'center'
+  robotSwitches:{
+    marginTop:20,
+    flex:0.4,
+    flexDirection:'row',
+    justifyContent: 'center'
   },
-  headerText:{
-    color: '#fff', 
-    marginTop:20, 
-    alignSelf: 'center'
+  robotControlArrows:{
+    flex:0.6,
+    flexDirection:'row',
+    alignItems: 'center',
+    justifyContent: 'space-around',
   },
-  paragraph: {
-    margin: 24,
-    fontSize: 18,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    color: '#34495e',
+  kitchenControlViewStyle:{
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  kitchenControlButtons:{
+    marginTop:20,
+    flexDirection:'row',
+    justifyContent: 'center'
+  },
+  buttonMedium:{
+    alignItems: 'center',
+    borderWidth: 1,
+    borderRadius: 5,
+    borderColor: '#fff',
+    padding: 30,
+    backgroundColor: '#fff'
+  },
+  buttonMediumOn:{
+    alignItems: 'center',
+    borderWidth: 1,
+    borderRadius: 5,
+    borderColor: 'green',
+    padding: 30,
+    backgroundColor: '#fff'
+  },
+  buttonMediumOff:{
+    alignItems: 'center',
+    borderWidth: 1,
+    borderRadius: 5,
+    borderColor: 'green',
+    padding: 30,
+    backgroundColor: '#fff'
   },
 });
-
+    
 AppRegistry.registerComponent('HalClient', () => HalClient);

@@ -255,7 +255,7 @@ wss.on('connection', function connection(ws) {
       ws.isAlive = false;
       ws.ping('', false, true);
     });
-  }, 30000);
+  }, 3000000);
 });
 
 wss.renderMessage = function(message){

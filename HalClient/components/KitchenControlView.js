@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
-import {Text, View, TouchableWithoutFeedback, StyleSheet} from 'react-native';
+import {Text, View, TouchableWithoutFeedback, StyleSheet, Dimensions} from 'react-native';
+
+var windowWidth = Dimensions.get('window').width;
+var windowHeight = Dimensions.get('window').height;
 
 export default class KitchenControlView extends Component{
   constructor(props){

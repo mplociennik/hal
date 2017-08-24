@@ -46,7 +46,7 @@ export default class Main extends Component {
 
     // reconnect websocket if disconnectet internet in background or inactive
     if (this.socketStream.readyState !== 1) {
-      this._reconnectSocket();
+      // this._reconnectSocket();
     }
   }
 

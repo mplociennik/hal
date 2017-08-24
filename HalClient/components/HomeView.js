@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
-import {Text, View, Image, TextInput, StyleSheet} from 'react-native';
+import {Text, View, Image, TextInput, StyleSheet, Dimensions} from 'react-native';
 
+var windowWidth = Dimensions.get('window').width;
+var windowHeight = Dimensions.get('window').height;
 
 export default class HomeView extends Component {
   constructor(props){

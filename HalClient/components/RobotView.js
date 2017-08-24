@@ -1,5 +1,9 @@
 import React, { Component } from 'react';
-import {Text, View, TouchableWithoutFeedback, Switch, Alert, Vibration, StyleSheet} from 'react-native';
+import {Text, View, TouchableWithoutFeedback, Switch, Alert, Vibration, StyleSheet, Dimensions} from 'react-native';
+
+var windowWidth = Dimensions.get('window').width;
+var windowHeight = Dimensions.get('window').height;
+
 
 export default class RobotView extends Component{
   constructor(props){

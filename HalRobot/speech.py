@@ -71,22 +71,13 @@ class Speech(multiprocessing.Process):
         # print('Cannot create file "{0}"'.format(fileNamePath))
         return fileNamePath
 
-    def create_dalek_voice(self, text):
-        name = 'Jacek'
-        region = 'eu-east'
-        text = "Exterminate, exterminate, exterminate!"
-        v = pyvona.create_voice(IVONA_ACCESS_KEY, IVONA_SECRET_KEY)
-        v.voice_name = name
-        v.region = region
-        try:
-            v.fetch_voice(text, 'voice_file')
-        except:
-            print "Speech: connection not found!"
+    def say_dalek_voice(self, text):
 
+        fileNamePath = self.create_voice(text)
         time.sleep(0.001)
-        os.system('play tmp/recorder.wav stretch 1.2 133.33 lin 0.2 0.4 \
+        os.system('play {0} stretch 1.2 133.33 lin 0.2 0.4 \
         overdrive 30 30 echo 0.4 0.8 15 0.8 \
-        synth sine fmod 30 echo 0.8 0.8 29 0.8')
+        synth sine fmod 30 echo 0.8 0.8 29 0.8'.format(fileNamePath))
 
     def play_sound(self, file):
         Audio(file, 1.0)

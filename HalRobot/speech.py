@@ -3,7 +3,6 @@
 import os
 import urllib2
 import md5
-import base64
 import voicerss_tts
 import multiprocessing
 from audio import Audio
@@ -16,6 +15,10 @@ class Speech(multiprocessing.Process):
     """Class to making connection to voice webapi."""
 
     language = 'en-us'
+    format= 'mp3'
+    rate = '44khz_16bit_stereo'
+    ssl='false'
+    b64='false'
         
     def __init__(self, name=None, region=None):
         if not os.path.isdir(SPEECH_DIR_NAME):
@@ -35,32 +38,33 @@ class Speech(multiprocessing.Process):
     def filter_spaces(self, text):
         return text.replace(" ", "%20")
 
-    def create_voice(self, text, lang=language, format='mp3', rate='44khz_16bit_stereo', ssl='false', b64='true'):
+    def create_voice(self, text):
         print 'creating voice...'
         # try:
         voice = voicerss_tts.speech({
             'key': API_KEY,
-            'hl': lang,
+            'hl': self.language,
             'src': text,
             'r': '0',
-            'c': format,
-            'f': rate,
-            'ssml': ssl,
-            'b64': b64
+            'c': self.format,
+            'f': self.rate,
+            'ssml': self.ssl,
+            'b64': self.b64
         })
-        print('<audio src="' + voice['response'] + '" autoplay="autoplay"></audio>')
+
         m = md5.new()
         m.update(text)
         textHash = m.hexdigest()
-        fileNamePath = '{0}/{1}.{2}'.format(VOICES_DIR_NAME,textHash, format)
-        filename = self.write_voice(fileNamePath,  base64.b64decode(voice['response']))
+        fileNamePath = '{0}/{1}.{2}'.format(VOICES_DIR_NAME,textHash, self.format)
+        filename = self.write_voice(fileNamePath,  voice['response'])
         #     print(filename)
         # except:
         #     print "Speech: ERROR!"
+        return fileNamePath
 
     def write_voice(self, fileNamePath, voice_binary):
         # try:
-        with open(fileNamePath, 'w') as f:
+        with open(fileNamePath, 'wb') as f:
             f.write(voice_binary)
             f.close()
         # except:
@@ -70,6 +74,10 @@ class Speech(multiprocessing.Process):
     def play_sound(self, file):
         Audio(file, 1.0)
 
+    def say(self, text):
+        fileNamePath = self.create_voice(text)
+        self.play_sound(fileNamePath)
+
 if __name__ == "__main__":
     speech = Speech()
-    speech.hello('Hello world man! How are you?')
+    speech.say('Hello world man! How are you? It\'s working!')

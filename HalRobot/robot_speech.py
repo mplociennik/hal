@@ -12,18 +12,21 @@ if platform.system() == 'Linux':
 
 class RobotSpeech(RobotWebsocketClient):
     
+    def speech(self, text):
+
+
     def on_message(self, ws, message):
         print('json message: ', message)
         dataObj = json.loads(message)
         print("Received message: {0}".format(dataObj))
         if dataObj['event'] == 'speech':
-            print('Speech in progress...')
+            self.speech(dataObj['data']['text'])
         if dataObj['event'] == 'message':
             print(dataObj['data']['message'])
 
     def on_open(self, ws):
         print('Sending initial request to HalServer')
-        initMessage = json.dumps({"client": "robotMove","event": "init", "data": {'mesage': 'hello server!'}})
+        initMessage = json.dumps({"client": "robotSpeech","event": "init", "data": {'mesage': 'hello server!'}})
         ws.send(initMessage)
 
     def start(self):

@@ -7,13 +7,22 @@ import platform
 from robot_websocket_client import RobotWebsocketClient
 
 if platform.system() == 'Linux':
-    import speech
+    from speech import Speech
 
 
 class RobotSpeech(RobotWebsocketClient):
     
     def speech(self, text):
+        pass
 
+    def __init__(self):
+        self.speech = Speech()
+
+    def text_to_speech(self, text):
+        self.speech.create_voice(text)
+
+    def text_to_dalek_voice(self, text):
+        self.speech.create_dalek_voice(text)
 
     def on_message(self, ws, message):
         print('json message: ', message)

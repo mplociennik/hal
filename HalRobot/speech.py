@@ -16,7 +16,7 @@ class Speech(multiprocessing.Process):
     """Class to making connection to voice webapi."""
 
     language = 'en-us'
-    format= 'mp3'
+    format= 'wav'
     rate = '44khz_16bit_stereo'
     ssl='false'
     b64='false'

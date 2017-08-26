@@ -88,4 +88,4 @@ class Speech(multiprocessing.Process):
 
 if __name__ == "__main__":
     speech = Speech()
-    speech.say_dalek_voice('Hi I like Olivia! I\'m robot'')
+    speech.say_dalek_voice('Hi I like Olivia! I\'m robot')

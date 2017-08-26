@@ -72,7 +72,6 @@ class Speech(multiprocessing.Process):
         return fileNamePath
 
     def say_dalek_voice(self, text):
-
         fileNamePath = self.create_voice(text)
         time.sleep(0.001)
         os.system('play {0} stretch 1.2 133.33 lin 0.2 0.4 \
@@ -88,4 +87,4 @@ class Speech(multiprocessing.Process):
 
 if __name__ == "__main__":
     speech = Speech()
-    speech.say('Hello world man! How are you? It\'s working!')
+    speech.say_dalek_voice('Exterminate! Exterminate! Exterminate!')

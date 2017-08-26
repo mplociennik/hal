@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import {Text, View, TouchableWithoutFeedback, Switch, Alert, Vibration, StyleSheet, Dimensions} from 'react-native';
+import FontAwesome, { Icons } from 'react-native-fontawesome';
 
 var windowWidth = Dimensions.get('window').width;
 var windowHeight = Dimensions.get('window').height;
@@ -72,7 +73,9 @@ export default class RobotView extends Component{
                 onPressIn={()=>this.move('left', true)} onPressOut={()=>this.move('left', false)} disabled={!this.props.socketConnected}>
                   <View style={styles.buttonLeft}>
                     <Text>
-                      LEFT
+                    <FontAwesome>
+                    {Icons.chevronLeft}
+                    </FontAwesome>
                     </Text>
                   </View>
                 </TouchableWithoutFeedback>      
@@ -81,8 +84,10 @@ export default class RobotView extends Component{
                 <TouchableWithoutFeedback 
                 onPressIn={()=>this.move('up', true)} onPressOut={()=>this.move('up', false)} disabled={!this.props.socketConnected}>
                   <View style={styles.buttonUp}>
-                    <Text>
-                      UP
+                    <Text style={styles.ArrowUp}>
+                      <FontAwesome>
+                        {Icons.chevronUp}
+                      </FontAwesome>
                     </Text>
                   </View>
                 </TouchableWithoutFeedback>
@@ -90,7 +95,9 @@ export default class RobotView extends Component{
                 onPressIn={()=>this.move('down', true)} onPressOut={()=>this.move('down', false)} disabled={!this.props.socketConnected}>
                   <View style={styles.buttonDown}>
                     <Text>
-                      DOWN
+                      <FontAwesome>
+                        {Icons.chevronDown}
+                      </FontAwesome>
                     </Text>
                   </View>
                 </TouchableWithoutFeedback>  
@@ -100,7 +107,9 @@ export default class RobotView extends Component{
                 onPressIn={()=>this.move('right', true)} onPressOut={()=>this.move('right', false)} disabled={!this.props.socketConnected}>
                 <View style={styles.buttonRight}>
                   <Text>
-                    RIGHT
+                    <FontAwesome>
+                      {Icons.chevronRight}
+                    </FontAwesome>
                   </Text>
                 </View>
                 </TouchableWithoutFeedback>
@@ -173,6 +182,10 @@ const styles = StyleSheet.create({
     width: 90, 
     height: 90,
     backgroundColor: '#fff',
+  },
+  arrowUp:{
+    position:'relative',
+    top:140
   },
   buttonDown:{
     marginTop:40,

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {Text, View, TouchableWithoutFeedback, Switch, Alert, Vibration, StyleSheet, Dimensions} from 'react-native';
+import {Text, View, TouchableWithoutFeedback, Switch, Alert, Vibration, StyleSheet, Dimensions, Button, TextInput} from 'react-native';
 import FontAwesome, { Icons } from 'react-native-fontawesome';
 
 var windowWidth = Dimensions.get('window').width;
@@ -45,6 +45,13 @@ export default class RobotView extends Component{
       { cancelable: false }
       )
   }
+
+  speechText(){
+    console.log('Sending robotSpeech text: ', this.state.textToSpeech);
+    const requestData = {client: 'halClient', event: 'robotSpeechText', date: Date.now(), data:{text: this.state.textToSpeech}};
+    this.props.socketStream.send(JSON.stringify(requestData));
+    this.setState({textToSpeech: ''});
+  }
   
   render(){
     return(
@@ -66,6 +73,11 @@ export default class RobotView extends Component{
               <View>
                 <Switch onValueChange={(value)=>{this.autopilot(value);}} value = {this.state.autopilotState} disabled={!this.props.socketConnected} thumbTintColor='#fff' tintColor='#fff'/>
               </View>            
+            </View>
+            <View>
+              <TextInput style={{height: 40, borderColor: 'gray', borderWidth: 1}} onChangeText={(text) => this.setState({textToSpeech: text})} value={this.state.textToSpeech}
+              />
+              <Button title="Speech text" onPress={()=>this.speechText()}/>
             </View>
             <View style={styles.robotControlArrows}>
               <View>

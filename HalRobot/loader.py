@@ -17,5 +17,7 @@ if LOADER_ENABLED:
     sleep(1)
     robot_camera = os.system('python /home/pi/hal/HalRobot/robot_camera.py')
     sleep(1)
+    robot_speech = os.system('python /home/pi/hal/HalRobot/robot_speech.py')
+    sleep(1)
 else:
     print('Loader is disabled!')

@@ -69,6 +69,12 @@ wss.toggleKitchenLight = function(ws, state){
   wss.broadcastByClientName('kitchenLight', dataJson);
 }
 
+wss.robotSpeechText = function(ws, text){
+  console.log("robotSpeech request text: ", text);
+  dataJson = JSON.stringify({event:'speech', data:{text: text}});
+  wss.broadcastByClientName('robotSpeech', dataJson);
+}
+
 wss.serveHalClient = function(ws, dataObj){
   if (typeof dataObj.event !== 'undefined') {
       switch(dataObj.event){
@@ -94,6 +100,9 @@ wss.serveHalClient = function(ws, dataObj){
             break;        
         case 'toggleKitchenLight':
             wss.toggleKitchenLight(ws, dataObj.data.state);
+            break;        
+        case 'robotSpeechText':
+            wss.robotSpeechText(ws, dataObj.data.text);
             break;
       }    
   }else{
@@ -193,6 +202,28 @@ wss.serveKitchenLight = function(ws, dataObj){
       case 'toggle_kitchen_light':
         dataJson = JSON.stringify({event:'toggle_kitchen_light', data: dataObj.data});
         wss.broadcastByClientName('kitchenLight', dataJson);
+      case 'message':
+        console.log('Message from "' + dataObj.client + '": ' + dataObj.data.message);
+        break;
+    }    
+  }else{
+    console.log('Event is undefined: ', dataObj);
+  } 
+};
+
+
+wss.serveRobotSpeech = function(ws, dataObj){
+  if (typeof dataObj.event !== 'undefined') {
+    switch(dataObj.event){
+      case 'init':
+        ws.client = dataObj.client;
+        dataJson = JSON.stringify({event:'message', data:{message: 'Init ready!'}});
+        ws.send(dataJson);
+        console.log('robotSpeech initialized!');
+        break;
+      case 'speech':
+        dataJson = JSON.stringify({event:'toggle_kitchen_light', data: dataObj.data});
+        wss.broadcastByClientName('robotSpeech', dataJson);
       case 'message':
         console.log('Message from "' + dataObj.client + '": ' + dataObj.data.message);
         break;

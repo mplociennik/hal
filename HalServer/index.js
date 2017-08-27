@@ -222,7 +222,7 @@ wss.serveRobotSpeech = function(ws, dataObj){
         console.log('robotSpeech initialized!');
         break;
       case 'speech':
-        dataJson = JSON.stringify({event:'toggle_kitchen_light', data: dataObj.data});
+        dataJson = JSON.stringify({event:'speech', data: dataObj.data});
         wss.broadcastByClientName('robotSpeech', dataJson);
       case 'message':
         console.log('Message from "' + dataObj.client + '": ' + dataObj.data.message);
@@ -268,6 +268,9 @@ wss.on('connection', function connection(ws) {
           break;   
         case 'kitchenLight':
           wss.serveKitchenLight(ws, dataObj);
+          break;     
+        case 'robotSpeech':
+          wss.serveRobotSpeech(ws, dataObj);
           break;        
       }
     } else {

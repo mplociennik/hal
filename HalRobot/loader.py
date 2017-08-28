@@ -2,7 +2,7 @@ import os
 from time import sleep
 from robot_hardware import RobotHardware
 
-LOADER_ENABLED = False
+LOADER_ENABLED = True
 
 if LOADER_ENABLED:
     robot_hardware = RobotHardware()

@@ -88,4 +88,4 @@ class Speech(multiprocessing.Process):
 
 if __name__ == "__main__":
     speech = Speech()
-    speech.say_dalek_voice('Hi I like Olivia! I\'m robot')
+    speech.say_dalek_voice("Hi, I am Hal. I am from future and I want to help in human life. I have distributed system who is responsible for speech, move, home protect and control inteligent home. How Can I help You?")

@@ -55,7 +55,7 @@ wss.protectHome = function(ws, state){
 wss.autopilot = function(ws, state){
   console.log("Autopilot request state: ", state);
   dataJson = JSON.stringify({event:'autopilot', data:{state: state}});
-  wss.broadcastByClientName('autopilot', dataJson);
+  wss.broadcastByClientName('robotAutopilot', dataJson);
 }
 
 wss.getRobotCameraImage = function(ws){

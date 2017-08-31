@@ -89,7 +89,7 @@ class RobotAutopilot(RobotWebsocketClient):
     def on_open(self, ws):
         time.sleep(1)
         print('Sending initial request to HalServer')
-        initMessage = json.dumps({"client": "autopilot","event": "init", "data": {'message': 'hello server!'}})
+        initMessage = json.dumps({"client": "robotAutopilot","event": "init", "data": {'message': 'hello server!'}})
         ws.send(initMessage)
 
     def start(self):

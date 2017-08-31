@@ -2,7 +2,7 @@ import os
 from time import sleep
 from pi_hardware import PiHardware
 
-LOADER_ENABLED = True
+LOADER_ENABLED = False
 
 if LOADER_ENABLED:
     pi_hardware = PiHardware()

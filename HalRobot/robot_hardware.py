@@ -10,7 +10,7 @@ if platform.system() == 'Linux':
     from pi_hardware import PiHardware
 
 
-class RobotSpeech(RobotWebsocketClient):
+class RobotHardware(RobotWebsocketClient):
 
 
     def __init__(self):
@@ -30,14 +30,16 @@ class RobotSpeech(RobotWebsocketClient):
         print('json message: ', message)
         dataObj = json.loads(message)
         print("Received message: {0}".format(dataObj))
-        if dataObj['event'] == 'speech':
-            self.speech.say(dataObj['data']['text'])
+        if dataObj['event'] == 'measureTemp':
+            self.measure_temp(ws)
+        if dataObj['event'] == 'measureVolts':
+            self.measure_volts(ws)
         if dataObj['event'] == 'message':
             print(dataObj['data']['message'])
 
     def on_open(self, ws):
         print('Sending initial request to HalServer')
-        initMessage = json.dumps({"client": "robotSpeech", "event": "init", "data": {'mesage': 'hello server!'}})
+        initMessage = json.dumps({"client": "robotHardware", "event": "init", "data": {'mesage': 'hello server!'}})
         ws.send(initMessage)
 
     def start(self):
@@ -52,5 +54,5 @@ class RobotSpeech(RobotWebsocketClient):
 
 
 if __name__ == "__main__":
-    robot_speech = RobotSpeech()
-    robot_speech.start()
+    robot_hardware = RobotHardware()
+    robot_hardware.start()

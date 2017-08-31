@@ -211,7 +211,6 @@ wss.serveKitchenLight = function(ws, dataObj){
   } 
 };
 
-
 wss.serveRobotSpeech = function(ws, dataObj){
   if (typeof dataObj.event !== 'undefined') {
     switch(dataObj.event){
@@ -230,6 +229,24 @@ wss.serveRobotSpeech = function(ws, dataObj){
     }    
   }else{
     console.log('Event is undefined: ', dataObj);
+  } 
+};
+
+wss.serveRobotHardware = function(ws, dataObj){
+  if (typeof dataObj.event !== 'undefined') {
+    switch(dataObj.event){
+      case 'init':
+        ws.client = dataObj.client;
+        dataJson = JSON.stringify({event:'message', data:{message: 'Init ready!'}});
+        ws.send(dataJson);
+        wss.renderMessage('robotHardware initialized!');
+        break;
+      case 'message':
+        wss.renderMessage('Message from "' + dataObj.client + '": ' + dataObj.data.message);
+        break;
+    }    
+  }else{
+    wss.renderMessage('Event is undefined: ' + dataObj);
   } 
 };
 
@@ -271,6 +288,9 @@ wss.on('connection', function connection(ws) {
           break;     
         case 'robotSpeech':
           wss.serveRobotSpeech(ws, dataObj);
+          break;            
+        case 'robotHardware':
+          wss.serveRobotHardware(ws, dataObj);
           break;        
       }
     } else {

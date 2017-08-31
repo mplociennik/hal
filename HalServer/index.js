@@ -119,11 +119,11 @@ wss.serveAutopilot = function(ws, dataObj){
         ws.send(dataJson);
         break;
       case 'message':
-        console.log('Message from "' + dataObj.client + '": ' + dataObj.data.message);
+        wss.renderMessage('Message from "' + dataObj.client + '": ' + dataObj.data.message);
         break;
     }    
   }else{
-    console.log('Event is undefined: ', dataObj);
+    wss.renderMessage('Event is undefined: ' + dataObj);
   }          
 };
 
@@ -136,18 +136,18 @@ wss.serveProtectHome = function(ws, dataObj){
         ws.send(dataJson);
         break;
       case 'message':
-        console.log('Message from "' + dataObj.client + '": ' + dataObj.data.message);
+        wss.renderMessage('Message from "' + dataObj.client + '": ' + dataObj.data.message);
         break;
       case 'alarm':
         dataJson = JSON.stringify({event:'protectHomeAlarm', data:{message:dataObj.data.message}});
         wss.broadcastByClientName('halClient', dataJson);
         break;
       default:
-        console.log('Event not found!');
+        wss.renderMessage('Event not found!');
         break;
     }    
   }else{
-    console.log('Event is undefined: ', dataObj);
+    wss.renderMessage('Event is undefined: ' + dataObj);
   }          
 };
 
@@ -161,11 +161,11 @@ wss.serveRobotMove = function(ws, dataObj){
         console.log('RobotMove initialized!');
         break;
       case 'message':
-        console.log('Message from "' + dataObj.client + '": ' + dataObj.data.message);
+        wss.renderMessage('Message from "' + dataObj.client + '": ' + dataObj.data.message);
         break;
     }    
   }else{
-    console.log('Event is undefined: ', dataObj);
+    wss.renderMessage('Event is undefined: ' + dataObj);
   } 
 };
 
@@ -176,17 +176,17 @@ wss.serveRobotCamera = function(ws, dataObj){
         ws.client = dataObj.client;
         dataJson = JSON.stringify({event:'message', data:{message: 'Init ready!'}});
         ws.send(dataJson);
-        console.log('RobotCamera initialized!');
+        wss.renderMessage('RobotCamera initialized!');
         break;
       case 'stream_photo':
         dataJson = JSON.stringify({event:'stream_photo', data: dataObj.data});
         wss.broadcastByClientName('halClient', dataJson);
       case 'message':
-        console.log('Message from "' + dataObj.client + '": ' + dataObj.data.message);
+        wss.renderMessage('Message from "' + dataObj.client + '": ' + dataObj.data.message);
         break;
     }    
   }else{
-    console.log('Event is undefined: ', dataObj);
+    wss.renderMessage('Event is undefined: ' + dataObj);
   } 
 };
 
@@ -197,17 +197,17 @@ wss.serveKitchenLight = function(ws, dataObj){
         ws.client = dataObj.client;
         dataJson = JSON.stringify({event:'message', data:{message: 'Init ready!'}});
         ws.send(dataJson);
-        console.log('KitchenLight initialized!');
+        wss.renderMessage('KitchenLight initialized!');
         break;
       case 'toggle_kitchen_light':
         dataJson = JSON.stringify({event:'toggle_kitchen_light', data: dataObj.data});
         wss.broadcastByClientName('kitchenLight', dataJson);
       case 'message':
-        console.log('Message from "' + dataObj.client + '": ' + dataObj.data.message);
+        wss.renderMessage('Message from "' + dataObj.client + '": ' + dataObj.data.message);
         break;
     }    
   }else{
-    console.log('Event is undefined: ', dataObj);
+    wss.renderMessage('Event is undefined: ' + dataObj);
   } 
 };
 
@@ -218,17 +218,17 @@ wss.serveRobotSpeech = function(ws, dataObj){
         ws.client = dataObj.client;
         dataJson = JSON.stringify({event:'message', data:{message: 'Init ready!'}});
         ws.send(dataJson);
-        console.log('robotSpeech initialized!');
+        wss.renderMessage('robotSpeech initialized!');
         break;
       case 'speech':
         dataJson = JSON.stringify({event:'speech', data: dataObj.data});
         wss.broadcastByClientName('robotSpeech', dataJson);
       case 'message':
-        console.log('Message from "' + dataObj.client + '": ' + dataObj.data.message);
+        wss.renderMessage('Message from "' + dataObj.client + '": ' + dataObj.data.message);
         break;
     }    
   }else{
-    console.log('Event is undefined: ', dataObj);
+    wss.renderMessage('Event is undefined: ' + dataObj);
   } 
 };
 
@@ -277,7 +277,7 @@ wss.on('connection', function connection(ws) {
         case 'robotMove':
           wss.serveRobotMove(ws, dataObj);
           break;
-        case 'autopilot':
+        case 'robotAutopilot':
           wss.serveAutopilot(ws, dataObj);
           break;             
         case 'robotCamera':

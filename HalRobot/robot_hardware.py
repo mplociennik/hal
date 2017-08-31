@@ -1,29 +1,56 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import os
-import subprocess
-from time import sleep
+import sys
+import time
+import json
+import platform
+from robot_websocket_client import RobotWebsocketClient
+
+if platform.system() == 'Linux':
+    from pi_hardware import PiHardware
 
 
-class RobotHardware():
+class RobotSpeech(RobotWebsocketClient):
 
-    def measure_temp(self):
-        command_response = subprocess.check_output('vcgencmd measure_temp',shell=True, stderr=subprocess.STDOUT)
-        return command_response    
 
-    def measure_volts(self):
-        command_response = subprocess.check_output('vcgencmd measure_volts',shell=True, stderr=subprocess.STDOUT)
-        return command_response
+    def __init__(self):
+        self.pi_hardware = PiHardware()
 
-    def disable_hdmi(self):
-        command_response = subprocess.check_output('tvservice -o',shell=True, stderr=subprocess.STDOUT)
-        return command_response
+    def measure_temp(self, ws):
+        temp = self.pi_hardware.measure_temp()
+        message = json.dumps({"client": "robotHardware", "event": "responseMeasureTemp", "data": {'result': temp}})
+        ws.send(message)
 
-    def enable_hdmi(self):
-        command_response = subprocess.check_output('tvservice -p',shell=True, stderr=subprocess.STDOUT)
-        return command_response
+    def measureVolts(self, ws):
+        result = self.pi_hardware.measure_volts()
+        message = json.dumps({"client": "robotHardware", "event": "responseMeasureVolts", "data": {'result': result}})
+        ws.send(message)
+
+    def on_message(self, ws, message):
+        print('json message: ', message)
+        dataObj = json.loads(message)
+        print("Received message: {0}".format(dataObj))
+        if dataObj['event'] == 'speech':
+            self.speech.say(dataObj['data']['text'])
+        if dataObj['event'] == 'message':
+            print(dataObj['data']['message'])
+
+    def on_open(self, ws):
+        print('Sending initial request to HalServer')
+        initMessage = json.dumps({"client": "robotSpeech", "event": "init", "data": {'mesage': 'hello server!'}})
+        ws.send(initMessage)
+
+    def start(self):
+        count = 0
+        while self.check_connection() == False:
+            count = count + 1
+            print("Not found connetion network! Reconnecting ({0})in 15 seconds...".format(count))
+            time.sleep(15)
+
+        print('Connection enabled! Starting socket client...')
+        self.connect()
 
 
 if __name__ == "__main__":
-    print robot_hardware.measure_temp()
-    print robot_hardware.measure_volts()
+    robot_speech = RobotSpeech()
+    robot_speech.start()

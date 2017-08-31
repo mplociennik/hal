@@ -9,7 +9,7 @@ var windowHeight = Dimensions.get('window').height;
 export default class RobotView extends Component{
   constructor(props){
     super(props);
-    this.state= {protectHomeState: false, autopilotState:false, moveDirection:null, moveState:false, textToSpeech:'Hi, I am Hal. I am from future and I want to help in human life. I have distributed system who is responsible for speech, move, home protect and control intelligent home. How Can I help You?'};
+    this.state= {protectHomeState: false, autopilotState:false, moveDirection:null, moveState:false, textToSpeech:''};
   }
   
   move(direction, state){
@@ -32,23 +32,10 @@ export default class RobotView extends Component{
     this.props.socketStream.send(JSON.stringify(requestData));
     this.setState({protectHomeState: state});
   }
-  
-  protectHomeAlarm(message){
-    console.log('Alarm alarm alarm!');
-    Vibration.vibrate([0, 500, 200, 500], true);
-    Alert.alert(
-      'Protect Home Alert!',
-      message,
-      [
-      {text: 'OK', onPress: () => Vibration.cancel()},
-      ],
-      { cancelable: false }
-      )
-  }
 
-  speechText(){
+  speechText(textToSpeech){
     console.log('Sending robotSpeech text: ', this.state.textToSpeech);
-    const requestData = {client: 'halClient', event: 'robotSpeechText', date: Date.now(), data:{text: this.state.textToSpeech}};
+    const requestData = {client: 'halClient', event: 'robotSpeechText', date: Date.now(), data:{text: textToSpeech}};
     this.props.socketStream.send(JSON.stringify(requestData));
     this.setState({textToSpeech: ''});
   }
@@ -75,9 +62,10 @@ export default class RobotView extends Component{
               </View>            
             </View>
             <View>
-              <TextInput style={{height: 40, borderColor: 'gray', borderWidth: 1}} onChangeText={(text) => this.setState({textToSpeech: text})} value={this.state.textToSpeech}
+              <TextInput style={{color: 'white', height: 40, borderColor: 'gray', borderWidth: 1}} onChangeText={(text) => this.setState({textToSpeech: text})} value={this.state.textToSpeech}
               />
-              <Button title="Speech text" onPress={()=>this.speechText()}/>
+              <Button title="Speech text" onPress={()=>this.speechText(this.state.textToSpeech)}/>
+              <Button title="Exterminate" onPress={()=>this.speechText('Exterminate! Exterminate! Exterminate!')}/>
             </View>
             <View style={styles.robotControlArrows}>
               <View>
@@ -236,7 +224,13 @@ const styles = StyleSheet.create({
   },
   robotSwitches:{
     marginTop:20,
-    flex:0.4,
+    flex:0.09,
+    flexDirection:'row',
+    justifyContent: 'center'
+  },
+  robotSpeechText:{
+    marginTop:20,
+    flex:0.2,
     flexDirection:'row',
     justifyContent: 'center'
   },

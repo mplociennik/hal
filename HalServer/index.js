@@ -1,6 +1,6 @@
+var moment = require('moment');
 var crypto = require('crypto');
 var md5sum = crypto.createHash('md5');
-
 const WebSocket = require('ws');
 const wss = new WebSocket.Server({ port: 8083});
 console.log('Server listening...');
@@ -274,7 +274,7 @@ wss.on('connection', function connection(ws) {
           break;        
       }
     } else {
-      console.log('Undefined client!');
+      wss.renderMessage('Undefined client!');
     }
     return true;
   });
@@ -294,7 +294,7 @@ wss.on('connection', function connection(ws) {
 
 wss.renderMessage = function(message){
   console.log('**********************************************');
-  console.log(message)
+  console.log(moment().format() + ": " + message)
   console.log('**********************************************');
   return true;
 }

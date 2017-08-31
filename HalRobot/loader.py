@@ -1,14 +1,16 @@
 import os
 from time import sleep
-from robot_hardware import RobotHardware
+from pi_hardware import PiHardware
 
 LOADER_ENABLED = True
 
 if LOADER_ENABLED:
-    robot_hardware = RobotHardware()
-    print robot_hardware.disable_hdmi()
+    pi_hardware = PiHardware()
+    print pi_hardware.disable_hdmi()
     sleep(5)
     print('Running robot modules...')
+    robot_move = os.system('python /home/pi/hal/HalRobot/robot_hardware.py &')
+    sleep(1)
     robot_move = os.system('python /home/pi/hal/HalRobot/robot_move.py &')
     sleep(1)
     home_protect = os.system('python /home/pi/hal/HalRobot/robot_home_protect.py &')

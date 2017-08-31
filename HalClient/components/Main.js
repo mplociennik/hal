@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {AppState, ViewPagerAndroid, Button, StyleSheet, Dimensions, View} from 'react-native';
+import {AppState, ViewPagerAndroid, Button, StyleSheet, Dimensions, View, Vibration, Alert} from 'react-native';
 import HomeView from './HomeView';
 import RobotView from './RobotView';
 import KitchenControlView from './KitchenControlView';
@@ -77,7 +77,7 @@ export default class Main extends Component {
           self.setState({socketResponse: requestData.data.message});
           break;   
         case 'protectHomeAlarm':
-          this._protectHomeAlarm(requestData.data.message);
+          this.protectHomeAlarm(requestData.data.message);
           break;
         case 'stream_photo':
           this.receiveImageStream(requestData.data);
@@ -119,6 +119,20 @@ export default class Main extends Component {
 
   setCameraModalVisible(visible) {
     this.setState({cameraModalVisible: visible});
+  }
+
+  
+  protectHomeAlarm(message){
+    console.log('Alarm alarm alarm!');
+    Vibration.vibrate([0, 500, 200, 500], true);
+    Alert.alert(
+      'Protect Home Alert!',
+      message,
+      [
+      {text: 'OK', onPress: () => Vibration.cancel()},
+      ],
+      { cancelable: false }
+      )
   }
 
   render(){

@@ -12,7 +12,7 @@ if platform.system() == 'Linux':
     GPIO.setmode(GPIO.BOARD)
     PIR_SENSOR = 37
     GPIO.setup(PIR_SENSOR, GPIO.IN, GPIO.PUD_DOWN)
-    from distance import Distance
+    # from distance import Distance
 
 
 class RobotHomeProtect(RobotWebsocketClient):
@@ -20,7 +20,8 @@ class RobotHomeProtect(RobotWebsocketClient):
     alarm_state = False
     def __init__(self):
         if platform.system() =='Linux':
-            self.INITIAL_DISTANCE = int(Distance().detect())
+            # self.INITIAL_DISTANCE = int(Distance().detect())
+            self.INITIAL_DISTANCE = 0
             print('initial distance is: {0} cm'.format(self.INITIAL_DISTANCE))
 
     def alarm(self, message):

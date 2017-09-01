@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {StyleSheet, Image, Text, TextInput, View, Modal, TouchableHighlight, TouchableWithoutFeedback, Button, Dimensions, Picker} from 'react-native';
+import {StyleSheet, Image, Text, TextInput, View, Modal, TouchableHighlight, TouchableWithoutFeedback, Button, Dimensions, Picker, Keyboard} from 'react-native';
 
 var windowWidth = Dimensions.get('window').width;
 var windowHeight = Dimensions.get('window').height;
@@ -12,13 +12,15 @@ export default class RobotSpeechModal extends Component {
 
     speechText(textToSpeech){
       console.log('Sending robotSpeech text: ', this.state.textToSpeech);
-      const requestData = {client: 'halClient', event: 'robotSpeechText', date: Date.now(), data:{lang: this.state.robotLector ,text: textToSpeech}};
+      const requestData = {client: 'halClient', event: 'robotSpeechText', date: Date.now(), data:{lector: this.state.robotLector ,text: textToSpeech}};
       this.props.socketStream.send(JSON.stringify(requestData));
       this.setState({textToSpeech: ''});
+      Keyboard.dismiss();
     }
 
     pressHideModal(){
       this.props.setRobotSpeechModalVisible(false);
+      Keyboard.dismiss();
     }
 
     render(){

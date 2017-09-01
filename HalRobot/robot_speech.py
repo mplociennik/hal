@@ -20,7 +20,7 @@ class RobotSpeech(RobotWebsocketClient):
         dataObj = json.loads(message)
         print("Received message: {0}".format(dataObj))
         if dataObj['event'] == 'speech':
-            if(dataObj['data']['lang'] == 'dalek'):
+            if dataObj['data']['lector'] == 'dalek':
                 self.speech.say_dalek_voice(dataObj['data']['text'])
             else:
                 self.speech.say(dataObj['data']['text'])

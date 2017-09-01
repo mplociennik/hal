@@ -69,9 +69,9 @@ wss.toggleKitchenLight = function(ws, state){
   wss.broadcastByClientName('kitchenLight', dataJson);
 }
 
-wss.robotSpeechText = function(ws, text){
+wss.robotSpeechText = function(ws, data){
   console.log("robotSpeech request text: ", text);
-  dataJson = JSON.stringify({event:'speech', data:{text: text}});
+  dataJson = JSON.stringify({event:'speech', data: data});
   wss.broadcastByClientName('robotSpeech', dataJson);
 }
 
@@ -102,7 +102,7 @@ wss.serveHalClient = function(ws, dataObj){
             wss.toggleKitchenLight(ws, dataObj.data.state);
             break;        
         case 'robotSpeechText':
-            wss.robotSpeechText(ws, dataObj.data.text);
+            wss.robotSpeechText(ws, dataObj.data);
             break;
       }    
   }else{

@@ -25,7 +25,7 @@ export default class Main extends Component {
       receivedImage: null, 
       streamImageBuffer: null,
       cameraModalVisible: false,
-      initialViewPagerPage: 1
+      initialViewPagerPage: 0
     };
     this.socketStream = null;
   }

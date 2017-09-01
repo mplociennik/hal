@@ -14,6 +14,8 @@ wss.getClientByType = function(clientType){
   wss.clients.forEach(function each(item){
     if (item.client === clientType) {
       client = item;
+    }else{
+      renderMessage('Not found client type: ' + clientType);
     }
   });
   return client;
@@ -24,17 +26,21 @@ wss.broadcast = function broadcast(data) {
   wss.clients.forEach(function each(client) {
     if (client.readyState === WebSocket.OPEN) {
       client.send(data);
+    }else{
+      renderMessage('Client not ready: ' + client.client);
     }
   });
 };
 
-// Broadcast by client type.
+// Broadcast by client name.
 wss.broadcastByClientName = function broadcast(clientName, data) {
   state = false;
   wss.clients.forEach(function each(client) {
     if (client.client === clientName && client.readyState === WebSocket.OPEN) {
       state = true;
       client.send(data);
+    }else{
+      renderMessage('Not not ready or not found: ' + clientName);
     }
   });
   return state;
@@ -70,9 +76,15 @@ wss.toggleKitchenLight = function(ws, state){
 }
 
 wss.robotSpeechText = function(ws, data){
-  console.log("robotSpeech request text: ", text);
+  console.log("robotSpeech request data: ", data);
   dataJson = JSON.stringify({event:'speech', data: data});
   wss.broadcastByClientName('robotSpeech', dataJson);
+}
+
+wss.robotHardware = function(ws, data){
+  console.log("robotHardware request data: ", data);
+  dataJson = JSON.stringify({event:'robotHardware', data: data});
+  wss.broadcastByClientName('robotHardware', dataJson);
 }
 
 wss.serveHalClient = function(ws, dataObj){
@@ -87,23 +99,26 @@ wss.serveHalClient = function(ws, dataObj){
           console.log('Message from "' + dataObj.client + '": ' + dataObj.data.message);
           break;
         case 'move':
-            wss.move(ws, dataObj.data.direction, dataObj.data.state);
-            break;
+          wss.move(ws, dataObj.data.direction, dataObj.data.state);
+          break;
         case 'protectHome':
-            wss.protectHome(ws, dataObj.data.state);
-            break;        
+          wss.protectHome(ws, dataObj.data.state);
+          break;        
         case 'autopilot':
-            wss.autopilot(ws, dataObj.data.state);
-            break;        
+          wss.autopilot(ws, dataObj.data.state);
+          break;        
         case 'getRobotCameraImage':
-            wss.getRobotCameraImage(ws);
-            break;        
+          wss.getRobotCameraImage(ws);
+          break;        
         case 'toggleKitchenLight':
-            wss.toggleKitchenLight(ws, dataObj.data.state);
-            break;        
+          wss.toggleKitchenLight(ws, dataObj.data.state);
+          break;        
         case 'robotSpeechText':
-            wss.robotSpeechText(ws, dataObj.data);
-            break;
+          wss.robotSpeechText(ws, dataObj.data);
+          break;        
+        case 'robotHardware':
+          wss.robotHardware(dataObj.data);
+          break;
       }    
   }else{
     console.log('Event is undefined: ', dataObj);
@@ -241,6 +256,8 @@ wss.serveRobotHardware = function(ws, dataObj){
         ws.send(dataJson);
         wss.renderMessage('robotHardware initialized!');
         break;
+      case 'hardwareStats':
+
       case 'message':
         wss.renderMessage('Message from "' + dataObj.client + '": ' + dataObj.data.message);
         break;

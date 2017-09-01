@@ -10,7 +10,7 @@ var windowHeight = Dimensions.get('window').height;
 export default class RobotView extends Component{
   constructor(props){
     super(props);
-    this.state= {protectHomeState: false, autopilotState:false, moveDirection:null, moveState:false, robotSpeechModalVisible: true};
+    this.state= {protectHomeState: false, autopilotState:false, moveDirection:null, moveState:false, robotSpeechModalVisible: false};
   }
   
   move(direction, state){

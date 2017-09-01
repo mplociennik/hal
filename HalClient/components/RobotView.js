@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import {Text, View, TouchableWithoutFeedback, Switch, Alert, Vibration, StyleSheet, Dimensions, Button, TextInput} from 'react-native';
+import {Text, View, TouchableWithoutFeedback, Switch, Alert, Vibration, StyleSheet, Dimensions, Button} from 'react-native';
 import FontAwesome, { Icons } from 'react-native-fontawesome';
+import RobotSpeechModal from './RobotSpeechModal';
 
 var windowWidth = Dimensions.get('window').width;
 var windowHeight = Dimensions.get('window').height;
@@ -9,7 +10,7 @@ var windowHeight = Dimensions.get('window').height;
 export default class RobotView extends Component{
   constructor(props){
     super(props);
-    this.state= {protectHomeState: false, autopilotState:false, moveDirection:null, moveState:false, textToSpeech:''};
+    this.state= {protectHomeState: false, autopilotState:false, moveDirection:null, moveState:false, robotSpeechModalVisible: true};
   }
   
   move(direction, state){
@@ -33,11 +34,8 @@ export default class RobotView extends Component{
     this.setState({protectHomeState: state});
   }
 
-  speechText(textToSpeech){
-    console.log('Sending robotSpeech text: ', this.state.textToSpeech);
-    const requestData = {client: 'halClient', event: 'robotSpeechText', date: Date.now(), data:{text: textToSpeech}};
-    this.props.socketStream.send(JSON.stringify(requestData));
-    this.setState({textToSpeech: ''});
+  setRobotSpeechModalVisible(state){
+    this.setState({robotSpeechModalVisible: state});
   }
   
   render(){
@@ -61,11 +59,9 @@ export default class RobotView extends Component{
                 <Switch onValueChange={(value)=>{this.autopilot(value);}} value = {this.state.autopilotState} disabled={!this.props.socketConnected} thumbTintColor='#fff' tintColor='#fff'/>
               </View>            
             </View>
-            <View>
-              <TextInput style={{color: 'white', height: 40, borderColor: 'gray', borderWidth: 1}} onChangeText={(text) => this.setState({textToSpeech: text})} value={this.state.textToSpeech}
-              />
-              <Button title="Speech text" onPress={()=>this.speechText(this.state.textToSpeech)}/>
-              <Button title="Exterminate" onPress={()=>this.speechText('Exterminate! Exterminate! Exterminate!')}/>
+            <View style={{marginLeft:15,marginRight:15}}>
+              <Button title="Robot speech" onPress={()=>this.setRobotSpeechModalVisible(true)}/>
+              <RobotSpeechModal socketStream={this.props.socketStream} modalVisible={this.state.robotSpeechModalVisible} setRobotSpeechModalVisible={this.setRobotSpeechModalVisible.bind(this)}></RobotSpeechModal>
             </View>
             <View style={styles.robotControlArrows}>
               <View>
@@ -228,26 +224,11 @@ const styles = StyleSheet.create({
     flexDirection:'row',
     justifyContent: 'center'
   },
-  robotSpeechText:{
-    marginTop:20,
-    flex:0.2,
-    flexDirection:'row',
-    justifyContent: 'center'
-  },
   robotControlArrows:{
     flex:0.6,
     flexDirection:'row',
     alignItems: 'center',
     justifyContent: 'space-around',
-  },
-  kitchenControlViewStyle:{
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  kitchenControlButtons:{
-    marginTop:20,
-    flexDirection:'row',
-    justifyContent: 'center'
   },
   buttonMedium:{
     alignItems: 'center',

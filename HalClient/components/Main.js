@@ -24,7 +24,8 @@ export default class Main extends Component {
       messages: [], 
       receivedImage: null, 
       streamImageBuffer: null,
-      cameraModalVisible: false
+      cameraModalVisible: false,
+      initialViewPagerPage: 1
     };
     this.socketStream = null;
   }
@@ -142,7 +143,7 @@ export default class Main extends Component {
             <Button title="Settings" onPress={()=>console.log('dupa')}/>
         </View>
         <ViewPagerAndroid
-          initialPage={0}
+          initialPage={this.state.initialViewPagerPage}
           style={styles.viewPager}
         >
           <View style={styles.pageStyle}>

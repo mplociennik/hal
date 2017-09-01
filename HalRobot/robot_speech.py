@@ -11,25 +11,19 @@ if platform.system() == 'Linux':
 
 
 class RobotSpeech(RobotWebsocketClient):
-    
-    def speech(self, text):
-        pass
 
     def __init__(self):
         self.speech = Speech()
-
-    def text_to_speech(self, text):
-        self.speech.create_voice(text)
-
-    def text_to_dalek_voice(self, text):
-        self.speech.create_dalek_voice(text)
 
     def on_message(self, ws, message):
         print('json message: ', message)
         dataObj = json.loads(message)
         print("Received message: {0}".format(dataObj))
         if dataObj['event'] == 'speech':
-            self.speech.say(dataObj['data']['text'])
+            if(dataObj['data']['lang'] == 'dalek'):
+                self.speech.say_dalek_voice(dataObj['data']['text'])
+            else:
+                self.speech.say(dataObj['data']['text'])
         if dataObj['event'] == 'message':
             print(dataObj['data']['message'])
 

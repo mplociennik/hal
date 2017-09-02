@@ -15,7 +15,7 @@ wss.getClientByType = function(clientType){
     if (item.client === clientType) {
       client = item;
     }else{
-      renderMessage('Not found client type: ' + clientType);
+      wss.renderMessage('Not found client type: ' + clientType);
     }
   });
   return client;
@@ -27,7 +27,7 @@ wss.broadcast = function broadcast(data) {
     if (client.readyState === WebSocket.OPEN) {
       client.send(data);
     }else{
-      renderMessage('Client not ready: ' + client.client);
+      wss.renderMessage('Client not ready: ' + client.client);
     }
   });
 };
@@ -40,7 +40,7 @@ wss.broadcastByClientName = function broadcast(clientName, data) {
       state = true;
       client.send(data);
     }else{
-      renderMessage('Not not ready or not found: ' + clientName);
+      wss.renderMessage('Not ready or not found: ' + clientName);
     }
   });
   return state;
@@ -256,8 +256,9 @@ wss.serveRobotHardware = function(ws, dataObj){
         ws.send(dataJson);
         wss.renderMessage('robotHardware initialized!');
         break;
-      case 'hardwareStats':
-
+      case 'robotHardwareInfo':
+        dataJson = JSON.stringify({event:'robotHardwareInfo', data:{message:dataObj.data.message}});
+        wss.broadcastByClientName('halClient', dataJson);
       case 'message':
         wss.renderMessage('Message from "' + dataObj.client + '": ' + dataObj.data.message);
         break;

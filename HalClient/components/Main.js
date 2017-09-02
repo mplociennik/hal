@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {AppState, ViewPagerAndroid, Button, StyleSheet, Dimensions, View, Vibration, Alert} from 'react-native';
+import {AppState, ViewPagerAndroid, Button, StyleSheet, Dimensions, View, Vibration, Alert, NetInfo} from 'react-native';
 import HomeView from './HomeView';
 import RobotView from './RobotView';
 import KitchenControlView from './KitchenControlView';
@@ -25,18 +25,45 @@ export default class Main extends Component {
       receivedImage: null, 
       streamImageBuffer: null,
       cameraModalVisible: false,
-      initialViewPagerPage: 0
+      initialViewPagerPage: 0,
+      robotHardwarInterval: null,
+      robotHardwareIntervalTime: 3000,
+
     };
     this.socketStream = null;
   }
 
+  initNetInfo(){
+    var self = this;
+    NetInfo.fetch().done((reach) => {
+      console.log('Initial connection: ' + reach);
+      self.setState({netInfoState: reach});
+    });
+    function handleConnectivityChange(reach) {
+      console.log('Changed connection: ' + reach);
+      self.setState({netInfoState: reach});
+    }
+    NetInfo.addEventListener(
+      'change',
+      handleConnectivityChange
+    );
+  }
+
   componentDidMount(){
+    this.initNetInfo()
+    // this.getNetInfo();
     AppState.addEventListener('change', this._handleAppStateChange);
     this._connectSocket();
+    var self = this;
+    var robotHardwarInterval = setInterval(()=>{
+      self.getRobotHardwareInfo();
+    }, this.state.robotHardwareIntervalTime);
+    this.setState({robotHardwareInterval: robotHardwarInterval});
   }
 
   componentWillUnmount() {
     AppState.removeEventListener('change', this._handleAppStateChange);
+    clearInterval(this.state.intervalId);
   }
 
   _handleAppStateChange = (nextAppState) => {
@@ -55,12 +82,14 @@ export default class Main extends Component {
     this.renderMessage('Connecting...');
     var self = this;
     this.socketStream = new WebSocket("ws://192.168.1.151:8083");
+
     this.socketStream.onopen = (evt)=>{ 
       self.setState({socketConnected: true});
       this.renderMessage('Socket connection opened.')
       const requestData = {client: 'halClient', event: 'init', date: Date.now(), data:{message: 'Hello Server!'}};
       self.socketStream.send(JSON.stringify(requestData))
     };
+
     this.socketStream.onmessage = (request)=>{
       this.renderMessage('Received message request: ' + request);
       var requestData = JSON.parse(request.data);
@@ -80,6 +109,9 @@ export default class Main extends Component {
         case 'protectHomeAlarm':
           this.protectHomeAlarm(requestData.data.message);
           break;
+        case 'robotHardwareInfo':
+          this.renderMessage('Hardware info: ' + requestData.data);
+          break;
         case 'stream_photo':
           this.receiveImageStream(requestData.data);
           this.setState({receivedImage: requestData.data.photo_data, cameraModalVisible: true})
@@ -95,6 +127,13 @@ export default class Main extends Component {
 
   }
 
+  getRobotHardwareInfo(){
+    const requestData = {client: 'halClient', event: 'robotHardware', date: Date.now(), data:{}};
+    if(this.socketStream.readyState === 1){
+      this.socketStream.send(JSON.stringify(requestData));
+    }
+  }
+
   renderMessage(message){
     this.setState({socketResponse: message, messages: [this.state.messages,message]} ); // socketResponse tymczasowo
     console.log(message);
@@ -103,8 +142,16 @@ export default class Main extends Component {
   
 
   _reconnectSocket(){
-    this.renderMessage('Reconnecting...');
-    this._connectSocket();
+    var self = this;
+    self.renderMessage('Reconnecting after 2 seconds...');
+    setTimeout(()=>{
+      if(this.state.netInfoState == 'WIFI'){
+        self._connectSocket();
+      }else{
+        self.renderMessage('WIFI connection disabled! Waiting for WIFI connection...');
+        self._reconnectSocket();
+      }
+    },2000);
   }
 
   _disconnectSocket(){
@@ -147,7 +194,7 @@ export default class Main extends Component {
           style={styles.viewPager}
         >
           <View style={styles.pageStyle}>
-            <HomeView></HomeView>
+            <HomeView netInfoState={this.state.netInfoState}></HomeView>
           </View>
           <View style={styles.pageStyle}>
             <RobotView socketConnected={this.state.socketConnected} socketStream={this.socketStream}></RobotView>

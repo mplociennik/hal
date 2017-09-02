@@ -28,6 +28,9 @@ export default class HomeView extends Component {
               placeholder="Type question or command."
             />
           </View>
+          <View style={styles.halNetInfo}>
+            <Text style={styles.pageText}>Connection info: {this.props.netInfoState}</Text>
+          </View>
         </View>
       );
   }
@@ -57,7 +60,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   halTextInput:{
-    flex:0.4,
+    flex:0.2,
+    flexDirection:'row'
+  },
+  halNetInfo:{
+    flex:0.2,
     flexDirection:'row'
   },
   pageStyle: {

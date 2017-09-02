@@ -7,6 +7,7 @@ import time
 import voicerss_tts
 import multiprocessing
 from audio import Audio
+from pymongo import MongoClient
 
 API_KEY = '481c2544951b469db5ef701015479b2e'
 SPEECH_DIR_NAME = 'speech'
@@ -39,6 +40,11 @@ class Speech(multiprocessing.Process):
     def filter_spaces(self, text):
         return text.replace(" ", "%20")
 
+    def get_text_hash(self, text):
+        m = md5.new()
+        m.update(text)
+        return m.hexdigest()
+
     def create_voice(self, text):
         print 'creating voice...'
         # try:
@@ -53,10 +59,7 @@ class Speech(multiprocessing.Process):
             'b64': self.b64
         })
 
-        m = md5.new()
-        m.update(text)
-        textHash = m.hexdigest()
-        fileNamePath = '{0}/{1}.{2}'.format(VOICES_DIR_NAME,textHash, self.format)
+        fileNamePath = '{0}/{1}.{2}'.format(VOICES_DIR_NAME, self.get_text_hash(text), self.format)
         filename = self.write_voice(fileNamePath,  voice['response'])
         #     print(filename)
         # except:
@@ -64,12 +67,12 @@ class Speech(multiprocessing.Process):
         return fileNamePath
 
     def write_voice(self, fileNamePath, voice_binary):
-        # try:
-        with open(fileNamePath, 'wb') as f:
-            f.write(voice_binary)
-            f.close()
-        # except:
-        # print('Cannot create file "{0}"'.format(fileNamePath))
+        try:
+            with open(fileNamePath, 'wb') as f:
+                f.write(voice_binary)
+                f.close()
+        except:
+            print('Cannot create file "{0}"'.format(fileNamePath))
         return fileNamePath
 
     def say_dalek_voice(self, text):
@@ -83,8 +86,19 @@ class Speech(multiprocessing.Process):
         Audio(file, 1.0)
 
     def say(self, text):
+        result = search_voice(text)
+        print("found voice: {0}".format(result))
         fileNamePath = self.create_voice(text)
         self.play_sound(fileNamePath)
+
+    def search_voice(self, text):
+        mongoClient = MongoClient()
+        db = mongoClient.hal
+        speechsCollection = db.speechs
+        result = speechsCollection.find_one({"hash": "Eliot"})
+        print(result)
+        return result
+
 
 if __name__ == "__main__":
     speech = Speech()

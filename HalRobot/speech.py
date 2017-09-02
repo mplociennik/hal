@@ -46,6 +46,9 @@ class Speech(multiprocessing.Process):
         m.update(text)
         return m.hexdigest()
 
+    def get_file_name_path(self, hash):
+        return '{0}/{1}.{2}'.format(VOICES_DIR_NAME, hash, self.format)
+
     def create_voice(self, text):
         print 'creating voice...'
         # try:
@@ -60,7 +63,7 @@ class Speech(multiprocessing.Process):
             'b64': self.b64
         })
 
-        fileNamePath = '{0}/{1}.{2}'.format(VOICES_DIR_NAME, self.get_text_hash(text), self.format)
+        fileNamePath = self.get_file_name_path(self.get_text_hash(text))
         state = self.write_voice(fileNamePath,  voice['response'])
         if state:
             self.db_save_voice(self.get_text_hash(text), text, self.language)
@@ -90,8 +93,11 @@ class Speech(multiprocessing.Process):
 
     def say(self, text):
         result = self.search_voice(text)
-        print("found voice: {0}".format(result))
-        fileNamePath = self.create_voice(text)
+        print result['hash']
+        if result:
+            fileNamePath = self.get_file_name_path(result['hash'])
+        else:
+            fileNamePath = self.create_voice(text)
         self.play_sound(fileNamePath)
 
     def search_voice(self, text):

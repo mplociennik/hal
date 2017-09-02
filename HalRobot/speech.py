@@ -97,8 +97,7 @@ class Speech(multiprocessing.Process):
     def search_voice(self, text):
         db = self.mongoClient.hal
         speechsCollection = db.speechs
-        result = speechsCollection.find_one({"hash": "Eliot"})
-        print(result)
+        result = speechsCollection.find_one({"hash": self.get_text_hash(text)})
         return result
 
     def db_save_voice(self, hash, text, lang):

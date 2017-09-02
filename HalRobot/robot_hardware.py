@@ -26,7 +26,7 @@ class RobotHardware(RobotWebsocketClient):
         message = json.dumps({"client": "robotHardware", "event": "responseMeasureVolts", "data": {'result': result}})
         ws.send(message)
 
-    def measureAll(self, ws):
+    def measure_all(self, ws):
         volts = self.pi_hardware.measure_volts()
         temp = self.pi_hardware.measure_temp()
         message = json.dumps({"client": "robotHardware", "event": "robotHardwareInfo", "data": {'volts': volts, 'temp':temp}})
@@ -41,7 +41,7 @@ class RobotHardware(RobotWebsocketClient):
         if dataObj['event'] == 'measureVolts':
             self.measure_volts(ws)
         if dataObj['event'] == 'robotHardware':
-            self.measure_volts(ws)
+            self.measure_all(ws)
         if dataObj['event'] == 'message':
             print(dataObj['data']['message'])
 

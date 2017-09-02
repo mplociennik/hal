@@ -94,7 +94,7 @@ class Speech(multiprocessing.Process):
     def say(self, text):
         result = self.search_voice(text)
         print(result.hash)
-        if result:
+        if result is not None:
             fileNamePath = self.get_file_name_path(result.hash)
         else:
             fileNamePath = self.create_voice(text)

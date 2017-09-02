@@ -30,6 +30,7 @@ class Speech(multiprocessing.Process):
 
         multiprocessing.Process.__init__(self)
         self.exit = multiprocessing.Event()
+        self.mongoClient = MongoClient()
         
     def terminate(self):
         self.exit.set() 
@@ -60,7 +61,9 @@ class Speech(multiprocessing.Process):
         })
 
         fileNamePath = '{0}/{1}.{2}'.format(VOICES_DIR_NAME, self.get_text_hash(text), self.format)
-        filename = self.write_voice(fileNamePath,  voice['response'])
+        state = self.write_voice(fileNamePath,  voice['response'])
+        if state:
+            self.db_save_voice(self.get_text_hash(text), text, self.language)
         #     print(filename)
         # except:
         #     print "Speech: ERROR!"
@@ -73,7 +76,7 @@ class Speech(multiprocessing.Process):
                 f.close()
         except:
             print('Cannot create file "{0}"'.format(fileNamePath))
-        return fileNamePath
+        return True
 
     def say_dalek_voice(self, text):
         fileNamePath = self.create_voice(text)
@@ -92,13 +95,18 @@ class Speech(multiprocessing.Process):
         self.play_sound(fileNamePath)
 
     def search_voice(self, text):
-        mongoClient = MongoClient()
-        db = mongoClient.hal
+        db = self.mongoClient.hal
         speechsCollection = db.speechs
         result = speechsCollection.find_one({"hash": "Eliot"})
         print(result)
         return result
 
+    def db_save_voice(self, hash, text, lang):
+        db = self.mongoClient.hal
+        speechsCollection = db.speechs
+        speechDocument = {"hash": hash, "text": text, "lang": lang,"date": datetime.datetime.utcnow()}
+        speech_id = speechsCollection.insert_one(speechDocument).inserted_id
+        return speech_id
 
 if __name__ == "__main__":
     speech = Speech()

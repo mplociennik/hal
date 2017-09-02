@@ -35,7 +35,9 @@ wss.broadcast = function broadcast(data) {
 // Broadcast by client name.
 wss.broadcastByClientName = function broadcast(clientName, data) {
   state = false;
+  console.log('clientName: ', clientName);
   wss.clients.forEach(function each(client) {
+    console.log('client.client: ', client.client);
     if (client.client === clientName && client.readyState === WebSocket.OPEN) {
       state = true;
       client.send(data);
@@ -81,9 +83,9 @@ wss.robotSpeechText = function(ws, data){
   wss.broadcastByClientName('robotSpeech', dataJson);
 }
 
-wss.robotHardware = function(ws, data){
-  console.log("robotHardware request data: ", data);
-  dataJson = JSON.stringify({event:'robotHardware', data: data});
+wss.robotHardware = function(ws){
+  console.log("robotHardware request.");
+  dataJson = JSON.stringify({event:'robotHardware', data: {}});
   wss.broadcastByClientName('robotHardware', dataJson);
 }
 

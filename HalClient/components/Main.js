@@ -51,7 +51,6 @@ export default class Main extends Component {
 
   componentDidMount(){
     this.initNetInfo()
-    // this.getNetInfo();
     AppState.addEventListener('change', this._handleAppStateChange);
     this._connectSocket();
     var self = this;

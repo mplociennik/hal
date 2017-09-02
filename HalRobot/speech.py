@@ -86,7 +86,7 @@ class Speech(multiprocessing.Process):
         Audio(file, 1.0)
 
     def say(self, text):
-        result = search_voice(text)
+        result = self.search_voice(text)
         print("found voice: {0}".format(result))
         fileNamePath = self.create_voice(text)
         self.play_sound(fileNamePath)

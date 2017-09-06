@@ -14,6 +14,7 @@ GPIO.output(SIGNAL_PIN, True)
 
 class KitchenController(RobotWebsocketClient):
 
+    WEBSOCKET_CLIENT_NAME = "kitchenLight"
     def revert_state(self, state):
         return not state
 
@@ -28,22 +29,6 @@ class KitchenController(RobotWebsocketClient):
             self.toggle_light(dataObj['data']['state'])
         if dataObj['event'] == 'message':
             print(dataObj['data']['message'])
-
-    def on_open(self, ws):
-        sleep(1)
-        print('Sending initial request to HalServer')
-        initMessage = json.dumps({"client": "kitchenLight", "event": "init", "data": {'message': 'Kitchen light ready.'}})
-        ws.send(initMessage)
-
-    def start(self):
-        count = 0
-        while self.check_connection() == False:
-            count = count + 1
-            print("Not found connetion network! Reconnecting ({0})in 15 seconds...".format(count))
-            time.sleep(15)
-
-        print('Internet connection enabled! Starting socket client...')
-        self.connect()
 
 if __name__ == "__main__":
     try:

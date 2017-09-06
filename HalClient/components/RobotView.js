@@ -14,7 +14,7 @@ export default class RobotView extends Component{
   }
   
   move(direction, state){
-    const requestData = {client: 'halClient', event: 'move', date: Date.now(), data:{direction:direction, state: state}};
+    const requestData = {from: 'halClient', to: 'robotMove', event: 'move', date: Date.now(), data:{direction:direction, state: state}};
     console.log('Move: ',requestData);
     this.props.socketStream.send(JSON.stringify(requestData));
     this.setState({moveDirection: direction, moveState: state});
@@ -22,14 +22,14 @@ export default class RobotView extends Component{
     
   autopilot(state){
     console.log('Sending Autopilot state: ', state);
-    const requestData = {client: 'halClient', event: 'autopilot', date: Date.now(), data:{state: state}};
+    const requestData = {from: 'halClient', to: 'robotAutopilot', event: 'autopilot', date: Date.now(), data:{state: state}};
     this.props.socketStream.send(JSON.stringify(requestData));
     this.setState({autopilotState: state});
   }
   
   protectHome(state){
     console.log('Sending ProtectHome state: ', state);
-    const requestData = {client: 'halClient', event: 'protectHome', date: Date.now(), data:{state: state}};
+    const requestData = {from: 'halClient', to: 'protectHome', event: 'protectHome', date: Date.now(), data:{state: state}};
     this.props.socketStream.send(JSON.stringify(requestData));
     this.setState({protectHomeState: state});
   }

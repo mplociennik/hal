@@ -11,6 +11,7 @@ if platform.system() == 'Linux':
 
 class RobotMove(RobotWebsocketClient):
 
+    WEBSOCKET_CLIENT_NAME = "robotMove"
     def __init__(self):
         pass
 
@@ -48,26 +49,12 @@ class RobotMove(RobotWebsocketClient):
     def on_message(self, ws, message):
         print('json message: ', message)
         dataObj = json.loads(message)
-        print("Received message: {0}".format(dataObj))
+        print("Received request: {0}".format(dataObj))
         if dataObj['event'] == 'move':
             self.move(dataObj['data']['direction'], dataObj['data']['state'])
         if dataObj['event'] == 'message':
             print(dataObj['data']['message'])
 
-    def on_open(self, ws):
-        print('Sending initial request to HalServer')
-        initMessage = json.dumps({"client": "robotMove","event": "init", "data": {'mesage': 'hello server!'}})
-        ws.send(initMessage)
-
-    def start(self):
-        count = 0
-        while self.check_connection() == False:
-            count = count + 1
-            print("Not found connetion network! Reconnecting ({0})in 15 seconds...".format(count))
-            time.sleep(15)
-
-        print('Connection enabled! Starting socket client...')
-        self.connect()
 
 if __name__ == "__main__":
     robot_move = RobotMove()

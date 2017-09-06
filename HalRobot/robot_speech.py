@@ -12,6 +12,8 @@ if platform.system() == 'Linux':
 
 class RobotSpeech(RobotWebsocketClient):
 
+    WEBSOCKET_CLIENT_NAME = "robotSpeech"
+
     def __init__(self):
         self.speech = Speech()
 
@@ -27,20 +29,6 @@ class RobotSpeech(RobotWebsocketClient):
         if dataObj['event'] == 'message':
             print(dataObj['data']['message'])
 
-    def on_open(self, ws):
-        print('Sending initial request to HalServer')
-        initMessage = json.dumps({"client": "robotSpeech","event": "init", "data": {'mesage': 'hello server!'}})
-        ws.send(initMessage)
-
-    def start(self):
-        count = 0
-        while self.check_connection() == False:
-            count = count + 1
-            print("Not found connetion network! Reconnecting ({0})in 15 seconds...".format(count))
-            time.sleep(15)
-
-        print('Connection enabled! Starting socket client...')
-        self.connect()
 
 if __name__ == "__main__":
     robot_speech = RobotSpeech()

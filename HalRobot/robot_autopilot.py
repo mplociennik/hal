@@ -15,6 +15,8 @@ class RobotAutopilot(RobotWebsocketClient):
     DIST_TOLERANCE = 4
     OBSTACLE_DISTANCE = 50
     AUTOPILOT_ENABLED = False
+    WEBSOCKET_CLIENT_NAME = "robotAutopilot"
+
     def __init__(self, ):
         pass
 
@@ -22,7 +24,7 @@ class RobotAutopilot(RobotWebsocketClient):
         print("toggle autopilot state: {0}".format(state))
         if state:
             self.AUTOPILOT_ENABLED = True
-            print("self.watch_alarm_state: {0}".format(self.AUTOPILOT_ENABLED))
+            print("autopilot state: {0}".format(self.AUTOPILOT_ENABLED))
             t = threading.Thread(target=self.autopilot_thread)
             t.setDaemon(True)
             t.start()
@@ -85,22 +87,6 @@ class RobotAutopilot(RobotWebsocketClient):
             self.toggle_autopilot(dataObj['data']['state'])
         if dataObj['event'] == 'message':
             print(dataObj['data']['message'])
-
-    def on_open(self, ws):
-        time.sleep(1)
-        print('Sending initial request to HalServer')
-        initMessage = json.dumps({"client": "robotAutopilot","event": "init", "data": {'message': 'hello server!'}})
-        ws.send(initMessage)
-
-    def start(self):
-        count = 0
-        while self.check_connection() == False:
-            count = count + 1
-            print("Not found connetion network! Reconnecting ({0})in 15 seconds...".format(count))
-            time.sleep(15)
-        
-        print('Internet connection enabled! Starting socket client...')
-        self.connect()
 
         
 if __name__ == "__main__":

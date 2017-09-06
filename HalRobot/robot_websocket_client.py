@@ -3,14 +3,15 @@
 import websocket
 import time
 import urllib2
+import json
 
-# WEBSOCKET_HOST = 'ws://localhost:8083/'
 WEBSOCKET_HOST = 'ws://192.168.1.151:8083/'
 
 
 class RobotWebsocketClient():
 
     ws = None
+    WEBSOCKET_CLIENT_NAME = "default"
     def __init__(self, ):
         pass
 
@@ -22,6 +23,10 @@ class RobotWebsocketClient():
     def on_close(self, ws):
         print("Socket connection closed.")
         self.reconnect()
+
+    def on_open(self, ws):
+        initMessage = json.dumps({"from": self.WEBSOCKET_CLIENT_NAME, "to": "server", "event": "init", "data": {'mesage': 'hello server!'}})
+        ws.send(initMessage)
 
     def check_connection(self):
         state = False
@@ -48,3 +53,13 @@ class RobotWebsocketClient():
                           on_close = self.on_close)
         self.ws.on_open = self.on_open
         self.ws.run_forever()
+
+    def start(self):
+        count = 0
+        while self.check_connection() == False:
+            count = count + 1
+            print("Not found connetion network! Reconnecting ({0})in 15 seconds...".format(count))
+            time.sleep(15)
+
+        print('Connection enabled! Starting socket client...')
+        self.connect()

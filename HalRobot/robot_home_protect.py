@@ -18,13 +18,15 @@ if platform.system() == 'Linux':
 class RobotHomeProtect(RobotWebsocketClient):
     DIST_TOLERANCE = 10
     alarm_state = False
+    WEBSOCKET_CLIENT_NAME = "protectHome"
+
     def __init__(self):
         if platform.system() =='Linux':
             self.INITIAL_DISTANCE = int(Distance().detect())
             print('initial distance is: {0} cm'.format(self.INITIAL_DISTANCE))
 
     def alarm(self, message):
-        print('Sending alarm message to Hal Server.')
+        print('Sending alarm message to')
         alarm_message = json.dumps({"client": "protectHome","event": "alarm", "data": {"message": message}})
         print("Alarm message: {0}".format(alarm_message))
         print("socket is {0}".format(self.ws.sock != None))
@@ -45,7 +47,7 @@ class RobotHomeProtect(RobotWebsocketClient):
                 cm = distance.detect()
                 print('Distance: {0} cm'.format(int(cm)))
                 if self.detect_opened_door(int(cm)):
-                    self.alarm("Dected changed distance: {0}!".format(int(cm)))
+                    self.alarm("Detected changed distance: {0}!".format(int(cm)))
                 time.sleep(1)
         else:
             self.alarm("Alarm debug in windows.")    
@@ -67,41 +69,27 @@ class RobotHomeProtect(RobotWebsocketClient):
             self.alarm(alarm_message)
             time.sleep(3)
             
-    def toggle_protect_home(self, state):
+    def toggle_protect_home(self, alarm_to, state):
         print("toggle protect home state: {0}".format(state))
         if state:
             self.protect_state = True
-            print("self.watch_alarm_state: {0}".format(self.protect_state))
+            self.alarm_to = alarm_to
+            print("self.protect_state: {0}".format(self.protect_state))
             t = threading.Thread(target=self.watch_pir)
             t.setDaemon(True)
             t.start()
         else:
             self.protect_state = False
+            self.alarm_to = None
                 
     def on_message(self, ws, message):
         dataObj = json.loads(message)
-        print("Received server response: {0}".format(dataObj))
+        print("Received request: {0}".format(dataObj))
         if dataObj['event'] == 'protectHome':
-            self.toggle_protect_home(dataObj['data']['state'])
+            self.toggle_protect_home(dataObj['from'], dataObj['data']['state'])
         if dataObj['event'] == 'message':
             print(dataObj['data']['message'])
 
-    def on_open(self, ws):
-        time.sleep(1)
-        print('Sending initial request to HalServer')
-        initMessage = json.dumps({"client": "protectHome","event": "init", "data": {'message': 'hello server!'}})
-        ws.send(initMessage)
-
-    def start(self):
-        count = 0
-        while self.check_connection() == False:
-            count = count + 1
-            print("Not found connetion network! Reconnecting ({0})in 15 seconds...".format(count))
-            time.sleep(15)
-        
-        print('Internet connection enabled! Starting socket client...')
-        self.connect()
-        
 
 if __name__ == "__main__":
     home_protect = RobotHomeProtect()

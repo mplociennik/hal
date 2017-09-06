@@ -127,10 +127,10 @@ export default class Main extends Component {
   }
 
   getRobotHardwareInfo(){
-    const requestData = {client: 'halClient', event: 'robotHardware', date: Date.now(), data:{}};
-    if(this.socketStream.readyState === 1){
-      this.socketStream.send(JSON.stringify(requestData));
-    }
+    // const requestData = {client: 'halClient', event: 'robotHardware', date: Date.now(), data:{}};
+    // if(this.socketStream.readyState === 1){
+    //   this.socketStream.send(JSON.stringify(requestData));
+    // }
   }
 
   renderMessage(message){

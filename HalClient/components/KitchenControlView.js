@@ -12,7 +12,7 @@ export default class KitchenControlView extends Component{
   
   changeKitchenLight(state){
     console.log('Sending kitchenLight state: ', state);
-    const requestData = {client: 'halClient', event: 'toggleKitchenLight', date: Date.now(), data:{state: state}};
+    const requestData = {from: 'halClient', to: 'kitchenLight', event: 'toggleKitchenLight', date: Date.now(), data:{state: state}};
     this.props.socketStream.send(JSON.stringify(requestData));
     this.setState({kitchenLightState: state});
   }

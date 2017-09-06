@@ -85,7 +85,7 @@ export default class Main extends Component {
     this.socketStream.onopen = (evt)=>{ 
       self.setState({socketConnected: true});
       this.renderMessage('Socket connection opened.')
-      const requestData = {client: 'halClient', event: 'init', date: Date.now(), data:{message: 'Hello Server!'}};
+      const requestData = {from: 'halClient', to: "server", event: 'init', date: Date.now(), data:{message: 'Hello Server!'}};
       self.socketStream.send(JSON.stringify(requestData))
     };
 

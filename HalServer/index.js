@@ -35,19 +35,45 @@ wss.broadcast = function broadcast(data) {
 
 // Broadcast by client name.
 wss.broadcastByClientName = function broadcast(clientName, data) {
+  dataString = JSON.stringify(data);
   state = false;
-  console.log('clientName: ', clientName);
+  console.log('broadcastByClientName clientName: ', clientName);
   wss.clients.forEach(function each(client) {
     console.log('client.client: ', client.client);
     if (client.client === clientName && client.readyState === WebSocket.OPEN) {
       state = true;
-      wss.renderMessage("Sending data: " + data);
-      client.send(data);
+      wss.renderMessage("Sending data: " + dataString);
+      client.send(dataString);
     }else{
       wss.renderMessage('Not ready or not found: ' + clientName);
     }
   });
   return state;
+};
+
+
+wss.renderMessage = function(message){
+  console.log('**********************************************');
+  console.log(moment().format() + ": " + message)
+  console.log('**********************************************');
+  return true;
+}
+
+wss.receiveServerRequest = function(ws, dataObj){
+    if (typeof dataObj.event !== 'undefined') {
+      switch(dataObj.event){
+        case 'init':
+          ws.client = dataObj.from;
+          dataJson = JSON.stringify({from: "server", to: dataObj['from'], event:'message', data:{message: 'Init ready!'}});
+          ws.send(dataJson);
+          break;
+        case 'message':
+          wss.renderMessage('Message from "' + dataObj.from + '": ' + dataObj.data.message);
+          break;
+      }    
+  }else{
+    console.log('Event is undefined: ', dataObj);
+  }
 };
 
 wss.on('connection', function connection(ws) {
@@ -71,6 +97,9 @@ wss.on('connection', function connection(ws) {
         case 'all':
           wss.broadcast(dataObj);
           break;
+        case 'server':
+          wss.receiveServerRequest(ws, dataObj);
+          break;
         default:
           wss.broadcastByClientName(dataObj.to, dataObj);
       }
@@ -92,10 +121,3 @@ wss.on('connection', function connection(ws) {
     });
   }, 3000000);
 });
-
-wss.renderMessage = function(message){
-  console.log('**********************************************');
-  console.log(moment().format() + ": " + message)
-  console.log('**********************************************');
-  return true;
-}

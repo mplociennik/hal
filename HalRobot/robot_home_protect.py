@@ -18,6 +18,7 @@ if platform.system() == 'Linux':
 class RobotHomeProtect(RobotWebsocketClient):
     DIST_TOLERANCE = 10
     alarm_state = False
+    alarm_to = None
     WEBSOCKET_CLIENT_NAME = "protectHome"
 
     def __init__(self):
@@ -27,7 +28,7 @@ class RobotHomeProtect(RobotWebsocketClient):
 
     def alarm(self, message):
         print('Sending alarm message to')
-        alarm_message = json.dumps({"client": "protectHome","event": "alarm", "data": {"message": message}})
+        alarm_message = json.dumps({"from": "protectHome", "to": self.alarm_to,"event": "alarm", "data": {"message": message}})
         print("Alarm message: {0}".format(alarm_message))
         print("socket is {0}".format(self.ws.sock != None))
         self.ws.send(alarm_message)

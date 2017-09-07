@@ -39,15 +39,13 @@ wss.broadcastByClientName = function broadcast(clientName, data) {
   state = false;
   console.log('broadcastByClientName clientName: ', clientName);
   wss.clients.forEach(function each(client) {
-    console.log('client.client: ', client.client);
     if (client.client === clientName && client.readyState === WebSocket.OPEN) {
       state = true;
       wss.renderMessage("Sending data: " + dataString);
       client.send(dataString);
-    }else{
-      wss.renderMessage('Not ready or not found: ' + clientName);
     }
   });
+  
   return state;
 };
 

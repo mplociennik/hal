@@ -59,6 +59,7 @@ class RobotHomeProtect(RobotWebsocketClient):
                 print("PIR is watching...")
                 time.sleep(0.1)
                 current_state = GPIO.input(PIR_SENSOR)
+                print("Current state pir: {0}".format(current_state))
                 if current_state == 1:
                     self.alarm_enabled = True
                     self.alarm("Movement detected!")

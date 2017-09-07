@@ -105,7 +105,7 @@ export default class Main extends Component {
         case 'autopilot':
           self.setState({socketResponse: requestData.data.message});
           break;   
-        case 'protectHomeAlarm':
+        case 'alarm':
           this.protectHomeAlarm(requestData.data.message);
           break;
         case 'robotHardwareInfo':

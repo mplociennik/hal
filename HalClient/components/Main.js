@@ -193,7 +193,7 @@ export default class Main extends Component {
           style={styles.viewPager}
         >
           <View style={styles.pageStyle}>
-            <HomeView netInfoState={this.state.netInfoState}></HomeView>
+            <HomeView netInfoState={this.state.netInfoState} socketConnected={this.state.socketConnected} socketStream={this.socketStream}></HomeView>
           </View>
           <View style={styles.pageStyle}>
             <RobotView socketConnected={this.state.socketConnected} socketStream={this.socketStream}></RobotView>

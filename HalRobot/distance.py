@@ -11,6 +11,7 @@ if platform.system() == 'Linux':
     GPIO.setup(TRIG,GPIO.OUT)
     GPIO.setup(ECHO, GPIO.IN)
     GPIO.output(TRIG, False)
+    GPIO.setwarnings(False)
 
 class Distance:
     """

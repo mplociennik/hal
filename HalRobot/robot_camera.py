@@ -7,12 +7,7 @@ import platform
 import datetime
 import base64
 from robot_websocket_client import RobotWebsocketClient
-if platform.system() == 'Linux':
-    from picamera import PiCamera
-
-
-STREAM_CHUNK = 1024
-
+STREAM_CMD = "raspivid -o - -t 0 -w 800 -h 400 | cvlc -vvv stream:///dev/stdin --sout '#rtp{sdp=rtsp://:8554/x}' :demux=h264"
 
 class RobotCamera(RobotWebsocketClient):
 

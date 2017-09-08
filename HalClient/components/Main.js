@@ -4,6 +4,7 @@ import HomeView from './HomeView';
 import RobotView from './RobotView';
 import KitchenControlView from './KitchenControlView';
 import HomeProtectView from './HomeProtectView';
+import MessagesLogView from './MessagesLogView';
 
 var windowWidth = Dimensions.get('window').width;
 var windowHeight = Dimensions.get('window').height;
@@ -21,7 +22,7 @@ export default class Main extends Component {
       kitchenLightState: false, 
       autopilotState: false, 
       socketConnected: false, 
-      messages: [], 
+      messagesLog: [], 
       receivedImage: null, 
       streamImageBuffer: null,
       cameraModalVisible: false,
@@ -92,19 +93,8 @@ export default class Main extends Component {
     this.socketStream.onmessage = (request)=>{
       this.renderMessage('Received message request: ' + request);
       var requestData = JSON.parse(request.data);
+      this.writeMessageLog(requestData);
       switch(requestData.event){
-        case 'message':
-          self.setState({socketResponse: requestData.data.message});
-          break;        
-        case 'move':
-          self.setState({socketResponse: requestData.data.message});
-          break;
-        case 'protectHome':
-          self.setState({socketResponse: requestData.data.message});
-          break;     
-        case 'autopilot':
-          self.setState({socketResponse: requestData.data.message});
-          break;   
         case 'alarm':
           this.protectHomeAlarm(requestData.data.message);
           break;
@@ -124,6 +114,11 @@ export default class Main extends Component {
       self._reconnectSocket();
     };
 
+  }
+
+  writeMessageLog(data){
+    this.setState({messagesLog: this.state.messagesLog.concat([data])});
+    this.renderMessage(this.state.messagesLog);
   }
 
   getRobotHardwareInfo(){
@@ -196,11 +191,14 @@ export default class Main extends Component {
             <HomeView netInfoState={this.state.netInfoState} socketConnected={this.state.socketConnected} socketStream={this.socketStream}></HomeView>
           </View>
           <View style={styles.pageStyle}>
+            <MessagesLogView messagesLog={this.state.messagesLog}></MessagesLogView> 
+          </View>  
+          <View style={styles.pageStyle}>
             <RobotView socketConnected={this.state.socketConnected} socketStream={this.socketStream}></RobotView>
           </View>
           <View style={styles.pageStyle}>
             <KitchenControlView socketConnected={this.state.socketConnected} socketStream={this.socketStream}></KitchenControlView> 
-          </View>
+          </View>        
           <View style={styles.pageStyle}>
             <HomeProtectView></HomeProtectView> 
           </View>

@@ -9,14 +9,14 @@ var windowHeight = Dimensions.get('window').height;
 export default class HomeView extends Component {
   constructor(props){
     super(props);
-    this.state= {questionText: null};
+    this.state= {speechCommand: null};
   }
   
   async _speechRecognize(){
     try{
-        //More Locales will be available upon release.
         var spokenText = await SpeechAndroid.startSpeech("Speak command", SpeechAndroid.US);
         console.log('spoken text: ', spokenText);
+        this.setState({speechCommand: spokenText});
         this.sendSpeechCommand(spokenText);
     }catch(error){
         switch(error){
@@ -29,7 +29,6 @@ export default class HomeView extends Component {
             case SpeechAndroid.E_SERVER_ERROR:
                 console.log('Google Server Error');
                 break;
-            /*And more errors that will be documented on Docs upon release*/
         }
     }
   }
@@ -47,6 +46,18 @@ export default class HomeView extends Component {
         },        
         {
           command: 'kitchen lights off', request: {from: 'halClient', to: 'kitchenLight', event: 'toggleKitchenLight', date: Date.now(), data:{state: false}}
+        },
+        {
+          command: 'protect home', request: {from: 'halClient', to: 'protectHome', event: 'protectHome', date: Date.now(), data:{state: true}}
+        },
+        {
+          command: 'stop protect home', request: {from: 'halClient', to: 'protectHome', event: 'protectHome', date: Date.now(), data:{state: false}}
+        },        
+        {
+          command: 'home protect', request: {from: 'halClient', to: 'protectHome', event: 'protectHome', date: Date.now(), data:{state: true}}
+        },
+        {
+          command: 'stop home protect', request: {from: 'halClient', to: 'protectHome', event: 'protectHome', date: Date.now(), data:{state: false}}
         },
       ];
       var request = null;
@@ -91,7 +102,10 @@ export default class HomeView extends Component {
           </View>
           <View style={styles.halNetInfo}>
             <Text style={styles.pageText}>Connection info: {this.props.netInfoState}</Text>
-          </View>          
+          </View>     
+          <View style={styles.halNetInfo}>
+            <Text style={styles.pageText}>Speech command: {this.state.speechCommand}</Text>
+          </View>        
         </View>
       );
   }

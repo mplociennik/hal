@@ -12,7 +12,7 @@ export default class RobotSpeechModal extends Component {
 
     speechText(textToSpeech){
       console.log('Sending robotSpeech text: ', this.state.textToSpeech);
-      const requestData = {from: 'halClient', to:"robotSpeech", event: 'robotSpeechText', date: Date.now(), data:{lector: this.state.robotLector ,text: textToSpeech}};
+      const requestData = {from: 'halClient', to:"robotSpeech", event: 'speech', date: Date.now(), data:{lector: this.state.robotLector ,text: textToSpeech}};
       this.props.socketStream.send(JSON.stringify(requestData));
       this.setState({textToSpeech: ''});
       Keyboard.dismiss();

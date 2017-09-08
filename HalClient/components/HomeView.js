@@ -15,6 +15,7 @@ export default class HomeView extends Component {
   async _speechRecognize(){
     try{
         var spokenText = await SpeechAndroid.startSpeech("Speak command", SpeechAndroid.US);
+        spokenText = spokenText.toLowerCase();
         console.log('spoken text: ', spokenText);
         this.setState({speechCommand: spokenText});
         this.sendSpeechCommand(spokenText);

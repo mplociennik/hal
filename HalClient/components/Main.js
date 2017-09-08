@@ -5,6 +5,7 @@ import RobotView from './RobotView';
 import KitchenControlView from './KitchenControlView';
 import HomeProtectView from './HomeProtectView';
 import MessagesLogView from './MessagesLogView';
+import RobotCameraView from './RobotCameraView';
 
 var windowWidth = Dimensions.get('window').width;
 var windowHeight = Dimensions.get('window').height;
@@ -101,10 +102,6 @@ export default class Main extends Component {
         case 'robotHardwareInfo':
           this.renderMessage('Hardware info: ' + requestData.data);
           break;
-        case 'stream_photo':
-          this.receiveImageStream(requestData.data);
-          this.setState({receivedImage: requestData.data.photo_data, cameraModalVisible: true})
-          break;
       }
     };    
 
@@ -152,18 +149,6 @@ export default class Main extends Component {
     this.socketStream.close();
   }
 
-
-  _getCameraImage = function(){
-    console.log('Sending camera image request...');
-    var requestData = {client: 'halClient', event: 'getrobotmodaCameraImage', date: Date.now(), data:{}};
-    this.socketStream.send(JSON.stringify(requestData));
-  }
-
-  setCameraModalVisible(visible) {
-    this.setState({cameraModalVisible: visible});
-  }
-
-  
   protectHomeAlarm(message){
     console.log('Alarm alarm alarm!');
     Vibration.vibrate([0, 500, 200, 500], true);
@@ -201,6 +186,9 @@ export default class Main extends Component {
           </View>        
           <View style={styles.pageStyle}>
             <HomeProtectView></HomeProtectView> 
+          </View>          
+          <View style={styles.pageStyle}>
+            <RobotCameraView></RobotCameraView> 
           </View>
         </ViewPagerAndroid>
       </View>

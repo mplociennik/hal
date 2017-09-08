@@ -20,23 +20,7 @@ export default class RobotCameraView extends Component{
             <Text style={styles.pageText}>Robot control</Text>
           </View>
           <View style={styles.pageContent}>
-            <Video
-              source={{uri: "rtsp://192.168.1.135:8554/x"}} // Can be a URL or a local file.
-              rate={1.0}                   // 0 is paused, 1 is normal.
-              volume={1.0}                 // 0 is muted, 1 is normal.
-              muted={false}                // Mutes the audio entirely.
-              paused={false}               // Pauses playback entirely.
-              resizeMode="cover"           // Fill the whole screen at aspect ratio.
-              repeat={true}                // Repeat forever.
-              playInBackground={false}     // Audio continues to play when aentering background.
-              playWhenInactive={false}     // [iOS] Video continues to play whcontrol or notification center are shown.
-              onLoadStart={this.loadStart} // Callback when video starts to load
-              onLoad={this.setDuration}    // Callback when video loads
-              onProgress={this.setTime}    // Callback every ~250ms with currentTime
-              onEnd={this.onEnd}           // Callback when playback finishes
-              onError={this.videoError}    // Callback when video cannot be loaded
-              style={styles.backgroundVideo}
-            />
+           <Text>Video here</Text>
           </View>
         </View>
       );

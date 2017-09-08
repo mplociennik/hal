@@ -58,6 +58,18 @@ export default class HomeView extends Component {
         },
         {
           command: 'stop home protect', request: {from: 'halClient', to: 'protectHome', event: 'protectHome', date: Date.now(), data:{state: false}}
+        },        
+        {
+          command: 'camera stream', request: {from: 'halClient', to: 'robotCamera', event: 'stream', date: Date.now(), data:{state: true}}
+        },        
+        {
+          command: 'stop camera stream', request: {from: 'halClient', to: 'robotCamera', event: 'stream', date: Date.now(), data:{state: false}}
+        },        
+        {
+          command: 'stream camera', request: {from: 'halClient', to: 'robotCamera', event: 'stream', date: Date.now(), data:{state: true}}
+        },        
+        {
+          command: 'stop stream camera', request: {from: 'halClient', to: 'robotCamera', event: 'stream', date: Date.now(), data:{state: false}}
         },
       ];
       var request = null;

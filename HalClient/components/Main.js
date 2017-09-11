@@ -5,6 +5,7 @@ import RobotView from './RobotView';
 import KitchenControlView from './KitchenControlView';
 import HomeProtectView from './HomeProtectView';
 import MessagesLogView from './MessagesLogView';
+import { play } from 'react-native-vlc-player';
 
 var windowWidth = Dimensions.get('window').width;
 var windowHeight = Dimensions.get('window').height;
@@ -148,14 +149,22 @@ export default class Main extends Component {
     this.socketStream.close();
   }
 
+  streamCamera(){
+    Vibration.cancel();
+    setTimeout(()=>{
+        play('rtsp://192.168.1.135:8554/x');
+      }, 2000);
+  }
+
   protectHomeAlarm(message){
     console.log('Alarm alarm alarm!');
     Vibration.vibrate([0, 500, 200, 500], true);
     Alert.alert(
-      'Protect Home Alert!',
+      'Protect Home Alert! Should you view video stream?',
       message,
       [
-      {text: 'OK', onPress: () => Vibration.cancel()},
+      {text: 'YES', onPress: () => this.streamCamera()},
+      {text: 'NO', onPress: () => Vibration.cancel()},
       ],
       { cancelable: false }
       )

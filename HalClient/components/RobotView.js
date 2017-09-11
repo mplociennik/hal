@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import {Text, View, TouchableWithoutFeedback, Switch, Alert, Vibration, StyleSheet, Dimensions, Button} from 'react-native';
 import FontAwesome, { Icons } from 'react-native-fontawesome';
 import RobotSpeechModal from './RobotSpeechModal';
-import { play } from 'react-native-vlc-player'
+import { play } from 'react-native-vlc-player';
 
 var windowWidth = Dimensions.get('window').width;
 var windowHeight = Dimensions.get('window').height;
@@ -43,8 +43,10 @@ export default class RobotView extends Component{
     this.setState({cameraStreaming: !this.state.cameraStreaming});
     const requestData = {from: 'halClient', to: 'robotCamera', event: 'stream', date: Date.now(), data:{state: this.state.cameraStreaming}};
     this.props.socketStream.send(JSON.stringify(requestData));
-    if (this.state.cameraStreaming ) {
-      play('rtsp://192.168.1.135:8554/x');
+    if (this.state.cameraStreaming) {
+      setTimeout(()=>{
+        play('rtsp://192.168.1.135:8554/x');
+      }, 2000);
     }
     
   }

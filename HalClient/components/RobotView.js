@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import {Text, View, TouchableWithoutFeedback, Switch, Alert, Vibration, StyleSheet, Dimensions, Button} from 'react-native';
 import FontAwesome, { Icons } from 'react-native-fontawesome';
 import RobotSpeechModal from './RobotSpeechModal';
+import { play } from 'react-native-vlc-player'
 
 var windowWidth = Dimensions.get('window').width;
 var windowHeight = Dimensions.get('window').height;
@@ -10,7 +11,7 @@ var windowHeight = Dimensions.get('window').height;
 export default class RobotView extends Component{
   constructor(props){
     super(props);
-    this.state= {protectHomeState: false, autopilotState:false, moveDirection:null, moveState:false, robotSpeechModalVisible: false};
+    this.state= {protectHomeState: false, autopilotState:false, moveDirection:null, moveState:false, robotSpeechModalVisible: false, cameraStreaming: false};
   }
   
   move(direction, state){
@@ -37,7 +38,25 @@ export default class RobotView extends Component{
   setRobotSpeechModalVisible(state){
     this.setState({robotSpeechModalVisible: state});
   }
+
+  toggleCameraStreaming(){
+    this.setState({cameraStreaming: !this.state.cameraStreaming});
+    const requestData = {from: 'halClient', to: 'robotCamera', event: 'stream', date: Date.now(), data:{state: this.state.cameraStreaming}};
+    this.props.socketStream.send(JSON.stringify(requestData));
+    if (this.state.cameraStreaming ) {
+      play('rtsp://192.168.1.135:8554/x');
+    }
+    
+  }
   
+  getStreamCameraButtonTitle(){
+    var label = 'Start stream camera';
+    if (this.state.cameraStreaming) {
+      label = 'Stop stream camera'; 
+    }
+    return label;
+  }
+
   render(){
     return(
         <View style={styles.robotViewStyle}>
@@ -62,6 +81,9 @@ export default class RobotView extends Component{
             <View style={{marginLeft:15,marginRight:15}}>
               <Button title="Robot speech" onPress={()=>this.setRobotSpeechModalVisible(true)}/>
               <RobotSpeechModal socketStream={this.props.socketStream} modalVisible={this.state.robotSpeechModalVisible} setRobotSpeechModalVisible={this.setRobotSpeechModalVisible.bind(this)}></RobotSpeechModal>
+            </View>
+            <View style={{marginLeft:15,marginRight:15}}>
+              <Button title={this.getStreamCameraButtonTitle()} onPress={()=>this.toggleCameraStreaming(!this.state.cameraStreaminga)}/>
             </View>
             <View style={styles.robotControlArrows}>
               <View>

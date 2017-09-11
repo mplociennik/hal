@@ -5,7 +5,6 @@ import RobotView from './RobotView';
 import KitchenControlView from './KitchenControlView';
 import HomeProtectView from './HomeProtectView';
 import MessagesLogView from './MessagesLogView';
-import RobotCameraView from './RobotCameraView';
 
 var windowWidth = Dimensions.get('window').width;
 var windowHeight = Dimensions.get('window').height;
@@ -187,9 +186,6 @@ export default class Main extends Component {
           <View style={styles.pageStyle}>
             <HomeProtectView></HomeProtectView> 
           </View>          
-          <View style={styles.pageStyle}>
-            <RobotCameraView></RobotCameraView> 
-          </View>
         </ViewPagerAndroid>
       </View>
       );

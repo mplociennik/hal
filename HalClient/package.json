@@ -12,7 +12,9 @@
     "react-native-android-voice": "^0.6.0",
     "react-native-fontawesome": "^5.7.0",
     "react-native-vector-icons": "^4.2.0",
-    "react-native-vlc": "^0.7.0"
+    "react-native-vlc": "^0.7.0",
+    "react-native-vlc-player": "0.0.9",
+    "react-native-vxgplayer": "0.0.6"
   },
   "devDependencies": {
     "babel-jest": "20.0.3",

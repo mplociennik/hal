@@ -150,6 +150,8 @@ export default class Main extends Component {
   }
 
   streamCamera(){
+        const requestData = {from: 'halClient', to: 'robotCamera', event: 'stream', date: Date.now(), data:{state: this.state.cameraStreaming}};
+    this.socketStream.send(JSON.stringify(requestData));
     Vibration.cancel();
     setTimeout(()=>{
         play('rtsp://192.168.1.135:8554/x');

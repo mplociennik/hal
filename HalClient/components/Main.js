@@ -9,6 +9,7 @@ import { play } from 'react-native-vlc-player';
 
 var windowWidth = Dimensions.get('window').width;
 var windowHeight = Dimensions.get('window').height;
+const SERVER_HOST = "ws://192.168.1.69:8083";
 
 export default class Main extends Component {
 
@@ -82,7 +83,7 @@ export default class Main extends Component {
   _connectSocket(){
     this.renderMessage('Connecting...');
     var self = this;
-    this.socketStream = new WebSocket("ws://192.168.1.151:8083");
+    this.socketStream = new WebSocket(SERVER_HOST);
 
     this.socketStream.onopen = (evt)=>{ 
       self.setState({socketConnected: true});

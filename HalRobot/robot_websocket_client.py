@@ -5,7 +5,7 @@ import time
 import urllib2
 import json
 
-WEBSOCKET_HOST = 'ws://192.168.1.151:8083/'
+WEBSOCKET_HOST = 'ws://192.168.1.69:8083/'
 
 
 class RobotWebsocketClient():

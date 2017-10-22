@@ -1,22 +1,114 @@
 #include <Servo.h>
 
-Servo myservo;  // create servo object to control a servo
+Servo servo_one;  // create servo object to control a servo
+Servo servo_two;  // create servo object to control a servo
 // twelve servo objects can be created on most boards
-
 int pos = 0;    // variable to store the servo position
+// servos
+const int servo_one_pin = 0;
+//const int servo_two_pin = 1;
+// Motor A [Right Side]
+const int enA = 4;
+const int in1 = 8;
+const int in2 = 9;
+// Motor B [Left Side]
+const int enB = 6;
+const int in3 = 10;
+const int in4 = 11;
 
 void setup() {
-  myservo.attach(9);  // attaches the servo on pin 9 to the servo object
+  //set servo pins
+  servo_one.attach(servo_one_pin);
+  //servo_two.attach(servo_two_pin);  
+  // set all the motor control pins to outputs
+  pinMode(enA, OUTPUT);
+  pinMode(enB, OUTPUT);
+  pinMode(in1, OUTPUT);
+  pinMode(in2, OUTPUT);
+  pinMode(in3, OUTPUT);
+  pinMode(in4, OUTPUT);
 }
 
-void loop() {
+void move_servo(Servo servo){
   for (pos = 0; pos <= 180; pos += 1) { // goes from 0 degrees to 180 degrees
     // in steps of 1 degree
-    myservo.write(pos);              // tell servo to go to position in variable 'pos'
+    servo.write(pos);              // tell servo to go to position in variable 'pos'
     delay(15);                       // waits 15ms for the servo to reach the position
   }
   for (pos = 180; pos >= 0; pos -= 1) { // goes from 180 degrees to 0 degrees
-    myservo.write(pos);              // tell servo to go to position in variable 'pos'
+    servo.write(pos);              // tell servo to go to position in variable 'pos'
     delay(15);                       // waits 15ms for the servo to reach the position
   }
+}
+
+void moveForward(int speed)
+{
+  analogWrite(enA, speed);
+  analogWrite(enB, speed);
+  // turn on motor A
+  digitalWrite(in1, HIGH);
+  digitalWrite(in2, LOW);
+  // turn on motor B
+  digitalWrite(in3, HIGH);
+  digitalWrite(in4, LOW);
+}
+
+void moveBackwards(int speed)
+{
+  analogWrite(enA, speed);
+  analogWrite(enB, speed);
+  // turn on motor A
+  digitalWrite(in1, LOW);
+  digitalWrite(in2, HIGH);
+  // turn on motor B
+  digitalWrite(in3, LOW);
+  digitalWrite(in4, HIGH);
+}
+
+void moveRight(int speed)
+{
+  // turn on motor A
+  digitalWrite(in1, LOW);
+  digitalWrite(in2, LOW);
+
+  // turn off motor B
+  digitalWrite(in3, HIGH);
+  digitalWrite(in4, LOW);
+
+  analogWrite(enA, speed);
+  analogWrite(enB, speed);
+}
+
+void moveLeft(int speed)
+{
+  // turn on motor A
+  digitalWrite(in1, HIGH);
+  digitalWrite(in2, LOW);
+
+  // turn off motor B
+  digitalWrite(in3, LOW);
+  digitalWrite(in4, LOW);
+
+  analogWrite(enA, speed);
+  analogWrite(enB, speed);
+}
+
+void moveStop()
+{
+  digitalWrite(in1, LOW);
+  digitalWrite(in2, LOW);  
+  digitalWrite(in3, LOW);
+  digitalWrite(in4, LOW);
+  delay(200);
+}
+
+void loop() {
+  //move_servo(servo_one);
+  //move_servo(servo_two);
+  moveForward(255);
+  delay(500);
+  moveBackwards(255);
+  delay(500);
+  moveStop();
+  delay(2000);
 }

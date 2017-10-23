@@ -17,6 +17,8 @@ const int in3 = 10;
 const int in4 = 11;
 
 void setup() {
+  //Serial
+  Serial.begin(9600);
   //set servo pins
   servo_one.attach(servo_one_pin);
   //servo_two.attach(servo_two_pin);  
@@ -45,10 +47,8 @@ void moveForward(int speed)
 {
   analogWrite(enA, speed);
   analogWrite(enB, speed);
-  // turn on motor A
   digitalWrite(in1, HIGH);
   digitalWrite(in2, LOW);
-  // turn on motor B
   digitalWrite(in3, HIGH);
   digitalWrite(in4, LOW);
 }
@@ -57,40 +57,30 @@ void moveBackwards(int speed)
 {
   analogWrite(enA, speed);
   analogWrite(enB, speed);
-  // turn on motor A
   digitalWrite(in1, LOW);
   digitalWrite(in2, HIGH);
-  // turn on motor B
   digitalWrite(in3, LOW);
   digitalWrite(in4, HIGH);
 }
 
 void moveRight(int speed)
 {
-  // turn on motor A
-  digitalWrite(in1, LOW);
-  digitalWrite(in2, LOW);
-
-  // turn off motor B
-  digitalWrite(in3, HIGH);
-  digitalWrite(in4, LOW);
-
   analogWrite(enA, speed);
   analogWrite(enB, speed);
+  digitalWrite(in1, LOW);
+  digitalWrite(in2, LOW);
+  digitalWrite(in3, HIGH);
+  digitalWrite(in4, LOW);
 }
 
 void moveLeft(int speed)
 {
-  // turn on motor A
-  digitalWrite(in1, HIGH);
-  digitalWrite(in2, LOW);
-
-  // turn off motor B
-  digitalWrite(in3, LOW);
-  digitalWrite(in4, LOW);
-
   analogWrite(enA, speed);
   analogWrite(enB, speed);
+  digitalWrite(in1, HIGH);
+  digitalWrite(in2, LOW);
+  digitalWrite(in3, LOW);
+  digitalWrite(in4, LOW);
 }
 
 void moveStop()
@@ -102,13 +92,33 @@ void moveStop()
   delay(200);
 }
 
+void run_command(char command){
+  switch(command){
+    case 'motor_forward':
+        moveForward(255);  
+    case 'motor_backward':
+        moveBackwards(255);
+        break;
+    case 'motor_left':
+        moveLeft(255);
+        break;
+    case 'motor_right':
+        moveRight(255);
+        break;
+    case 'motor_stop':
+        moveStop()
+        break;
+    default:
+       printf('yolo')       
+  }
+}
+
 void loop() {
+  Serial.println("robot_motor_ready");
   //move_servo(servo_one);
   //move_servo(servo_two);
-  moveForward(255);
-  delay(500);
-  moveBackwards(255);
-  delay(500);
-  moveStop();
-  delay(2000);
+  if(Serial.available()){
+    run_command(Serial.read() - '0');
+  }
+  delay(200);
 }

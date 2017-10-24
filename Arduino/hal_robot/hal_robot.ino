@@ -16,11 +16,15 @@ const int enB = 6;
 const int in3 = 10;
 const int in4 = 11;
 
+boolean packetEnded = false;
+boolean backward = false;
+int steps = 0;
+
 void setup() {
   //Serial
   Serial.begin(9600);
   //set servo pins
-  servo_one.attach(servo_one_pin);
+  //servo_one.attach(servo_one_pin);
   //servo_two.attach(servo_two_pin);  
   // set all the motor control pins to outputs
   pinMode(enA, OUTPUT);
@@ -116,13 +120,38 @@ void run_command(char command){
 }
 
 void loop() {
-//  Serial.println("robot_motor_ready");
-  Serial.println(Serial.available());
-  //move_servo(servo_one);
-  //move_servo(servo_two);
-  Serial.println(Serial.read());
-  if(Serial.available()){
-    run_command(Serial.read());
+  while(Serial.available() > 0){
+    //Read each character, check if negative, end of command or
+    //digit, and adjust step value accordingly
+    char aChar = Serial.read();
+    if(aChar == '-'){
+      backward = true;
+    }
+    else if(aChar == ';'){
+      packetEnded = true;
+    }
+    else if(aChar >= '0' && aChar <= '9'){
+      steps *= 10;
+      steps += aChar -'0';
+    }
   }
-  delay(200);
+  
+  if(packetEnded){
+    //Perform steps
+    if(backward){
+      Serial.print(steps);
+      Serial.println(" Steps Backward");
+      //func here
+    }
+    else{
+      Serial.print(steps);
+      Serial.println(" Steps Forward");
+      //func here
+    }
+    
+    //Reset control values.
+    steps = 0;
+    backward = false;
+    packetEnded = false;
+  }
 }

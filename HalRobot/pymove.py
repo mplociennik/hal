@@ -28,22 +28,22 @@ class PyMove():
     def run_backward(self):
         text = "DOWN Start"
         self.display_text(text)
-        ser.write('2')
+        ser.write('11')
 
     def run_left(self):
         text = "LEFT Start"
         self.display_text(text)
-        ser.write('3')
+        ser.write('111')
 
     def run_right(self):
         text = "RIGHT Start"
         self.display_text(text)
-        ser.write('4')
+        ser.write('1111')
 
     def stop_motors(self):
         text = "Stop motors"
         self.display_text(text)
-        ser.write('0')
+        ser.write('')
 
     def receiver(self):
         while True:

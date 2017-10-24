@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 import time
 import serial
+from multiprocessing import Process, Queue
 
 # command to show connections: ls /dev/tty*
 ser = serial.Serial('/dev/ttyUSB0', 9600)
@@ -44,14 +45,17 @@ class PyMove():
         self.display_text(text)
         ser.write('motor_stop')
 
-    def callback_data(self):
-        # create maybe next time...
+    def receiver(self):
         while True:
             print(ser.readline())
+            time.sleep(0.500)
 
 
 if __name__ == '__main__':
     move = PyMove()
+    queue = Queue()
+    p = Process(target=receiver, args=())
+    p.start()
     time.sleep(1)
     move.run_forward()
     time.sleep(1)

@@ -106,10 +106,10 @@ void run_command(char command){
         moveRight(255);
         break;
     case 'motor_stop':
-        moveStop()
+        moveStop();
         break;
     default:
-       printf('yolo')       
+       printf('yolo');       
   }
 }
 

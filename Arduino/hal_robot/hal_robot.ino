@@ -94,6 +94,7 @@ void moveStop()
 
 void run_command(char command){
   switch(command){
+    Serial.println("running command: " + command);
     case 'motor_forward':
         moveForward(255);  
     case 'motor_backward':
@@ -114,7 +115,7 @@ void run_command(char command){
 }
 
 void loop() {
-  Serial.println("robot_motor_ready");
+//  Serial.println("robot_motor_ready");
   //move_servo(servo_one);
   //move_servo(servo_two);
   if(Serial.available()){

@@ -4,6 +4,7 @@ import websocket
 import time
 import urllib2
 import json
+import requests
 
 WEBSOCKET_HOST = 'ws://192.168.1.69:8083/'
 
@@ -53,6 +54,12 @@ class RobotWebsocketClient():
                           on_close = self.on_close)
         self.ws.on_open = self.on_open
         self.ws.run_forever()
+
+
+    def get
+    def get_server_host(self):
+        print('Geting server host...')
+        requests.post
 
     def start(self):
         count = 0

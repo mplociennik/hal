@@ -61,4 +61,4 @@ if __name__ == '__main__':
     time.sleep(1)
     move.run_backward()
     time.sleep(1)
-    move.run_stop_motors()
+    move.stop_motors()

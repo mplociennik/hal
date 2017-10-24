@@ -23,32 +23,32 @@ class PyMove():
     def run_forward(self):
         text = "Forward Start"
         self.display_text(text)
-        ser.write('motor_forward')
+        ser.write('1')
 
     def run_backward(self):
         text = "DOWN Start"
         self.display_text(text)
-        ser.write('motor_backward')
+        ser.write('2')
 
     def run_left(self):
         text = "LEFT Start"
         self.display_text(text)
-        ser.write('motor_left')
+        ser.write('3')
 
     def run_right(self):
         text = "RIGHT Start"
         self.display_text(text)
-        ser.write('motor_right')
+        ser.write('4')
 
     def stop_motors(self):
         text = "Stop motors"
         self.display_text(text)
-        ser.write('motor_stop')
+        ser.write('0')
 
     def receiver(self):
         while True:
             print(ser.readline())
-            time.sleep(0.500)
+            time.sleep(1)
 
 
 if __name__ == '__main__':
@@ -56,6 +56,7 @@ if __name__ == '__main__':
     queue = Queue()
     p = Process(target=move.receiver, args=())
     p.start()
+    p.join()
     time.sleep(1)
     move.run_forward()
     time.sleep(1)

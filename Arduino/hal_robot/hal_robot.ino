@@ -16,9 +16,8 @@ const int enB = 6;
 const int in3 = 10;
 const int in4 = 11;
 
-boolean packetEnded = false;
-boolean backward = false;
-int steps = 0;
+char receivedChar;
+boolean newData = false;
 
 void setup() {
   //Serial
@@ -119,6 +118,34 @@ void run_command(char command){
   }
 }
 
+void recvInfo() {
+
+  if (Serial.available() > 0) {
+
+    receivedChar = Serial.read();
+    newData = true;
+    
+  }
+  
+}
+
+void lightLED() {
+
+  int led = (receivedChar - '0');
+
+  while(newData == true) {
+
+    digitalWrite(led, HIGH);
+    delay(2000);
+    digitalWrite(led, LOW);
+
+    newData = false;
+    
+  }
+  
+}
+
 void loop() {
- Serial.println(Serial.readString());
+  recvInfo();
+  lightLED();
 }

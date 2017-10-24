@@ -57,11 +57,6 @@ if __name__ == '__main__':
     p = Process(target=move.receiver, args=())
     p.start()
     p.join()
-    i = 0
-    while True:
-        i += 1
-        ser.write('kurwa {0}'.format(i))
-        time.sleep(1)
     move.run_forward()
     time.sleep(1)
     move.run_backward()

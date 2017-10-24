@@ -54,7 +54,7 @@ class PyMove():
 if __name__ == '__main__':
     move = PyMove()
     queue = Queue()
-    p = Process(target=receiver, args=())
+    p = Process(target=move.receiver, args=())
     p.start()
     time.sleep(1)
     move.run_forward()

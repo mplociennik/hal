@@ -93,20 +93,21 @@ void moveStop()
 }
 
 void run_command(char command){
+  Serial.println("command:");
+  Serial.println(command);
   switch(command){
-    Serial.println("running command: " + command);
-    case 'motor_forward':
+    case '1':
         moveForward(255);  
-    case 'motor_backward':
+    case '2':
         moveBackwards(255);
         break;
-    case 'motor_left':
+    case '3':
         moveLeft(255);
         break;
-    case 'motor_right':
+    case '4':
         moveRight(255);
         break;
-    case 'motor_stop':
+    case '0':
         moveStop();
         break;
     default:
@@ -116,10 +117,12 @@ void run_command(char command){
 
 void loop() {
 //  Serial.println("robot_motor_ready");
+  Serial.println(Serial.available());
   //move_servo(servo_one);
   //move_servo(servo_two);
+  Serial.println(Serial.read());
   if(Serial.available()){
-    run_command(Serial.read() - '0');
+    run_command(Serial.read());
   }
   delay(200);
 }

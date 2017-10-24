@@ -28,27 +28,27 @@ class PyMove():
     def run_backward(self):
         text = "DOWN Start"
         self.display_text(text)
-        ser.write('11')
+        ser.write('2')
 
     def run_left(self):
         text = "LEFT Start"
         self.display_text(text)
-        ser.write('111')
+        ser.write('3')
 
     def run_right(self):
         text = "RIGHT Start"
         self.display_text(text)
-        ser.write('1111')
+        ser.write('4')
 
     def stop_motors(self):
         text = "Stop motors"
         self.display_text(text)
-        ser.write('')
+        ser.write('0')
 
     def receiver(self):
         while True:
             print(ser.readline())
-            time.sleep(0.2)
+            time.sleep(0.200)
 
 
 if __name__ == '__main__':
@@ -57,7 +57,11 @@ if __name__ == '__main__':
     p = Process(target=move.receiver, args=())
     p.start()
     p.join()
-    time.sleep(1)
+    i = 0
+    while True:
+        i += 1
+        ser.write('kurwa {0}'.format(i))
+        time.sleep(1)
     move.run_forward()
     time.sleep(1)
     move.run_backward()

@@ -120,38 +120,5 @@ void run_command(char command){
 }
 
 void loop() {
-  while(Serial.available() > 0){
-    //Read each character, check if negative, end of command or
-    //digit, and adjust step value accordingly
-    char aChar = Serial.read();
-    if(aChar == '-'){
-      backward = true;
-    }
-    else if(aChar == ';'){
-      packetEnded = true;
-    }
-    else if(aChar >= '0' && aChar <= '9'){
-      steps *= 10;
-      steps += aChar -'0';
-    }
-  }
-  
-  if(packetEnded){
-    //Perform steps
-    if(backward){
-      Serial.print(steps);
-      Serial.println(" Steps Backward");
-      //func here
-    }
-    else{
-      Serial.print(steps);
-      Serial.println(" Steps Forward");
-      //func here
-    }
-    
-    //Reset control values.
-    steps = 0;
-    backward = false;
-    packetEnded = false;
-  }
+ Serial.println(Serial.readString());
 }

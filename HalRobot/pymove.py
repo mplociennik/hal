@@ -50,14 +50,15 @@ class PyMove():
             req = ser.readline()
             if req:
                 print(req)
-            
+
+    def run_receiver(self):
+        queue = Queue()
+        p = Process(target=move.receiver, args=())
+        p.start()
+        p.join()
 
 if __name__ == '__main__':
     move = PyMove()
-    queue = Queue()
-    p = Process(target=move.receiver, args=())
-    p.start()
-    p.join()
     print(ser.name)    
     move.run_forward()
     time.sleep(2)

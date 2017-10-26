@@ -13,7 +13,7 @@ class RobotMove(RobotWebsocketClient):
 
     WEBSOCKET_CLIENT_NAME = "robotMove"
     def __init__(self):
-        pass
+        PyMove().run_receiver()
 
     def move(self, direction, state):
         response = json.dumps({'event': 'message','data': {'message': 'Direction: {0}, State: {1}'.format(direction, state)}})

@@ -58,7 +58,8 @@ class PyMove():
 
 if __name__ == '__main__':
     move = PyMove()
-    print(ser.name)    
+    print(ser.name)
+    move.run_receiver()
     move.run_forward()
     time.sleep(2)
     move.stop_motors()

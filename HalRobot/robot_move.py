@@ -4,6 +4,7 @@ import sys
 import time
 import json
 import platform
+from multiprocessing import Process
 from robot_websocket_client import RobotWebsocketClient
 if platform.system() == 'Linux':
     from pymove import PyMove
@@ -59,3 +60,7 @@ class RobotMove(RobotWebsocketClient):
 if __name__ == "__main__":
     robot_move = RobotMove()
     robot_move.start()
+    move = PyMove()
+    p = Process(target=move.receiver, args=())
+    p.start()
+    p.join()

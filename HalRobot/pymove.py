@@ -51,16 +51,13 @@ class PyMove():
             if req:
                 print(req)
 
-    def run_receiver(self):
-        move = PyMove()
-        p = Process(target=move.receiver, args=())
-        p.start()
-        p.join()
 
 if __name__ == '__main__':
-    move = PyMove()
     print(ser.name)
-    move.run_receiver()
+    move = PyMove()
+    p = Process(target=move.receiver, args=())
+    p.start()
+    p.join()
     move.run_forward()
     time.sleep(2)
     move.stop_motors()

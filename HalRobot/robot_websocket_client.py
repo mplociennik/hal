@@ -55,11 +55,10 @@ class RobotWebsocketClient():
         self.ws.on_open = self.on_open
         self.ws.run_forever()
 
-
-    def get
-    def get_server_host(self):
+    '''def get_server_host(self):
         print('Geting server host...')
         requests.post
+    '''
 
     def start(self):
         count = 0

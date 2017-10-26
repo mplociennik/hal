@@ -5,7 +5,7 @@ import serial
 from multiprocessing import Process, Queue
 
 # command to show connections: ls /dev/tty*
-ser = serial.Serial('/dev/ttyUSB1', 9600)
+ser = serial.Serial('/dev/ttyUSB0', 115200, timeout=.1)
 
 
 class PyMove():
@@ -47,9 +47,10 @@ class PyMove():
 
     def receiver(self):
         while True:
-            print(ser.readline())
-            time.sleep(0.200)
-
+	   req = ser.readline()
+           if req:
+               print(req)
+            
 
 if __name__ == '__main__':
     move = PyMove()
@@ -57,8 +58,5 @@ if __name__ == '__main__':
     p = Process(target=move.receiver, args=())
     p.start()
     p.join()
-    move.run_forward()
-    time.sleep(1)
-    move.run_backward()
-    time.sleep(1)
-    move.stop_motors()
+    print(ser.name)    
+ 

@@ -21,7 +21,7 @@ boolean newData = false;
 
 void setup() {
   //Serial
-  Serial.begin(9600);
+  Serial.begin(115200);
   //set servo pins
   //servo_one.attach(servo_one_pin);
   //servo_two.attach(servo_two_pin);  
@@ -96,8 +96,6 @@ void moveStop()
 }
 
 void run_command(char command){
-  Serial.println("command:");
-  Serial.println(command);
   switch(command){
     case '1':
         moveForward(255);  
@@ -114,38 +112,17 @@ void run_command(char command){
         moveStop();
         break;
     default:
-       printf('yolo');       
+      Serial.print('yolo');       
   }
-}
-
-void recvInfo() {
-
-  if (Serial.available() > 0) {
-
-    receivedChar = Serial.read();
-    newData = true;
-    
-  }
-  
-}
-
-void lightLED() {
-
-  int led = (receivedChar - '0');
-
-  while(newData == true) {
-
-    digitalWrite(led, HIGH);
-    delay(2000);
-    digitalWrite(led, LOW);
-
-    newData = false;
-    
-  }
-  
 }
 
 void loop() {
-  recvInfo();
-  lightLED();
+  if(Serial.available() > 0) {
+    char data = Serial.read();
+    char str[2];
+    str[0] = data;
+    str[1] = '\0';
+    run_command(str);
+    Serial.print(str);
+  }
 }

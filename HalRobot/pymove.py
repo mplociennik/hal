@@ -47,9 +47,9 @@ class PyMove():
 
     def receiver(self):
         while True:
-	   req = ser.readline()
-           if req:
-               print(req)
+            req = ser.readline()
+            if req:
+                print(req)
             
 
 if __name__ == '__main__':
@@ -59,4 +59,6 @@ if __name__ == '__main__':
     p.start()
     p.join()
     print(ser.name)    
- 
+    move.run_forward()
+    time.sleep(2)
+    move.stop_motors()

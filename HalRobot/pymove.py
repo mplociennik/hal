@@ -20,12 +20,12 @@ class PyMove():
         print(text)
         return
 
-    def run_forward(self):
+    def run_up(self):
         text = "Forward Start"
         self.display_text(text)
         ser.write('1')
 
-    def run_backward(self):
+    def run_down(self):
         text = "DOWN Start"
         self.display_text(text)
         ser.write('2')

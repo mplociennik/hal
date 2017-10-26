@@ -22,27 +22,27 @@ class RobotMove(RobotWebsocketClient):
             return response
         if "up" in direction:
             if state:
-                PyMove().run_up_start()
+                PyMove().run_up()
             else:
-                PyMove().run_up_stop()
+                PyMove().stop_motors()
             response = json.dumps({'event': 'move' ,'data': {'message': 'Move UP state: {0}'.format(state)}})             
         if 'down' in direction:
             if state:
-                PyMove().run_down_start()  
+                PyMove().run_down()
             else:
-                PyMove().run_down_stop()
+                PyMove().stop_motors()
             response = json.dumps({'event': 'move' ,'data': {'message': 'Move DOWN state: {0}'.format(state)}})
         if 'left' in direction:
             if state:
-                PyMove().run_left_start()
+                PyMove().run_left()
             else:
-                PyMove().run_left_stop()
+                PyMove().stop_motors()
             response = json.dumps({'event': 'move' ,'data': {'message': 'Move LEFT state: {0}'.format(state)}})   
         if 'right' in direction:
             if state:
-                PyMove().run_right_start() 
+                PyMove().run_right()
             else:
-                PyMove().run_right_stop()
+                PyMove().stop_motors()
             response = json.dumps({'event': 'move' ,'data': {'message': 'Move RIGHT state: {0}'.format(state)}})            
         return response
 

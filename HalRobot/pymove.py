@@ -52,6 +52,7 @@ class PyMove():
                 print(req)
 
     def run_receiver(self):
+        move = PyMove()
         p = Process(target=move.receiver, args=())
         p.start()
         p.join()

@@ -97,13 +97,20 @@ void moveStop()
 
 void run_command(char* command){
   if(command[0] == '1') {
-    Serial.println(String('1a'));
     moveForward(255);
   }
-  if(command[0] == '2') moveBackwards(255);
-  if(command[0] =='3') moveLeft(255);       
-  if(command[0] == '4') moveRight(255);
-  if(command[0] == '0') moveStop();   
+  if(command[0] == '2') {
+    moveBackwards(255);
+  }
+  if(command[0] =='3') {
+    moveLeft(255);
+  }       
+  if(command[0] == '4') {
+    moveRight(255);
+  }
+  if(command[0] == '0') {
+    moveStop();
+  }   
 }
 
 void loop() {

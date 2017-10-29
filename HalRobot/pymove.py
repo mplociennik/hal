@@ -5,7 +5,7 @@ import serial
 from multiprocessing import Process, Queue
 
 # command to show connections: ls /dev/tty*
-ser = serial.Serial('/dev/ttyUSB0', 115200, timeout=.1)
+ser = serial.Serial('/dev/ttyUSB1', 115200, timeout=.1)
 
 
 class PyMove():

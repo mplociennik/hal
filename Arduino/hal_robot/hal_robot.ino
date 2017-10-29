@@ -95,25 +95,15 @@ void moveStop()
   delay(200);
 }
 
-void run_command(char command){
-  switch(command){
-    case '1':
-        moveForward(255);  
-    case '2':
-        moveBackwards(255);
-        break;
-    case '3':
-        moveLeft(255);
-        break;
-    case '4':
-        moveRight(255);
-        break;
-    case '0':
-        moveStop();
-        break;
-    default:
-      Serial.print('yolo');       
+void run_command(char* command){
+  if(command[0] == '1') {
+    Serial.println(String('1a'));
+    moveForward(255);
   }
+  if(command[0] == '2') moveBackwards(255);
+  if(command[0] =='3') moveLeft(255);       
+  if(command[0] == '4') moveRight(255);
+  if(command[0] == '0') moveStop();   
 }
 
 void loop() {
@@ -123,6 +113,5 @@ void loop() {
     str[0] = data;
     str[1] = '\0';
     run_command(str);
-    Serial.print(str);
   }
 }

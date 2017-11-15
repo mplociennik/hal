@@ -9,7 +9,7 @@ import { play } from 'react-native-vlc-player';
 
 var windowWidth = Dimensions.get('window').width;
 var windowHeight = Dimensions.get('window').height;
-const SERVER_HOST = "ws://192.168.1.69:8083";
+const SERVER_HOST = "ws://5.104.255.112:8083";
 
 export default class Main extends Component {
 

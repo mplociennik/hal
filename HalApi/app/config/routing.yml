@@ -1,0 +1,11 @@
+hal_api:
+    resource: "@HalApiBundle/Controller/"
+    type:     annotation
+    prefix:   /
+
+app:
+    resource: '@AppBundle/Controller/'
+    type: annotation
+
+api_login_check:
+  path: /api/login_check

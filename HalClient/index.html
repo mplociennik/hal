@@ -34,13 +34,11 @@
 </head>
 <body>
   <script type="text/javascript">
-  var ws = new WebSocket('ws://127.0.0.1:8083');
+  var ws = new WebSocket('ws://5.104.255.112:8083');
 
   ws.onopen = () => {
     dataJson = JSON.stringify({client: 'halClient', event: 'init', data:{}, date: new Date()});
     ws.send(dataJson);
-    $('.socket-response').html('Socket connected! :)');
-    
   };
 
   ws.onmessage = (e) => {
@@ -86,6 +84,12 @@
     console.log('Sending camera image request...');
     var requestData = {client: 'halClient', event: 'getRobotCameraImage', date: Date.now(), data:{}};
     ws.send(JSON.stringify(requestData));
+  }
+
+  var kitchenLight = function(state){
+    console.log("Kitchen Light state: ", state);
+    var requestData = {from: 'halClient', to: 'kitchenLight', event: 'toggleKitchenLight', date: Date.now(), data:{state: state}};
+      ws.send(JSON.stringify(requestData));
   }
 
   var lastMove = null;
@@ -147,15 +151,16 @@
         <div class="row">
           <button class="btn btn-primary control-arrow arrow-up" onclick="getCameraImage()">Get image</button>
         </div>
+        <div class="row">
+          <button class="btn btn-primary control-arrow arrow-up" onmousedown="kitchenLight(true)">kitchen light on</button>
+          <button class="btn btn-primary control-arrow arrow-up" onmousedown="kitchenLight(false)">kitchen light off</button>
+        </div> 
       </div>
     </div>
     <div class="row">
       <div class="col-md-12">
         Socket Response: <span class="socket-response"></span>
       </div>
-      <video src="rtsp://192.168.1.135:8554/x">
-        Your browser does not support the VIDEO tag and/or RTP streams.
-      </video>
     </div>
   </div>
 </body>

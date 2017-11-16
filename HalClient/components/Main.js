@@ -137,11 +137,11 @@ export default class Main extends Component {
     var self = this;
     self.renderMessage('Reconnecting after 2 seconds...');
     setTimeout(()=>{
-      if(this.state.netInfoState == 'WIFI'){
-        self._connectSocket();
-      }else{
-        self.renderMessage('WIFI connection disabled! Waiting for WIFI connection...');
+      if(this.state.netInfoState == 'NONE'){
+        self.renderMessage('Internet connection disabled! Waiting for WIFI connection...');
         self._reconnectSocket();
+      }else{
+        self._connectSocket();
       }
     },2000);
   }

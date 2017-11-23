@@ -9,7 +9,7 @@ import { play } from 'react-native-vlc-player';
 
 var windowWidth = Dimensions.get('window').width;
 var windowHeight = Dimensions.get('window').height;
-const SERVER_HOST = "ws://192.168.1.69:8083";
+const SERVER_HOST = "ws://5.104.255.112:8083";
 
 export default class Main extends Component {
 
@@ -137,11 +137,11 @@ export default class Main extends Component {
     var self = this;
     self.renderMessage('Reconnecting after 2 seconds...');
     setTimeout(()=>{
-      if(this.state.netInfoState == 'WIFI'){
-        self._connectSocket();
-      }else{
-        self.renderMessage('WIFI connection disabled! Waiting for WIFI connection...');
+      if(this.state.netInfoState == 'NONE'){
+        self.renderMessage('Internet connection disabled! Waiting for WIFI connection...');
         self._reconnectSocket();
+      }else{
+        self._connectSocket();
       }
     },2000);
   }

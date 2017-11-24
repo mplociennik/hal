@@ -1,72 +1,56 @@
-Symfony Standard Edition
-========================
+LexikJWTAuthenticationBundle Sandbox
+=====================================
 
-Welcome to the Symfony Standard Edition - a fully-functional Symfony
-application that you can use as the skeleton for your new applications.
+This is a sample application for experimenting/demonstrating features of the powerful LexikJWTAuthenticationBundle bundle which provides authentication through JWT.
 
-For details on how to download and get started with Symfony, see the
-[Installation][1] chapter of the Symfony Documentation.
-
-What's inside?
+What's inside
 --------------
 
-The Symfony Standard Edition is configured with the following defaults:
+- [Symfony](https://github.com/symfony/symfony) ~3.1
+- [LexikJWTAuthenticationBundle](https://github.com/lexik/LexikJWTAuthenticationBundle) ~2.0
 
-  * An AppBundle you can use to start coding;
+Get started
+------------
 
-  * Twig as the only configured template engine;
+Clone the project:
+```
+$ git clone https://github.com/chalasr/lexik-jwt-authentication-sandbox
+```
 
-  * Doctrine ORM/DBAL;
+Install the dependencies:
+```
+$ cd lexik-jwt-authentication-sandbox
+$ composer install
+```
 
-  * Swiftmailer;
+Create the database schema:
+```
+$ php bin/console doctrine:database:create
+$ php bin/console doctrine:schema:update --force
+```
 
-  * Annotations enabled for everything.
+Usage
+------
 
-It comes pre-configured with the following bundles:
+Run the web server:
+```
+$ php bin/console server:run
+```
 
-  * **FrameworkBundle** - The core Symfony framework bundle
+Register a new user:
+```
+$ curl -X POST http://localhost:8000/register -d _username=johndoe -d _password=test
+-> User johndoe successfully created
+```
 
-  * [**SensioFrameworkExtraBundle**][6] - Adds several enhancements, including
-    template and routing annotation capability
+Get a JWT token:
+```
+$ curl -X POST http://localhost:8000/login_check -d _username=johndoe -d _password=test
+-> { "token": "[TOKEN]" }  
+```
 
-  * [**DoctrineBundle**][7] - Adds support for the Doctrine ORM
-
-  * [**TwigBundle**][8] - Adds support for the Twig templating engine
-
-  * [**SecurityBundle**][9] - Adds security by integrating Symfony's security
-    component
-
-  * [**SwiftmailerBundle**][10] - Adds support for Swiftmailer, a library for
-    sending emails
-
-  * [**MonologBundle**][11] - Adds support for Monolog, a logging library
-
-  * **WebProfilerBundle** (in dev/test env) - Adds profiling functionality and
-    the web debug toolbar
-
-  * **SensioDistributionBundle** (in dev/test env) - Adds functionality for
-    configuring and working with Symfony distributions
-
-  * [**SensioGeneratorBundle**][13] (in dev env) - Adds code generation
-    capabilities
-
-  * [**WebServerBundle**][14] (in dev env) - Adds commands for running applications
-    using the PHP built-in web server
-
-  * **DebugBundle** (in dev/test env) - Adds Debug and VarDumper component
-    integration
-
-All libraries and bundles included in the Symfony Standard Edition are
-released under the MIT or BSD license.
-
-Enjoy!
-
-[1]:  https://symfony.com/doc/3.3/setup.html
-[6]:  https://symfony.com/doc/current/bundles/SensioFrameworkExtraBundle/index.html
-[7]:  https://symfony.com/doc/3.3/doctrine.html
-[8]:  https://symfony.com/doc/3.3/templating.html
-[9]:  https://symfony.com/doc/3.3/security.html
-[10]: https://symfony.com/doc/3.3/email.html
-[11]: https://symfony.com/doc/3.3/logging.html
-[13]: https://symfony.com/doc/current/bundles/SensioGeneratorBundle/index.html
-[14]: https://symfony.com/doc/current/setup/built_in_web_server.html
+Access a secured resource:
+```
+$ curl -H "Authorization: JWT [TOKEN]" http://localhost:8000/api
+-> Logged in as johndoe
+```

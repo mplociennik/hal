@@ -8,7 +8,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 class ConversationController extends Controller
 {
     /**
-     * @Route("/conversation")
+     * @Route("/api/conversation")
      */
     public function conversationPostAction()
     {
@@ -18,7 +18,7 @@ class ConversationController extends Controller
     }
 
     /**
-     * @Route("/conversation/{id}")
+     * @Route("/api/conversation/{id}")
      */
     public function conversationGetAction($id)
     {
@@ -28,7 +28,7 @@ class ConversationController extends Controller
     }
 
     /**
-     * @Route("/conversation-tree/{id}")
+     * @Route("/api/conversation-tree/{id}")
      */
     public function conversationTreeGetAction($id)
     {
@@ -38,7 +38,7 @@ class ConversationController extends Controller
     }
 
     /**
-     * @Route("/conversation/{id}")
+     * @Route("/api/conversation/{id}")
      */
     public function conversationPatchAction($id)
     {

@@ -4,21 +4,23 @@ namespace AppBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class ConversationController extends Controller
 {
     /**
      * @Route("/api/conversation")
+	 * @Method("GET")
      */
     public function conversationPostAction()
     {
-        return $this->render('AppBundle:ConversationController:conversation_post.html.twig', array(
-            // ...
-        ));
+        
     }
 
     /**
      * @Route("/api/conversation/{id}")
+	 * @Method("GET")
      */
     public function conversationGetAction($id)
     {
@@ -29,12 +31,12 @@ class ConversationController extends Controller
 
     /**
      * @Route("/api/conversation-tree/{id}")
+	 * @Method("GET")
      */
-    public function conversationTreeGetAction($id)
+    public function conversationTreeGetAction($id): JsonResponse
     {
-        return $this->render('AppBundle:ConversationController:conversation_tree_get.html.twig', array(
-            // ...
-        ));
+    	$data = [];
+        return new JsonResponse(json_decode($data));
     }
 
     /**

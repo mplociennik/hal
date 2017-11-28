@@ -2,3 +2,10 @@ services:
     app.jwt_token_authenticator:
         parent: lexik_jwt_authentication.security.guard.jwt_token_authenticator
         class: AppBundle\Security\Guard\JWTAuthenticator
+#
+#    AppBundle\Utils\JsonFromDbObjectConverter:
+#        public: false
+
+    cbl.error_service:
+        public: true
+        class: AppBundle\DependencyInjection\ErrorService

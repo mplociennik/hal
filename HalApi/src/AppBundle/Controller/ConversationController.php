@@ -6,16 +6,27 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use AppBundle\Utils\JsonFromDbObjectConverter;
+use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * Class ConversationController
+ * @package AppBundle\Controller
+ */
 class ConversationController extends Controller
 {
     /**
      * @Route("/api/conversation")
-	 * @Method("GET")
+	 * @Method("POST")
+	 * @param Request $request
+	 * @param JsonFromDbObjectConverter $converter
+	 * @return JsonResponse
      */
-    public function conversationPostAction()
+    public function conversationPostAction(Request $request, JsonFromDbObjectConverter $converter)
     {
-        
+        echo "<pre>";
+        var_dump("dupa");
+        die;
     }
 
     /**

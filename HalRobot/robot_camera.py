@@ -2,6 +2,7 @@
 import os
 import json
 from robot_websocket_client import RobotWebsocketClient
+
 STREAM_CMD = "/home/pi/hal/HalRobot/stream_camera.sh &"
 STOP_CMD = "killall raspivid && killall cvlc"
 

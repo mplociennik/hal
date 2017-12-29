@@ -98,6 +98,8 @@ wss.on('connection', function connection(ws) {
   ws.on('message', function incoming(data) {
     wss.renderMessage('Received data: ' + data);
     dataObj = JSON.parse(data);
+    wss.sendWebsocketLog(dataObj);
+
     if (typeof dataObj.from !== 'undefined' && typeof dataObj.to !== 'undefined') {
        switch(dataObj.to){
         case 'all':

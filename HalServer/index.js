@@ -3,6 +3,8 @@ var crypto = require('crypto');
 var md5sum = crypto.createHash('md5');
 const WebSocket = require('ws');
 const wss = new WebSocket.Server({ port: 8083});
+const WEBSOCKET_LOG_CLIENT_NAME = 'websocketLogSender';
+
 console.log('Server listening...');
 
 function heartbeat() {
@@ -49,7 +51,6 @@ wss.broadcastByClientName = function broadcast(clientName, data) {
   return state;
 };
 
-
 wss.renderMessage = function(message){
   console.log('**********************************************');
   console.log(moment().format() + ": " + message)
@@ -71,6 +72,13 @@ wss.receiveServerRequest = function(ws, dataObj){
       }    
   }else{
     console.log('Event is undefined: ', dataObj);
+  }
+};
+
+wss.sendWebsocketLog = function(data){
+  state = wss.broadcastByClientName(WEBSOCKET_LOG_CLIENT_NAME, data);
+  if(!state){
+    console.log('Websocket Log Client is not connected!');
   }
 };
 

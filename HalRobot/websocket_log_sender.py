@@ -10,10 +10,10 @@ class WebsocketLogSender(RobotWebsocketClient):
         pass
 
     def post_websocket_log(self, data):
-        print(data)
+        print('data: {0}'.format(data))
         hal_api = HalApi()
         response = hal_api.post_websocket_log(data)
-        print(response)
+        print('response: {0}'.format(response))
 
     def on_message(self, ws, message):
         print('json message: ', message)

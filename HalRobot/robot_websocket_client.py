@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 import websocket
 import time
-import urllib2
 import json
 import requests
 
@@ -32,9 +31,9 @@ class RobotWebsocketClient():
     def check_connection(self):
         state = False
         try:
-            urllib2.urlopen('http://cieniu.pl', timeout=1)
+            requests.get('http://cieniu.pl')
             state = True
-        except urllib2.URLError as err: 
+        except requests.ConnectionError as err:
             state = False
         print("self.check_connection() state: {0} ".format(state))
         return state

@@ -34,3 +34,8 @@ services:
         public: true
         class: AppBundle\DependencyInjection\WordService
         arguments: ["@doctrine.orm.entity_manager", "@service_container"]
+
+    app.speech_command_service:
+        public: true
+        class: AppBundle\DependencyInjection\SpeechCommandService
+        arguments: ["@doctrine.orm.entity_manager", "@service_container"]

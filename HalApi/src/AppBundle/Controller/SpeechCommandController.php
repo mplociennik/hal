@@ -12,6 +12,7 @@ use AppBundle\Utils\JsonFromDbObjectConverter;
 use Symfony\Component\HttpFoundation\Request;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
+
 class SpeechCommandController extends Controller
 {
 	/**
@@ -20,12 +21,13 @@ class SpeechCommandController extends Controller
 	 * @param Request $request
 	 * @param JsonFromDbObjectConverter $converter
 	 * @return JsonResponse
+	 * @throws \Doctrine\ORM\OptimisticLockException
 	 */
 	public function speechCommandPostAction(Request $request, JsonFromDbObjectConverter $converter): JsonResponse
 	{
 		$speechCommandRequest = new SpeechCommandRequest();
 		$speechCommandRequest->command = $request->get('command');
-		$speechCommandRequest->languageId = $request->get('languageId') ? (int) $request->get('languageId') : null;
+		$speechCommandRequest->languageId = $request->get('languageId') ? (int)$request->get('languageId') : null;
 		$speechCommandRequest->wsMessages = $request->get('wsMessages');
 
 		$validator = $this->get('validator');
@@ -40,6 +42,26 @@ class SpeechCommandController extends Controller
 		$speechCommandService = $this->container->get('app.speech_command_service');
 		$result = $speechCommandService->createSpeechCommand($speechCommandRequest);
 		$data = $converter->convertObjectToJson($result);
+
+		return new JsonResponse(json_decode($data), JsonResponse::HTTP_OK);
+	}
+
+	/**
+	 * @Route("/api/speech-command")
+	 * @Method("GET")
+	 * @param $id
+	 * @param JsonFromDbObjectConverter $converter
+	 */
+	public function speechCommandsGetAction(JsonFromDbObjectConverter $converter)
+	{
+		$results = $this->getDoctrine()->getRepository(SpeechCommand::class)->findAll();
+
+		if (!$results) {
+			$data['message'] = 'Speech commands not found...';
+			return new JsonResponse($data, JsonResponse::HTTP_NOT_FOUND);
+		}
+
+		$data = $converter->convertObjectToJson($results);
 
 		return new JsonResponse(json_decode($data), JsonResponse::HTTP_OK);
 	}

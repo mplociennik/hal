@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Utils\Traits\EntityDateTimes;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -12,6 +13,8 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class WebsocketLog
 {
+	use EntityDateTimes;
+
 	/**
 	 * @var int
 	 *
@@ -50,21 +53,6 @@ class WebsocketLog
 	private $data;
 
 	/**
-	 * @var \DateTime
-	 *
-	 * @ORM\Column(name="createdAt", type="datetime")
-	 */
-	private $createdAt;
-
-	/**
-	 * @var \DateTime
-	 *
-	 * @ORM\Column(name="updatedAt", type="datetime")
-	 */
-	private $updatedAt;
-
-
-	/**
 	 * Get id
 	 *
 	 * @return int
@@ -79,7 +67,6 @@ class WebsocketLog
 	 *
 	 * @param string $clientFrom
 	 *
-	 * @return WebsocketLog
 	 */
 	public function setClientFrom($clientFrom)
 	{
@@ -101,7 +88,6 @@ class WebsocketLog
 	 *
 	 * @param string $clientTo
 	 *
-	 * @return WebsocketLog
 	 */
 	public function setClientTo($clientTo)
 	{
@@ -123,9 +109,8 @@ class WebsocketLog
 	 *
 	 * @param string $data
 	 *
-	 * @return WebsocketLog
 	 */
-	public function setData($data)
+	public function setData(string $data)
 	{
 		$this->data = $data;
 	}
@@ -138,50 +123,6 @@ class WebsocketLog
 	public function getData()
 	{
 		return $this->data;
-	}
-
-	/**
-	 * Set createdAt
-	 *
-	 * @param \DateTime $createdAt
-	 *
-	 * @return WebsocketLog
-	 */
-	public function setCreatedAt(\DateTime $createdAt)
-	{
-		$this->createdAt = $createdAt;
-	}
-
-	/**
-	 * Get createdAt
-	 *
-	 * @return \DateTime
-	 */
-	public function getCreatedAt()
-	{
-		return $this->createdAt;
-	}
-
-	/**
-	 * Set updatedAt
-	 *
-	 * @param \DateTime $updatedAt
-	 *
-	 * @return WebsocketLog
-	 */
-	public function setUpdatedAt(\DateTime $updatedAt)
-	{
-		$this->updatedAt = $updatedAt;
-	}
-
-	/**
-	 * Get updatedAt
-	 *
-	 * @return \DateTime
-	 */
-	public function getUpdatedAt()
-	{
-		return $this->updatedAt;
 	}
 
 	/**

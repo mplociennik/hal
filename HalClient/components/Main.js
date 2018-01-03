@@ -9,7 +9,10 @@ import { play } from 'react-native-vlc-player';
 
 var windowWidth = Dimensions.get('window').width;
 var windowHeight = Dimensions.get('window').height;
-const SERVER_HOST = "ws://5.104.255.112:8083";
+const WEBSOCKET_HOST = "ws://5.104.255.112:8083";
+const API_HOST = "http://5.104.255.112:8000";
+const API_CLIENT = "halClient";
+const API_PASSWORD = "uchoSloniaWDupieWeza";
 
 export default class Main extends Component {
 
@@ -31,7 +34,7 @@ export default class Main extends Component {
       initialViewPagerPage: 0,
       robotHardwarInterval: null,
       robotHardwareIntervalTime: 3000,
-
+      apiToken: null,
     };
     this.socketStream = null;
   }
@@ -61,6 +64,10 @@ export default class Main extends Component {
       self.getRobotHardwareInfo();
     }, this.state.robotHardwareIntervalTime);
     this.setState({robotHardwareInterval: robotHardwarInterval});
+    var apiToken = this.getApiToken(API_CLIENT, API_PASSWORD);
+    console.log(apiToken);
+    this.writeMessageLog(apiToken);
+    this.setState({apiToken: apiToken});
   }
 
   componentWillUnmount() {
@@ -83,7 +90,7 @@ export default class Main extends Component {
   _connectSocket(){
     this.renderMessage('Connecting...');
     var self = this;
-    this.socketStream = new WebSocket(SERVER_HOST);
+    this.socketStream = new WebSocket(WEBSOCKET_HOST);
 
     this.socketStream.onopen = (evt)=>{ 
       self.setState({socketConnected: true});
@@ -171,6 +178,32 @@ export default class Main extends Component {
       ],
       { cancelable: false }
       )
+  }
+
+  getApiToken(username, password){
+    const bodyData = {
+          _username: username,
+          _password: password,
+        };
+    return fetch(API_HOST + '/login_check', {
+        method: 'POST',
+        body: JSON.stringify(bodyData)
+      }).then((response) => response.json()).then((responseJson) => {
+      return responseJson;
+    }).catch((error) => {
+      console.error(error);
+    });
+  }
+
+  getSpeechCommands() {
+    return fetch(API_HOST + '/api/speech-command').
+    then((response) => response.json()).
+    then((responseJson) => {
+      return responseJson.movies;
+    }).
+    catch((error) => {
+      console.error(error);
+    });
   }
 
   render(){
